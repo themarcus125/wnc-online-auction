@@ -1,9 +1,24 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "outDir": "dist",
+    "incremental": true,   
+    "declaration": true, 
+    "removeComments": true,  
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*" : ["./*"]
+    },    
     "strict": true,
     "lib": ["esnext"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "exclude": [
+      "node_modules",
+      "dist",
+    ],
+    "include": [
+      "**/*"
+    ]
   }
 }
