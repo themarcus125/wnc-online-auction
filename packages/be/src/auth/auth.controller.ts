@@ -22,12 +22,12 @@ const login: RequestHandler = async (req, res, next) => {
     const loginResponse = await AuthService.login({ email, password });
     if (loginResponse.status === LoginMessage.NOEMAIL) {
       return res.status(400).json({
-        message: 'NOEMAIL',
+        error: 'NO_EMAIL',
       });
     }
     if (loginResponse.status === LoginMessage.WRONGPASS) {
       return res.status(400).json({
-        message: 'WRONGPASS',
+        error: 'WRONG_PASS',
       });
     }
     return res.json({

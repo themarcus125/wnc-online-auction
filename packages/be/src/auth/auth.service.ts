@@ -61,7 +61,7 @@ const sign = ({ _id, email, role }: UserDoc): JWTResponse => {
   };
 };
 
-const verify = async (token: string) => {
+const verify = (token: string) => {
   const { jwtSecret } = appConfig;
   return jwt.verify(token, jwtSecret) as JWTPayload;
 };

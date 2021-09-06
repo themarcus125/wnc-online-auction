@@ -1,9 +1,12 @@
 import express from 'express';
-const apiRouter = express.Router();
+import { loading } from '@/utils/logs';
+import authRoute from '@/auth/auth.route';
+import userRoute from '@/user/user.route';
 
-// console.log("Loading actor routes");
-// router.use("/api/actor", actorRoutes);
-// console.log("Loading customer routes");
-// router.use("/api/customer", customerRoutes);
+const apiRouter = express.Router();
+loading('API router');
+
+apiRouter.use('/auth', authRoute);
+apiRouter.use('/user', userRoute);
 
 export default apiRouter;

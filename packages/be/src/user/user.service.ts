@@ -5,7 +5,7 @@ import { UserModel, UserDoc } from './user.schema';
 const createUser = (dto: CreateUserDTO) => UserModel.create(dto);
 
 const findUserById = (id: string, options?: QueryOptions) =>
-  UserModel.findById(id, options).exec();
+  UserModel.findById(id, options).select('-password').exec();
 
 const findUser = (filter: FilterQuery<UserDoc>, options?: QueryOptions) =>
   UserModel.findOne(filter, options).exec();

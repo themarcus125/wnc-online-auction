@@ -1,0 +1,23 @@
+@host = localhost
+@port = 3000
+@baseurl = http://{{host}}:{{port}}/api/auth
+###
+POST {{baseurl}}/register
+content-type: application/json
+
+{
+  "email": "huy@gmail.com",
+  "name": "huy",
+  "address": "this is a address",
+  "password": "123456"
+}
+
+###
+
+POST {{baseurl}}/login
+content-type: application/json
+
+{
+  "email": "huy@gmail.com",
+  "password": "123456"
+}

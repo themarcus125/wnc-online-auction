@@ -1,5 +1,5 @@
 import { dbConnect } from './utils/logs';
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
 
 import { dbConfig } from '~/config';
 
@@ -11,3 +11,5 @@ export const connectDB = () => {
   dbConnect();
   return mongoose.connect(url);
 };
+
+// https://mongoosejs.com/docs/typescript/populate.html
