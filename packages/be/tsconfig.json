@@ -1,24 +1,30 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "incremental": true,   
-    "declaration": true, 
-    "removeComments": true,  
+    "incremental": true,
+    "declaration": true,
+    "removeComments": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "~/*" : ["./*"]
-    },    
+      "@/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./*"
+      ]
+    },
     "strict": true,
-    "lib": ["esnext"],
-    "esModuleInterop": true,
-    "exclude": [
-      "node_modules",
-      "dist",
+    "lib": [
+      "esnext"
     ],
-    "include": [
-      "**/*"
-    ]
-  }
+    "esModuleInterop": true,
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+  ],
+  "include": [
+    "**/*"
+  ]
 }
