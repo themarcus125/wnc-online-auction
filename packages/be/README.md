@@ -2,27 +2,15 @@
 
 ## Getting started for local dev
 
-### 1. Install dependencies and enviroment
+### 1. Install dependencies and set enviroment
 
 ```bash
 npm install
 ```
 
-### 2. Create and seed the database
+Check `.env.sample` and create your own `.env`
 
-Run the following command to create your SQLite database file. This also creates the `User` and `Post` tables that are defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
-
-```bash
-npx prisma migrate dev --name init
-```
-
-Now, seed the database with the sample data in [`prisma/seed.ts`](./prisma/seed.ts) by running the following command:
-
-```bash
-npx prisma db seed --preview-feature
-```
-
-### 3. Start the server
+### 2. Start the server
 
 ```bash
 npm run dev

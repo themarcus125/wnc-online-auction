@@ -1,0 +1,1 @@
+- Try cookie for auth
