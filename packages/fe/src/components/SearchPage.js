@@ -5,18 +5,8 @@ import ProductItem from './common/ProductItem';
 
 const SearchPage = () => {
   return (
-    <Wrapper className="uk-padding">
+    <Wrapper className="uk-padding-small">
       <div className="page uk-margin-auto">
-        <div className="uk-flex uk-flex-between uk-margin-bottom">
-          <input className="uk-input black-border" type="text" />
-          <select class="uk-select drop-down black-border">
-            <option>Category 01</option>
-            <option>Categoryyyyyy 02</option>
-          </select>
-          <button className="uk-button uk-button-primary button">
-            Tìm kiếm
-          </button>
-        </div>
         <div className="uk-child-width-auto uk-flex uk-flex-between uk-flex-bottom uk-margin-bottom">
           <span>
             <b>2,261</b> results for ps5

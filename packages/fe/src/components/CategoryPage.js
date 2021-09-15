@@ -5,7 +5,7 @@ import ProductItem from './common/ProductItem';
 
 const CategoryPage = () => {
   return (
-    <Wrapper className="uk-padding">
+    <Wrapper className="uk-padding-small">
       <div className="page uk-margin-auto">
         <div>
           <ul class="uk-breadcrumb">

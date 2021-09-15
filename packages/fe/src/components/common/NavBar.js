@@ -48,7 +48,7 @@ const NavBar = () => {
 
       <ul className="uk-navbar-nav">
         <li className="uk-active">
-          <a href="#">Đăng xuất</a>
+          <a href="#">Đăng nhập</a>
         </li>
       </ul>
     </nav>
