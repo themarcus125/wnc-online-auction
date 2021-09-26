@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import UIKit from 'uikit/dist/js/uikit.min.js';
 import styled from 'styled-components';
+import { Link } from 'gatsby';
 
 const NavBar = () => {
   useEffect(() => {
@@ -48,7 +49,7 @@ const NavBar = () => {
 
       <ul className="uk-navbar-nav">
         <li className="uk-active">
-          <a href="#">Đăng nhập</a>
+          <Link to="login">Đăng nhập</Link>
         </li>
       </ul>
     </nav>
