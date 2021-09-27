@@ -1,5 +1,5 @@
-import { dbConnect } from './utils/logs';
 import mongoose from 'mongoose';
+import { dbConnect } from './utils/logs';
 
 import { dbConfig } from '~/config';
 

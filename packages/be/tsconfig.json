@@ -4,6 +4,8 @@
     "incremental": true,
     "declaration": true,
     "removeComments": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
@@ -18,7 +20,6 @@
     "lib": [
       "esnext"
     ],
-    "esModuleInterop": true,
   },
   "exclude": [
     "node_modules",
