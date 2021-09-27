@@ -11,7 +11,7 @@ import { LoginDTO, JWTResponse, JWTPayload } from './auth.dto';
 
 const register = ({ email, name, address, password }: CreateUserDTO) => {
   const hashedPassword = getHashedPassword(password);
-  return UserService.createUser({
+  return UserService.create({
     email,
     name,
     address,
@@ -26,7 +26,7 @@ export enum LoginMessage {
 }
 
 const login = async ({ email, password }: LoginDTO) => {
-  const user = await UserService.findUser({ email });
+  const user = await UserService.findOne({ email });
   if (!user) {
     return {
       status: LoginMessage.NOEMAIL,

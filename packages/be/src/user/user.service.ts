@@ -1,24 +1,39 @@
-import { FilterQuery, QueryOptions } from 'mongoose';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { UserModel, UserDoc } from './user.schema';
+import BaseService from '@/utils/base.service';
+import { validateEmail } from '@/utils/validator';
+import { comparePassword } from '@/utils/password';
 
-const createUser = (dto: CreateUserDTO) => UserModel.create(dto);
+export enum CheckEmailMessage {
+  VALID,
+  INVALID,
+  NONUNIQUE,
+}
 
-const findUserById = (id: string, options?: QueryOptions) =>
-  UserModel.findById(id, options).select('-password').exec();
+export enum CheckPasswordMessage {
+  VALID,
+  SHORT,
+  SAME,
+}
 
-const findUser = (filter: FilterQuery<UserDoc>, options?: QueryOptions) =>
-  UserModel.findOne(filter, options).exec();
+class UserService extends BaseService<UserDoc, CreateUserDTO> {
+  constructor() {
+    super(UserModel);
+  }
+  async checkEmail(email: string) {
+    const isEmail = validateEmail(email);
+    if (!isEmail) return CheckEmailMessage.INVALID;
+    const isNonUnique = await this.model.exists({ email });
+    if (isNonUnique) return CheckEmailMessage.NONUNIQUE;
+    return CheckEmailMessage.VALID;
+  }
+  checkPassword(password: string, hashedPassword?: string) {
+    const isPassword = password.length >= 6;
+    if (!isPassword) return CheckPasswordMessage.SHORT;
+    if (hashedPassword && comparePassword(password, hashedPassword))
+      return CheckPasswordMessage.SAME;
+    return CheckPasswordMessage.VALID;
+  }
+}
 
-const updateUser = (
-  filter: FilterQuery<UserDoc>,
-  dto: UpdateUserDTO,
-  options?: QueryOptions,
-) => UserModel.findOneAndUpdate(filter, dto, options).exec();
-
-export default {
-  createUser,
-  findUserById,
-  findUser,
-  updateUser,
-};
+export default new UserService();

@@ -1,7 +1,24 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzY3NTVkNzI5MmU5ODM4NzA0MDQ1YiIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjAsImlhdCI6MTYzMDk1ODk4Mn0.0dDRJdoc-DGJNc3YkWpk1gHeFi8UxFYI5h36Sw3p0Gg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjIsImlhdCI6MTYzMjc1NDYyN30.Manh261NX3BgO_vGhHoZroBfwl0uliXbAQMAVgYhY3w
 ###
 GET {{baseurl}}
 authorization: Bearer {{token}}
+###
+PATCH  {{baseurl}}
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "huy new name",
+    "dob": "1999-12-23T00:00:00.000Z"
+}
+###
+POST {{baseurl}}/email
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "email": "huy2@gmail.com"
+}

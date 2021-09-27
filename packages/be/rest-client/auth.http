@@ -6,18 +6,24 @@ POST {{baseurl}}/register
 content-type: application/json
 
 {
-  "email": "huy@gmail.com",
+  "email": "huy_2@gmail.com",
   "name": "huy",
   "address": "this is a address",
   "password": "123456"
 }
-
 ###
-
 POST {{baseurl}}/login
 content-type: application/json
 
 {
   "email": "huy@gmail.com",
+  "password": "123456"
+}
+###
+POST {{baseurl}}/login
+content-type: application/json
+
+{
+  "email": "huy_2@gmail.com",
   "password": "123456"
 }

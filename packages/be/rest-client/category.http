@@ -1,0 +1,28 @@
+@host = localhost
+@port = 3000
+@baseurl = http://{{host}}:{{port}}/api/category
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjIsImlhdCI6MTYzMjczNzU1MH0.XA1W0740VGqme3ERTJrROUuUeFwIqrzHpsAik-CYlmM
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5OGJjNDk5YjE4MTY0MjIwNDVjYSIsImVtYWlsIjoiaHV5XzJAZ21haWwuY29tIiwicm9sZSI6MCwiaWF0IjoxNjMyNzM3OTY3fQ.qkgXrNlCeKkVARgWXcU5nUdCG2G1HU3K1A8Ld5nytyI
+###
+POST {{baseurl}}
+authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+    "name": "parent 1"
+}
+###
+POST {{baseurl}}
+authorization: Bearer {{userToken}}
+content-type: application/json
+
+{
+    "name": "child 1",
+    "parent": "61519a3c2cd7faf68f4b7ec0"
+}
+###
+Get {{baseurl}}
+content-type: application/json
+###
+Get {{baseurl}}?parent=61519a3c2cd7faf68f4b7ec0
+content-type: application/json

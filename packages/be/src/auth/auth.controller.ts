@@ -10,7 +10,7 @@ const register: RequestHandler = async (req, res, next) => {
     if (!user) {
       throw new Error('Something went wrong');
     }
-    res.json(user);
+    res.json({ id: user._id });
   } catch (e) {
     next(e);
   }
