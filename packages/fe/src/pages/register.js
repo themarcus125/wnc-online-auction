@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'gatsby';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { ToastContainer, toast } from 'react-toastify';
+import { navigate } from 'gatsby';
 
 import FormErrorMessage from '../components/common/Form/ErrorMessage';
 
@@ -20,6 +22,7 @@ const RegisterSchema = Yup.object().shape({
 
 const RegisterPage = () => {
   const [verifiedWithRecaptcha, setVerifiedWithRecaptcha] = useState(false);
+  const recaptchaRef = useRef(null);
 
   const onSubmit = async (values, { setSubmitting }) => {
     const { fullName, email, address, password } = values;
@@ -31,9 +34,15 @@ const RegisterPage = () => {
     });
     setSubmitting(false);
     if (res.error) {
-      // Error handling here
+      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại', { theme: 'colored' });
     } else {
-      // Log the user in or navigate to login screen
+      navigate('/login', {
+        state: {
+          toastMsg:
+            'Tạo tài khoản thành công. Hãy đăng nhập với tài khoản vừa tạo',
+          toastType: 'success',
+        },
+      });
     }
   };
 
@@ -43,11 +52,17 @@ const RegisterPage = () => {
     }
   };
 
+  const onRecaptchaExpire = () => {
+    setVerifiedWithRecaptcha(false);
+    recaptchaRef.current.reset();
+  };
+
   return (
     <div
       className="uk-flex uk-flex-middle uk-flex-center"
       style={{ height: '100vh', backgroundColor: 'gray' }}
     >
+      <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
       <div className="uk-width-1-2@s uk-width-1-3@l uk-background-default uk-border-rounded uk-padding">
         <Formik
           initialValues={{
@@ -118,8 +133,10 @@ const RegisterPage = () => {
                   />
                 </div>
                 <ReCAPTCHA
+                  ref={recaptchaRef}
                   sitekey="6LctLpQcAAAAABDK1rWNlDL7ph21c8jgTtJ_45Hl"
                   onChange={recaptchaCallback}
+                  onExpired={onRecaptchaExpire}
                 />
                 <div className="uk-flex uk-flex-between uk-flex-middle uk-margin-top">
                   <button

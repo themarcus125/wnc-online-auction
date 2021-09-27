@@ -26,6 +26,7 @@
     "react-dom": "^17.0.1",
     "react-google-recaptcha": "^2.1.0",
     "react-helmet": "^6.1.0",
+    "react-toastify": "^8.0.3",
     "styled-components": "^5.3.1",
     "uikit": "^3.7.2",
     "yup": "^0.32.9"
