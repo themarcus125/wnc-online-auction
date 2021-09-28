@@ -20,7 +20,8 @@ authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "password": "1234567a"
+    "oldPassword": "1234567a",
+    "newPassword": "123456"
 }
 ### Check email can be changed
 POST {{baseurl}}/email

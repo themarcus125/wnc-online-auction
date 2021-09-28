@@ -2,7 +2,7 @@ import { JWTPayload } from '@/auth/auth.dto';
 import { sendMail } from '@/mail/mail.service';
 import OtpService from '@/otp/otp.service';
 import { tag } from '@/utils/html';
-import { getHashedPassword } from '@/utils/password';
+import { comparePassword, getHashedPassword } from '@/utils/password';
 import { RequestHandler } from 'express';
 import { UpdateUserDTO } from './user.dto';
 import UserService from './user.service';
@@ -55,26 +55,29 @@ const updateUser: RequestHandler = async (req, res, next) => {
 const changeUserPassword: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
-    const { password }: UpdateUserDTO = req.body;
-    const isPassword = UserService.checkPassword(password || '');
-    if (!password || isPassword !== CheckPasswordMessage.VALID) {
-      return res.status(400).json({
-        error: 'INVALID_NEW_PASSWORD',
-      });
-    }
-    const hashedPassword = getHashedPassword(password);
-    const user = await UserService.findOneAndUpdate(
-      { _id: id },
-      {
-        password: hashedPassword,
-      },
-    ).select('-password -verifyOtp -passwordOtp');
+    const user = await UserService.findById(id);
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
       });
     }
-    res.json(user);
+    const { oldPassword, newPassword } = req.body;
+    const isPass = comparePassword(oldPassword, user.password);
+    if (!isPass) {
+      return res.status(400).json({
+        error: 'WRONG_OLD_PASS',
+      });
+    }
+    const isPassword = UserService.checkPassword(newPassword || '');
+    if (!newPassword || isPassword !== CheckPasswordMessage.VALID) {
+      return res.status(400).json({
+        error: 'INVALID_NEW_PASSWORD',
+      });
+    }
+    const hashedPassword = getHashedPassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+    res.json({ id });
   } catch (e) {
     next(e);
   }
