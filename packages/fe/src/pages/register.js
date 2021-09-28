@@ -8,16 +8,16 @@ import { navigate } from 'gatsby';
 
 import FormErrorMessage from '../components/common/Form/ErrorMessage';
 
-import { postAPI } from '../utils/api';
+import { postAPIForm } from '../utils/api';
 
 const RegisterSchema = Yup.object().shape({
   fullName: Yup.string().required('*Bắt buộc'),
-  email: Yup.string().required('*Bắt buộc').email('Email không hợp lệ'),
+  email: Yup.string().required('*Bắt buộc').email('*Email không hợp lệ'),
   address: Yup.string().required('*Bắt buộc'),
-  password: Yup.string().required('*Bắt buộc'),
+  password: Yup.string().required('*Bắt buộc').min(8, '*Phải dài hơn 8 kí tự'),
   confirmPassword: Yup.string()
     .required('*Bắt buộc')
-    .oneOf([Yup.ref('password'), null], 'Password không trùng'),
+    .oneOf([Yup.ref('password'), null], '*Password không trùng'),
 });
 
 const RegisterPage = () => {
@@ -26,7 +26,7 @@ const RegisterPage = () => {
 
   const onSubmit = async (values, { setSubmitting }) => {
     const { fullName, email, address, password } = values;
-    const res = await postAPI('/api/auth/register', {
+    const res = await postAPIForm('/api/auth/register', {
       email,
       name: fullName,
       address,
@@ -34,7 +34,7 @@ const RegisterPage = () => {
     });
     setSubmitting(false);
     if (res.error) {
-      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại', { theme: 'colored' });
+      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');
     } else {
       navigate('/login', {
         state: {
@@ -62,7 +62,11 @@ const RegisterPage = () => {
       className="uk-flex uk-flex-middle uk-flex-center"
       style={{ height: '100vh', backgroundColor: 'gray' }}
     >
-      <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
+      <ToastContainer
+        position={toast.POSITION.TOP_RIGHT}
+        autoClose={3000}
+        theme="colored"
+      />
       <div className="uk-width-1-2@s uk-width-1-3@l uk-background-default uk-border-rounded uk-padding">
         <Formik
           initialValues={{
@@ -81,7 +85,6 @@ const RegisterPage = () => {
                 <legend className="uk-legend">Tạo tài khoản Biddly</legend>
                 <div className="uk-margin">
                   <Field
-                    ref={null}
                     className="uk-input"
                     type="text"
                     placeholder="Họ tên"
@@ -91,7 +94,6 @@ const RegisterPage = () => {
                 </div>
                 <div className="uk-margin">
                   <Field
-                    ref={null}
                     className="uk-input"
                     type="email"
                     placeholder="Email"
@@ -101,7 +103,6 @@ const RegisterPage = () => {
                 </div>
                 <div className="uk-margin">
                   <Field
-                    ref={null}
                     className="uk-input"
                     type="text"
                     placeholder="Địa chỉ"
@@ -111,7 +112,6 @@ const RegisterPage = () => {
                 </div>
                 <div className="uk-margin">
                   <Field
-                    ref={null}
                     className="uk-input"
                     type="password"
                     placeholder="Mật khẩu"
@@ -121,7 +121,6 @@ const RegisterPage = () => {
                 </div>
                 <div className="uk-margin">
                   <Field
-                    ref={null}
                     className="uk-input"
                     type="password"
                     placeholder="Xác nhận mật khẩu"
