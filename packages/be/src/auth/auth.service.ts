@@ -57,7 +57,7 @@ const sign = ({ _id, email, role, isVerified }: UserDoc): JWTResponse => {
   };
 };
 
-const resign = (payload: JWTPayload): JWTResponse => {
+const reSign = (payload: JWTPayload): JWTResponse => {
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
   const accessToken = jwt.sign(payload, jwtSecret);
@@ -78,5 +78,5 @@ export default {
   login,
   sign,
   verify,
-  resign,
+  reSign,
 };

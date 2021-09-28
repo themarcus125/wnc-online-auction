@@ -5,6 +5,6 @@ const authRoute = express.Router();
 
 authRoute.post('/login', AuthController.login);
 authRoute.post('/register', AuthController.register);
-authRoute.get('/resign', tokenGuard, AuthController.resign);
+authRoute.get('/re-sign', tokenGuard, AuthController.reSign);
 
 export default authRoute;

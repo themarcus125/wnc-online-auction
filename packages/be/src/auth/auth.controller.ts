@@ -34,10 +34,10 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-const resign: RequestHandler = (req, res, next) => {
+const reSign: RequestHandler = (req, res, next) => {
   try {
     const jwtPayload: JWTPayload = res.locals.jwtPayload;
-    const response = AuthService.resign(jwtPayload);
+    const response = AuthService.reSign(jwtPayload);
     return res.json({
       ...response,
     });
@@ -49,5 +49,5 @@ const resign: RequestHandler = (req, res, next) => {
 export default {
   register,
   login,
-  resign,
+  reSign,
 };
