@@ -18,4 +18,5 @@ export interface JWTPayload {
   id: string;
   email: string;
   role: UserRole;
+  isVerified: boolean;
 }

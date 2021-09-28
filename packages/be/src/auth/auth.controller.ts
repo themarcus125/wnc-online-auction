@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 
-import { LoginDTO, RegisterDTO } from './auth.dto';
+import { JWTPayload, LoginDTO, RegisterDTO } from './auth.dto';
 import AuthService, { LoginMessage } from './auth.service';
 
 const register: RequestHandler = async (req, res, next) => {
@@ -38,7 +38,20 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
+const resign: RequestHandler = (req, res, next) => {
+  try {
+    const jwtPayload: JWTPayload = res.locals.jwtPayload;
+    const response = AuthService.resign(jwtPayload);
+    return res.json({
+      ...response,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   register,
   login,
+  resign,
 };

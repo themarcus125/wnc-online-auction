@@ -2,8 +2,9 @@ import { UserRole } from '@/user/user.schema';
 import { RequestHandler } from 'express';
 import { JWTPayload } from './auth.dto';
 import AuthService from './auth.service';
+import UserService from '@/user/user.service';
 
-export const userGuard: RequestHandler = (req, res, next) => {
+export const tokenGuard: RequestHandler = async (req, res, next) => {
   const bearerToken = req.header('authorization') || '';
   if (!bearerToken.startsWith('Bearer')) {
     return res.status(401).json({
@@ -22,7 +23,18 @@ export const userGuard: RequestHandler = (req, res, next) => {
       error: 'INVALID_TOKEN',
     });
   }
-  res.locals.jwtPayload = verifiedToken;
+  const user = await UserService.findById(verifiedToken.id);
+  if (!user) {
+    return res.status(404).json({
+      error: 'NOT_FOUND_USER',
+    });
+  }
+  res.locals.jwtPayload = {
+    id: user._id,
+    isVerified: user.isVerified,
+    role: user.role,
+    email: user.email,
+  } as JWTPayload;
   next();
 };
 
@@ -38,6 +50,23 @@ export const roleGuard =
     if (jwtPayload.role !== role) {
       return res.status(401).json({
         error: 'INVALID_TOKEN_ROLE',
+      });
+    }
+    next();
+  };
+
+export const emailGuard =
+  (mode: boolean): RequestHandler =>
+  (req, res, next) => {
+    const jwtPayload: JWTPayload = res.locals.jwtPayload;
+    if (!jwtPayload) {
+      return res.status(401).json({
+        error: 'INVALID_TOKEN',
+      });
+    }
+    if (jwtPayload.isVerified !== mode) {
+      return res.status(401).json({
+        error: `${mode ? 'UNVERIFIED' : 'VERIFIED'}_EMAIL`,
       });
     }
     next();

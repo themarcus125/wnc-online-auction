@@ -1,3 +1,4 @@
+import { Otp, OtpDoc, OtpSchema } from '@/otp/otp.schema';
 import { Document, model, Schema } from 'mongoose';
 
 export enum UserRole {
@@ -14,6 +15,8 @@ export interface User {
   password: string;
   role: UserRole;
   isVerified: boolean;
+  verifyOtp: OtpDoc;
+  passwordOtp: OtpDoc;
 }
 
 export type UserDoc = User & Document;
@@ -27,6 +30,8 @@ export const UserSchema = new Schema<UserDoc>(
     password: { type: String, required: true, minlength: 6 },
     role: { type: Number, enum: UserRole, default: UserRole.BIDDER },
     isVerified: { type: Boolean, default: false },
+    verifyOtp: OtpSchema,
+    passwordOtp: OtpSchema,
   },
   { timestamps: true },
 );

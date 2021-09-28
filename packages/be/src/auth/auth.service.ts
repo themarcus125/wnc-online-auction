@@ -45,12 +45,24 @@ const login = async ({ email, password }: LoginDTO) => {
   };
 };
 
-const sign = ({ _id, email, role }: UserDoc): JWTResponse => {
+const sign = ({ _id, email, role, isVerified }: UserDoc): JWTResponse => {
   const payload: JWTPayload = {
     id: _id,
     email,
     role,
+    isVerified,
   };
+  const { expirationTime, jwtSecret } = appConfig;
+  const iat = new Date().getTime();
+  const accessToken = jwt.sign(payload, jwtSecret);
+  return {
+    accessToken,
+    expiresIn: expirationTime,
+    expiresAt: iat + expirationTime * 1000,
+  };
+};
+
+const resign = (payload: JWTPayload): JWTResponse => {
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
   const accessToken = jwt.sign(payload, jwtSecret);
@@ -66,9 +78,38 @@ const verify = (token: string) => {
   return jwt.verify(token, jwtSecret) as JWTPayload;
 };
 
+export enum EmailOtpMessage {
+  VERIFIED,
+  NO_OTP,
+  EXPIRED,
+  WRONG_OTP,
+}
+
+const verifyEmailOTP = async (user: UserDoc, otp: string) => {
+  if (user.isVerified) {
+    return EmailOtpMessage.VERIFIED;
+  }
+  if (!user.verifyOtp) {
+    return EmailOtpMessage.NO_OTP;
+  }
+  if (
+    Date.now() - new Date(user.verifyOtp.createdAt).getTime() >=
+    5 * 60 * 1000
+  ) {
+    return EmailOtpMessage.EXPIRED;
+  }
+  if (user.verifyOtp.key !== otp) {
+    return EmailOtpMessage.WRONG_OTP;
+  }
+  await user.verifyOtp.remove();
+  await user.save();
+  return EmailOtpMessage.VERIFIED;
+};
+
 export default {
   register,
   login,
   sign,
   verify,
+  resign,
 };
