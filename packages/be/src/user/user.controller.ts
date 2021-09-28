@@ -5,25 +5,20 @@ import { tag } from '@/utils/html';
 import { getHashedPassword } from '@/utils/password';
 import { RequestHandler } from 'express';
 import { UpdateUserDTO } from './user.dto';
-import UserService, {
+import UserService from './user.service';
+import {
   CheckEmailMessage,
   CheckPasswordMessage,
   EmailOtpMessage,
-  getCheckEmailMessage,
-  getEmailOtpMessage,
-  getResetPasswordOtpMessage,
   ResetPasswordOtpMessage,
-} from './user.service';
+} from './user.message';
 
 const getUser: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
-    const user = await UserService.findById(id).select('-password');
+    const { id } = res.locals.jwtPayload;
+    const user = await UserService.findById(id).select(
+      '-password -verifyOtp -passwordOtp',
+    );
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
@@ -37,12 +32,7 @@ const getUser: RequestHandler = async (req, res, next) => {
 
 const updateUser: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
+    const { id } = res.locals.jwtPayload;
     const { name, dob }: UpdateUserDTO = req.body;
     const user = await UserService.update(
       { _id: id },
@@ -50,7 +40,7 @@ const updateUser: RequestHandler = async (req, res, next) => {
         name,
         dob,
       },
-    ).select('-password');
+    ).select('-password -verifyOtp -passwordOtp');
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
@@ -64,12 +54,7 @@ const updateUser: RequestHandler = async (req, res, next) => {
 
 const changeUserPassword: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
+    const { id } = res.locals.jwtPayload;
     const { password }: UpdateUserDTO = req.body;
     const isPassword = UserService.checkPassword(password || '');
     if (!password || isPassword !== CheckPasswordMessage.VALID) {
@@ -83,7 +68,7 @@ const changeUserPassword: RequestHandler = async (req, res, next) => {
       {
         password: hashedPassword,
       },
-    ).select('-password');
+    ).select('-password -verifyOtp -passwordOtp');
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
@@ -97,17 +82,11 @@ const changeUserPassword: RequestHandler = async (req, res, next) => {
 
 const checkUserEmail: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
     const { email } = req.body;
-    const isEmail = await UserService.checkEmail(email);
-    if (isEmail !== CheckEmailMessage.VALID) {
+    const isEmailMessage = await UserService.checkEmail(email);
+    if (isEmailMessage !== CheckEmailMessage.VALID) {
       return res.status(404).json({
-        error: getCheckEmailMessage(isEmail),
+        error: isEmailMessage,
         isEmail: false,
       });
     }
@@ -121,22 +100,17 @@ const checkUserEmail: RequestHandler = async (req, res, next) => {
 
 const changeUserEmail: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
+    const { id } = res.locals.jwtPayload;
     const { email } = req.body;
-    const isEmail = await UserService.checkEmail(email);
-    if (isEmail !== CheckEmailMessage.VALID) {
+    const isEmailMessage = await UserService.checkEmail(email);
+    if (isEmailMessage !== CheckEmailMessage.VALID) {
       return res.status(404).json({
-        error: getCheckEmailMessage(isEmail),
+        error: isEmailMessage,
         isEmail: false,
       });
     }
     const newUser = await UserService.changeEmail(id, email).select(
-      '-password',
+      '-password -verifyOtp -passwordOtp',
     );
     res.json(newUser);
   } catch (e) {
@@ -146,12 +120,7 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
 
 const sendResetPasswordOTP: RequestHandler = async (req, res, next) => {
   try {
-    const { id, email }: JWTPayload = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
+    const { id, email }: JWTPayload = res.locals.jwtPayload;
     const otp = await OtpService.createOtp();
     const user = await UserService.update(
       { _id: id, email },
@@ -196,15 +165,18 @@ const resetPassword: RequestHandler = async (req, res, next) => {
         error: 'INVALID_PASSWORD',
       });
     }
-    const isSuccess = await UserService.resetPassword(user, otp, password);
-    const message = getResetPasswordOtpMessage(isSuccess);
-    if (isSuccess !== ResetPasswordOtpMessage.SUCCESS) {
+    const resetPasswordMessage = await UserService.resetPassword(
+      user,
+      otp,
+      password,
+    );
+    if (resetPasswordMessage !== ResetPasswordOtpMessage.SUCCESS) {
       return res.status(400).json({
-        error: message,
+        error: resetPasswordMessage,
       });
     }
     res.json({
-      status: message,
+      status: resetPasswordMessage,
     });
   } catch (e) {
     next(e);
@@ -213,12 +185,7 @@ const resetPassword: RequestHandler = async (req, res, next) => {
 
 const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
   try {
-    const { id, email }: JWTPayload = res.locals.jwtPayload || {};
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
+    const { id, email }: JWTPayload = res.locals.jwtPayload;
     const otp = await OtpService.createOtp();
     const user = await UserService.update(
       { _id: id, email },
@@ -244,28 +211,22 @@ const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
 
 const verifyEmailOTP: RequestHandler = async (req, res, next) => {
   try {
-    const { id }: JWTPayload = res.locals.jwtPayload || {};
+    const { id }: JWTPayload = res.locals.jwtPayload;
     const otp: string = req.body.otp || '';
-    if (!id) {
-      return res.status(401).json({
-        error: 'NO_AUTH',
-      });
-    }
     const user = await UserService.findById(id);
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
       });
     }
-    const isVerified = await UserService.verifyEmailOTP(user, otp);
-    const message = getEmailOtpMessage(isVerified);
-    if (isVerified !== EmailOtpMessage.VERIFIED) {
+    const emailOtpMessage = await UserService.verifyEmailOTP(user, otp);
+    if (emailOtpMessage !== EmailOtpMessage.VERIFIED) {
       return res.status(400).json({
-        error: message,
+        error: emailOtpMessage,
       });
     }
     res.json({
-      status: message,
+      status: emailOtpMessage,
     });
   } catch (e) {
     next(e);

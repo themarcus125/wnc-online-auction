@@ -2,72 +2,13 @@ import { CreateUserDTO } from './user.dto';
 import { UserModel, UserDoc } from './user.schema';
 import BaseService from '@/utils/base.service';
 import { validateEmail } from '@/utils/validator';
-import { comparePassword, getHashedPassword } from '@/utils/password';
-
-export enum CheckEmailMessage {
-  VALID,
-  INVALID,
-  NONUNIQUE,
-}
-
-export const getCheckEmailMessage = (e: CheckEmailMessage) => {
-  if (e === CheckEmailMessage.INVALID) {
-    return 'INVALID';
-  }
-  if (e === CheckEmailMessage.NONUNIQUE) {
-    return 'NONUNIQUE';
-  }
-  return 'VALID';
-};
-
-export enum CheckPasswordMessage {
-  VALID,
-  SHORT,
-}
-
-export enum EmailOtpMessage {
-  VERIFIED,
-  NO_OTP,
-  EXPIRED,
-  WRONG_OTP,
-}
-
-export const getEmailOtpMessage = (e: EmailOtpMessage) => {
-  if (e === EmailOtpMessage.NO_OTP) {
-    return 'NO_OTP';
-  }
-  if (e === EmailOtpMessage.EXPIRED) {
-    return 'EXPIRED';
-  }
-  if (e === EmailOtpMessage.WRONG_OTP) {
-    return 'WRONG_OTP';
-  }
-  return 'VERIFIED';
-};
-
-export enum ResetPasswordOtpMessage {
-  SUCCESS,
-  NO_OTP,
-  EXPIRED,
-  WRONG_OTP,
-  INVALID,
-}
-
-export const getResetPasswordOtpMessage = (e: ResetPasswordOtpMessage) => {
-  if (e === ResetPasswordOtpMessage.NO_OTP) {
-    return 'NO_OTP';
-  }
-  if (e === ResetPasswordOtpMessage.EXPIRED) {
-    return 'EXPIRED';
-  }
-  if (e === ResetPasswordOtpMessage.WRONG_OTP) {
-    return 'WRONG_OTP';
-  }
-  if (e === ResetPasswordOtpMessage.INVALID) {
-    return 'INVALID';
-  }
-  return 'SUCCESS';
-};
+import { getHashedPassword } from '@/utils/password';
+import {
+  CheckEmailMessage,
+  CheckPasswordMessage,
+  EmailOtpMessage,
+  ResetPasswordOtpMessage,
+} from './user.message';
 
 class UserService extends BaseService<UserDoc, CreateUserDTO> {
   constructor() {
@@ -78,7 +19,7 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
     const isEmail = validateEmail(email);
     if (!isEmail) return CheckEmailMessage.INVALID;
     const isNonUnique = await this.model.exists({ email });
-    if (isNonUnique) return CheckEmailMessage.NONUNIQUE;
+    if (isNonUnique) return CheckEmailMessage.NON_UNIQUE;
     return CheckEmailMessage.VALID;
   }
 

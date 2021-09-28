@@ -8,6 +8,7 @@ import { CreateUserDTO } from '@/user/user.dto';
 import { getHashedPassword, comparePassword } from '@/utils/password';
 
 import { LoginDTO, JWTResponse, JWTPayload } from './auth.dto';
+import { LoginMessage } from './auth.message';
 
 const register = ({ email, name, address, password }: CreateUserDTO) => {
   const hashedPassword = getHashedPassword(password);
@@ -19,23 +20,17 @@ const register = ({ email, name, address, password }: CreateUserDTO) => {
   });
 };
 
-export enum LoginMessage {
-  SUCCESS,
-  NOEMAIL,
-  WRONGPASS,
-}
-
 const login = async ({ email, password }: LoginDTO) => {
   const user = await UserService.findOne({ email });
   if (!user) {
     return {
-      status: LoginMessage.NOEMAIL,
+      status: LoginMessage.NO_EMAIL,
     };
   }
   const isPass = comparePassword(password, user.password);
   if (!isPass) {
     return {
-      status: LoginMessage.WRONGPASS,
+      status: LoginMessage.WRONG_PASS,
     };
   }
   const jwtResponse = sign(user);

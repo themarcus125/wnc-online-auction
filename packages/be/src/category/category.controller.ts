@@ -17,7 +17,7 @@ const getCategories: RequestHandler = async (req, res, next) => {
 
 const createCategory: RequestHandler = async (req, res, next) => {
   try {
-    const { name, parent } = req.body as CreateCategoryDTO;
+    const { name, parent }: CreateCategoryDTO = req.body;
     const category = await CategoryService.create({
       name,
       parent,

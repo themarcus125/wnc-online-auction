@@ -1,11 +1,12 @@
 import { RequestHandler } from 'express';
 
 import { JWTPayload, LoginDTO, RegisterDTO } from './auth.dto';
-import AuthService, { LoginMessage } from './auth.service';
+import { LoginMessage } from './auth.message';
+import AuthService from './auth.service';
 
 const register: RequestHandler = async (req, res, next) => {
   try {
-    const { email, name, address, password } = req.body as RegisterDTO;
+    const { email, name, address, password }: RegisterDTO = req.body;
     const user = await AuthService.register({ email, name, address, password });
     if (!user) {
       throw new Error('Something went wrong');
@@ -18,16 +19,11 @@ const register: RequestHandler = async (req, res, next) => {
 
 const login: RequestHandler = async (req, res, next) => {
   try {
-    const { email, password } = req.body as LoginDTO;
+    const { email, password }: LoginDTO = req.body;
     const loginResponse = await AuthService.login({ email, password });
-    if (loginResponse.status === LoginMessage.NOEMAIL) {
+    if (loginResponse.status !== LoginMessage.SUCCESS) {
       return res.status(400).json({
-        error: 'NO_EMAIL',
-      });
-    }
-    if (loginResponse.status === LoginMessage.WRONGPASS) {
-      return res.status(400).json({
-        error: 'WRONG_PASS',
+        error: loginResponse.status,
       });
     }
     return res.json({
