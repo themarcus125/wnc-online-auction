@@ -30,7 +30,7 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
   }
 
   changeEmail(id: string, email: string) {
-    return this.update(
+    return this.findOneAndUpdate(
       { _id: id },
       {
         email,

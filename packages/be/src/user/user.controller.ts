@@ -34,7 +34,7 @@ const updateUser: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
     const { name, dob }: UpdateUserDTO = req.body;
-    const user = await UserService.update(
+    const user = await UserService.findOneAndUpdate(
       { _id: id },
       {
         name,
@@ -63,7 +63,7 @@ const changeUserPassword: RequestHandler = async (req, res, next) => {
       });
     }
     const hashedPassword = getHashedPassword(password);
-    const user = await UserService.update(
+    const user = await UserService.findOneAndUpdate(
       { _id: id },
       {
         password: hashedPassword,
@@ -120,10 +120,10 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
 
 const sendResetPasswordOTP: RequestHandler = async (req, res, next) => {
   try {
-    const { id, email }: JWTPayload = res.locals.jwtPayload;
+    const email = req.body.email || '';
     const otp = await OtpService.createOtp();
-    const user = await UserService.update(
-      { _id: id, email },
+    const user = await UserService.findOneAndUpdate(
+      { email },
       { passwordOtp: otp },
     );
     if (!user) {
@@ -187,7 +187,7 @@ const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
   try {
     const { id, email }: JWTPayload = res.locals.jwtPayload;
     const otp = await OtpService.createOtp();
-    const user = await UserService.update(
+    const user = await UserService.findOneAndUpdate(
       { _id: id, email },
       { verifyOtp: otp },
     );

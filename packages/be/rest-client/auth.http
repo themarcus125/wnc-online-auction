@@ -1,34 +1,34 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/auth
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE2MzI4MjA0NzN9.j6V47Il0zxM4A2LODmas-RKkufoH_FKavS83uMw_zqA
-###
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTMwOTAzZTkxOTQ4ZDU0M2Y2OWY5YSIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMjgzMTgxMH0.CNGRHC9vT6VxqJXA5U-BUC7_6rOSQZgpCkNH9BADoms
+### Register
 POST {{baseurl}}/register
 content-type: application/json
 
 {
-  "email": "huy_2@gmail.com",
+  "email": "huytest2@gmail.com",
   "name": "huy",
   "address": "this is a address",
   "password": "123456"
 }
-###
+### Login success
 POST {{baseurl}}/login
 content-type: application/json
 
 {
-  "email": "huynonstop123nt@gmail.com",
-  "password": "123456789"
-}
-###
-POST {{baseurl}}/login
-content-type: application/json
-
-{
-  "email": "huy_2@gmail.com",
+  "email": "huytest2@gmail.com",
   "password": "123456"
 }
-###
+### Login fail
+POST {{baseurl}}/login
+content-type: application/json
+
+{
+  "email": "tthuykh99@gmail.com",
+  "password": "123456"
+}
+### Get new access token from access token
 GET {{baseurl}}/resign
 content-type: application/json
 authorization: Bearer {{token}}

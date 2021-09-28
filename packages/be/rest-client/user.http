@@ -1,11 +1,11 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImlzVmVyaWZpZWQiOmZhbHNlLCJyb2xlIjoyLCJlbWFpbCI6Imh1eUBnbWFpbC5jb20iLCJpYXQiOjE2MzI4MjA1NTN9.TeAoK_IdffyHv1kQ4jdeFxPve9TxV4DZXrUflWQZuOM
-###
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTMwOTAzZTkxOTQ4ZDU0M2Y2OWY5YSIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMjgzMTgxMH0.CNGRHC9vT6VxqJXA5U-BUC7_6rOSQZgpCkNH9BADoms
+### Get user info
 GET {{baseurl}}
 authorization: Bearer {{token}}
-###
+### Update name or dob
 PATCH  {{baseurl}}
 authorization: Bearer {{token}}
 Content-Type: application/json
@@ -14,7 +14,7 @@ Content-Type: application/json
     "name": "huy new name",
     "dob": "1999-12-23T00:00:00.000Z"
 }
-###
+### Change password
 PATCH  {{baseurl}}/password
 authorization: Bearer {{token}}
 Content-Type: application/json
@@ -22,45 +22,48 @@ Content-Type: application/json
 {
     "password": "1234567a"
 }
-###
+### Check email can be changed
 POST {{baseurl}}/email
 authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "huynonstop123nt@gmail.com"
+    "email": "tthuykh99@gmail.com"
 }
-###
+### Change email
 PATCH {{baseurl}}/email
 authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "huynonstop123nt@gmail.com"
+    "email": "tthuykh99@gmail.com"
 }
-###
+### Get verify email OTP
 GET {{baseurl}}/email/verify/otp
 authorization: Bearer {{token}}
 Content-Type: application/json
-###
+### Verify OTP
 PATCH {{baseurl}}/email/verify/otp
 authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "otp": "4714234"
+    "otp": "6932038"
 }
-###
-GET {{baseurl}}/password/reset/otp
-authorization: Bearer {{token}}
+### Get otp to reset password
+POST  {{baseurl}}/password/reset/otp
 Content-Type: application/json
+
+{
+    "email": "tthuykh99@gmail.com"
+}
 ###
 PATCH  {{baseurl}}/password/reset/otp
 authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "huynonstop123nt@gmail.com",
-    "otp": "5185406",
-    "password": "123456789"
+    "email": "tthuykh99@gmail.com",
+    "otp": "7046450",
+    "password": "tthuykh99"
 }

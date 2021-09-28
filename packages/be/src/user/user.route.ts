@@ -7,13 +7,11 @@ const userRoute = express.Router();
 
 userRoute.get('/', tokenGuard, UserController.getUser);
 userRoute.patch('/', tokenGuard, UserController.updateUser);
-userRoute.get(
-  '/password/reset/otp',
-  tokenGuard,
-  UserController.sendResetPasswordOTP,
-);
+
+userRoute.post('/password/reset/otp', UserController.sendResetPasswordOTP);
 userRoute.patch('/password/reset/otp', UserController.resetPassword);
 userRoute.patch('/password', tokenGuard, UserController.changeUserPassword);
+
 userRoute.get(
   '/email/verify/otp',
   tokenGuard,

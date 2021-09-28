@@ -32,7 +32,7 @@ export default class BaseService<DocT, CreateDtoT> {
     }
     return query;
   }
-  update(
+  findOneAndUpdate(
     filter: FilterQuery<DocT>,
     dto: UpdateQuery<DocT>,
     options: QueryOptions = { returnOriginal: false },
