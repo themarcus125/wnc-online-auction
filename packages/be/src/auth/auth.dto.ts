@@ -19,4 +19,5 @@ export interface JWTPayload {
   email: string;
   role: UserRole;
   isVerified: boolean;
+  expiredAt?: number;
 }

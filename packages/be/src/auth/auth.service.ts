@@ -10,6 +10,10 @@ import { getHashedPassword, comparePassword } from '@/utils/password';
 import { LoginDTO, JWTResponse, JWTPayload } from './auth.dto';
 import { LoginMessage } from './auth.message';
 
+export const getExpirationTime = () => {
+  return appConfig.expirationTime;
+};
+
 const register = ({ email, name, address, password }: CreateUserDTO) => {
   const hashedPassword = getHashedPassword(password);
   return UserService.create({
@@ -49,7 +53,9 @@ const sign = ({ _id, email, role, isVerified }: UserDoc): JWTResponse => {
   };
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
-  const accessToken = jwt.sign(payload, jwtSecret);
+  const accessToken = jwt.sign(payload, jwtSecret, {
+    expiresIn: expirationTime,
+  });
   return {
     accessToken,
     expiresIn: expirationTime,
@@ -60,7 +66,9 @@ const sign = ({ _id, email, role, isVerified }: UserDoc): JWTResponse => {
 const reSign = (payload: JWTPayload): JWTResponse => {
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
-  const accessToken = jwt.sign(payload, jwtSecret);
+  const accessToken = jwt.sign(payload, jwtSecret, {
+    expiresIn: expirationTime,
+  });
   return {
     accessToken,
     expiresIn: expirationTime,
@@ -70,7 +78,18 @@ const reSign = (payload: JWTPayload): JWTResponse => {
 
 const verify = (token: string) => {
   const { jwtSecret } = appConfig;
-  return jwt.verify(token, jwtSecret) as JWTPayload;
+  try {
+    return jwt.verify(token, jwtSecret) as JWTPayload;
+  } catch (e: any) {
+    if (e instanceof jwt.TokenExpiredError) {
+      const payload = jwt.decode(token) as JWTPayload;
+      return {
+        ...payload,
+        expiredAt: e.expiredAt,
+      };
+    }
+    return null;
+  }
 };
 
 export default {
