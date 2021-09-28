@@ -56,7 +56,7 @@ export const roleGuard =
   };
 
 export const emailGuard =
-  (mode: boolean): RequestHandler =>
+  (isVerified: boolean): RequestHandler =>
   (req, res, next) => {
     const jwtPayload: JWTPayload = res.locals.jwtPayload;
     if (!jwtPayload) {
@@ -64,9 +64,9 @@ export const emailGuard =
         error: 'INVALID_TOKEN',
       });
     }
-    if (jwtPayload.isVerified !== mode) {
+    if (jwtPayload.isVerified !== isVerified) {
       return res.status(401).json({
-        error: `${mode ? 'UNVERIFIED' : 'VERIFIED'}_EMAIL`,
+        error: `${isVerified ? 'UNVERIFIED' : 'VERIFIED'}_EMAIL`,
       });
     }
     next();

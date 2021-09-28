@@ -37,6 +37,10 @@ export const mailConfig: MailConfig = {
   pass: EMAIL_PASSWORD,
 };
 
+export const otpConfig = {
+  length: 7,
+};
+
 loading('Config');
 // console.dir(appConfig);
 // console.dir(dbConfig);

@@ -1,8 +1,9 @@
 import { otpGen } from '@/utils/password';
+import { otpConfig } from '~/config';
 import { OtpModel } from './otp.schema';
 
 const getOtpLength = () => {
-  return 6;
+  return otpConfig.length;
 };
 
 const createOtp = () => {

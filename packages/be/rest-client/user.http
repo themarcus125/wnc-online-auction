@@ -1,7 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjIsImlhdCI6MTYzMjc1NDYyN30.Manh261NX3BgO_vGhHoZroBfwl0uliXbAQMAVgYhY3w
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImlzVmVyaWZpZWQiOmZhbHNlLCJyb2xlIjoyLCJlbWFpbCI6Imh1eUBnbWFpbC5jb20iLCJpYXQiOjE2MzI4MjA1NTN9.TeAoK_IdffyHv1kQ4jdeFxPve9TxV4DZXrUflWQZuOM
 ###
 GET {{baseurl}}
 authorization: Bearer {{token}}
@@ -15,10 +15,52 @@ Content-Type: application/json
     "dob": "1999-12-23T00:00:00.000Z"
 }
 ###
+PATCH  {{baseurl}}/password
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "password": "1234567a"
+}
+###
 POST {{baseurl}}/email
 authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "huy2@gmail.com"
+    "email": "huynonstop123nt@gmail.com"
+}
+###
+PATCH {{baseurl}}/email
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "email": "huynonstop123nt@gmail.com"
+}
+###
+GET {{baseurl}}/email/verify/otp
+authorization: Bearer {{token}}
+Content-Type: application/json
+###
+PATCH {{baseurl}}/email/verify/otp
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "otp": "4714234"
+}
+###
+GET {{baseurl}}/password/reset/otp
+authorization: Bearer {{token}}
+Content-Type: application/json
+###
+PATCH  {{baseurl}}/password/reset/otp
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "email": "huynonstop123nt@gmail.com",
+    "otp": "5185406",
+    "password": "123456789"
 }

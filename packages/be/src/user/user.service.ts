@@ -2,7 +2,7 @@ import { CreateUserDTO } from './user.dto';
 import { UserModel, UserDoc } from './user.schema';
 import BaseService from '@/utils/base.service';
 import { validateEmail } from '@/utils/validator';
-import { comparePassword } from '@/utils/password';
+import { comparePassword, getHashedPassword } from '@/utils/password';
 
 export enum CheckEmailMessage {
   VALID,
@@ -23,7 +23,6 @@ export const getCheckEmailMessage = (e: CheckEmailMessage) => {
 export enum CheckPasswordMessage {
   VALID,
   SHORT,
-  SAME,
 }
 
 export enum EmailOtpMessage {
@@ -46,6 +45,30 @@ export const getEmailOtpMessage = (e: EmailOtpMessage) => {
   return 'VERIFIED';
 };
 
+export enum ResetPasswordOtpMessage {
+  SUCCESS,
+  NO_OTP,
+  EXPIRED,
+  WRONG_OTP,
+  INVALID,
+}
+
+export const getResetPasswordOtpMessage = (e: ResetPasswordOtpMessage) => {
+  if (e === ResetPasswordOtpMessage.NO_OTP) {
+    return 'NO_OTP';
+  }
+  if (e === ResetPasswordOtpMessage.EXPIRED) {
+    return 'EXPIRED';
+  }
+  if (e === ResetPasswordOtpMessage.WRONG_OTP) {
+    return 'WRONG_OTP';
+  }
+  if (e === ResetPasswordOtpMessage.INVALID) {
+    return 'INVALID';
+  }
+  return 'SUCCESS';
+};
+
 class UserService extends BaseService<UserDoc, CreateUserDTO> {
   constructor() {
     super(UserModel);
@@ -59,11 +82,9 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
     return CheckEmailMessage.VALID;
   }
 
-  checkPassword(password: string, hashedPassword?: string) {
+  checkPassword(password: string) {
     const isPassword = password.length >= 6;
     if (!isPassword) return CheckPasswordMessage.SHORT;
-    if (hashedPassword && comparePassword(password, hashedPassword))
-      return CheckPasswordMessage.SAME;
     return CheckPasswordMessage.VALID;
   }
 
@@ -80,7 +101,27 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
     );
   }
 
-  verifyEmailOTP = async (user: UserDoc, otp: string) => {
+  async resetPassword(user: UserDoc, otp: string, newPassword: string) {
+    if (!user.passwordOtp) {
+      return ResetPasswordOtpMessage.NO_OTP;
+    }
+    if (
+      Date.now() - new Date(user.passwordOtp.createdAt).getTime() >=
+      5 * 60 * 1000
+    ) {
+      return ResetPasswordOtpMessage.EXPIRED;
+    }
+    if (user.passwordOtp.key !== otp) {
+      return ResetPasswordOtpMessage.WRONG_OTP;
+    }
+    const hashedPassword = getHashedPassword(newPassword);
+    user.passwordOtp = undefined;
+    user.password = hashedPassword;
+    await user.save();
+    return ResetPasswordOtpMessage.SUCCESS;
+  }
+
+  async verifyEmailOTP(user: UserDoc, otp: string) {
     if (user.isVerified) {
       return EmailOtpMessage.VERIFIED;
     }
@@ -96,10 +137,11 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
     if (user.verifyOtp.key !== otp) {
       return EmailOtpMessage.WRONG_OTP;
     }
-    await user.verifyOtp.remove();
+    user.isVerified = true;
+    user.verifyOtp = undefined;
     await user.save();
     return EmailOtpMessage.VERIFIED;
-  };
+  }
 }
 
 export default new UserService();

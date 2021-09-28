@@ -1,5 +1,5 @@
-import { Otp, OtpDoc, OtpSchema } from '@/otp/otp.schema';
 import { Document, model, Schema } from 'mongoose';
+import { Otp, OtpDoc, OtpSchema } from '@/otp/otp.schema';
 
 export enum UserRole {
   BIDDER,
@@ -15,8 +15,9 @@ export interface User {
   password: string;
   role: UserRole;
   isVerified: boolean;
-  verifyOtp: OtpDoc;
-  passwordOtp: OtpDoc;
+  verifyOtp?: OtpDoc;
+  passwordOtp?: OtpDoc;
+  // validTokenTime: Date;
 }
 
 export type UserDoc = User & Document;

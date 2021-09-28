@@ -1,4 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
+import OtpService from './otp.service';
 
 export interface Otp {
   key: string;
@@ -12,8 +13,8 @@ export const OtpSchema = new Schema<OtpDoc>(
   {
     key: {
       type: String,
-      maxlength: 7,
-      minLength: 7,
+      maxlength: OtpService.getOtpLength(),
+      minLength: OtpService.getOtpLength(),
       required: true,
     },
   },

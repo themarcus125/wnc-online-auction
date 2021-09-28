@@ -1,6 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/auth
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTE5NjEwOTc1MmZlOWZmMmU2MmFmYSIsImVtYWlsIjoiaHV5QGdtYWlsLmNvbSIsInJvbGUiOjIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE2MzI4MjA0NzN9.j6V47Il0zxM4A2LODmas-RKkufoH_FKavS83uMw_zqA
 ###
 POST {{baseurl}}/register
 content-type: application/json
@@ -16,8 +17,8 @@ POST {{baseurl}}/login
 content-type: application/json
 
 {
-  "email": "huy@gmail.com",
-  "password": "123456"
+  "email": "huynonstop123nt@gmail.com",
+  "password": "123456789"
 }
 ###
 POST {{baseurl}}/login
@@ -27,3 +28,7 @@ content-type: application/json
   "email": "huy_2@gmail.com",
   "password": "123456"
 }
+###
+GET {{baseurl}}/resign
+content-type: application/json
+authorization: Bearer {{token}}
