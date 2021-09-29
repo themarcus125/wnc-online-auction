@@ -16,7 +16,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 const LoginPage = ({ location }) => {
-  const { toastMsg, toastType } = location.state;
+  const { toastMsg, toastType } = location.state || {};
 
   useEffect(() => {
     if (toastMsg && toastType) {
