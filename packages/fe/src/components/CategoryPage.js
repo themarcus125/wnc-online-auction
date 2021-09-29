@@ -8,7 +8,7 @@ const CategoryPage = () => {
     <Wrapper className="uk-padding-small">
       <div className="page uk-margin-auto">
         <div>
-          <ul class="uk-breadcrumb">
+          <ul className="uk-breadcrumb">
             <li>
               <a href="#">Home</a>
             </li>
@@ -27,7 +27,7 @@ const CategoryPage = () => {
         </div>
 
         <div className="uk-flex uk-flex-right">
-          <select class="uk-select drop-down">
+          <select className="uk-select drop-down">
             <option>Thời gian kết thúc giảm dần</option>
             <option>Giá tăng dần</option>
           </select>

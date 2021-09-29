@@ -11,7 +11,6 @@ const NavBar = () => {
 
   useEffect(() => {
     UIKit.navbar('#navbar');
-    console.log('nav barrrr');
   }, []);
 
   return (
@@ -77,7 +76,7 @@ const NavBar = () => {
               <div className="uk-navbar-dropdown">
                 <ul className="uk-nav uk-navbar-dropdown-nav">
                   <li>
-                    <Link>Tài khoản</Link>
+                    <Link to={'/account'}>Tài khoản</Link>
                   </li>
                   <li>
                     <a>Đăng xuất</a>
