@@ -54,7 +54,7 @@ const sign = ({ _id, email, role, isVerified }: UserDoc): JWTResponse => {
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
   const accessToken = jwt.sign(payload, jwtSecret, {
-    expiresIn: expirationTime * 1000,
+    expiresIn: expirationTime,
   });
   return {
     accessToken,
@@ -67,7 +67,7 @@ const reSign = (payload: JWTPayload): JWTResponse => {
   const { expirationTime, jwtSecret } = appConfig;
   const iat = new Date().getTime();
   const accessToken = jwt.sign(payload, jwtSecret, {
-    expiresIn: expirationTime * 1000,
+    expiresIn: expirationTime,
   });
   return {
     accessToken,
