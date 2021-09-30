@@ -11,7 +11,7 @@ const SearchPage = () => {
           <span>
             <b>2,261</b> results for ps5
           </span>
-          <select class="uk-select drop-down">
+          <select className="uk-select drop-down">
             <option>Thời gian kết thúc giảm dần</option>
             <option>Giá tăng dần</option>
           </select>

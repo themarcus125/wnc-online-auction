@@ -9,7 +9,6 @@ const PrivateWrapper = ({ component: Component, title, ...rest }) => {
   return (
     <>
       <Helmet title={`${title}`} defer={false} />
-      {/* Private route headers go here */}
       <Component {...rest} />
     </>
   );

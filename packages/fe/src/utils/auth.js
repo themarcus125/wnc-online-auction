@@ -2,11 +2,11 @@ import { getAPIWithToken } from './api';
 const CURRENT_USER = 'currentUser';
 
 export const setUser = (user) =>
-  window.localStorage.setItem(CURRENT_USER, user);
+  window.localStorage.setItem(CURRENT_USER, JSON.stringify(user));
 
 export const getUser = () =>
   typeof window !== 'undefined' && window.localStorage.getItem(CURRENT_USER)
-    ? window.localStorage.getItem(CURRENT_USER)
+    ? JSON.parse(window.localStorage.getItem(CURRENT_USER))
     : {};
 
 export const setTokenToLocalStorage = async (token) => {
