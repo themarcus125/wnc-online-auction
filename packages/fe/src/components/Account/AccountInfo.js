@@ -1,8 +1,175 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
+import { ToastContainer, toast } from 'react-toastify';
+import * as Yup from 'yup';
+
+import {
+  patchAPIWithToken,
+  getAPIWithToken,
+  postAPIWithToken,
+} from '../../utils/api';
+import { getToken, setUser } from '../../utils/auth';
+import Modal, { showModal, hideModal } from '../common/Modal';
+
+const isEmail = Yup.string().email('Email không hợp lệ');
+const passwordModalID = 'passwordModal';
 
 const AccountInfo = () => {
+  const [fullName, setFullName] = useState('');
+  const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthDate, setBirthDate] = useState(new Date('1/1/1979'));
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const originalEmail = useRef('');
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const loadData = async () => {
+    setIsLoading(true);
+    const token = await getToken();
+    const response = await getAPIWithToken('/api/user', token);
+    if (response.error) {
+      toast.error('Đã có lỗi xảy ra!');
+      return;
+    }
+
+    setUser({ ...response, token });
+    setFullName(response.name);
+    setAddress(response.address);
+    setEmail(response.email);
+    originalEmail.current = response.email;
+    if (response.bod) {
+      setBirthDate(response.bod);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const onSave = async () => {
+    if (!email || !fullName || !address) {
+      toast.error('Không được để trống thông tin');
+      return;
+    }
+    setIsSubmitting(true);
+    const token = await getToken();
+
+    let isValidEmail = true;
+    try {
+      await isEmail.validate(email);
+    } catch (err) {
+      toast.error(err.message);
+      isValidEmail = false;
+      setIsSubmitting(false);
+    }
+    if (!isValidEmail) {
+      return;
+    }
+
+    if (email !== originalEmail.current) {
+      const checkEmailResponse = await postAPIWithToken(
+        '/api/user/email',
+        {
+          email,
+        },
+        token,
+      );
+      if (checkEmailResponse.error) {
+        toast.error('Email đã tồn tại. Xin vui lòng sử dụng email khác');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    let apiRequests = [
+      patchAPIWithToken(
+        '/api/user',
+        {
+          name: fullName,
+          address,
+          dob: birthDate,
+        },
+        token,
+      ),
+    ];
+
+    if (email !== originalEmail.current) {
+      apiRequests = [
+        ...apiRequests,
+        patchAPIWithToken(
+          '/api/user/email',
+          {
+            email,
+          },
+          token,
+        ),
+      ];
+    }
+
+    const [updateUserResponse, updateEmailResponse] = await Promise.all(
+      apiRequests,
+    );
+    console.log('email', updateEmailResponse);
+
+    if (updateEmailResponse?.error || updateUserResponse.error) {
+      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      setIsSubmitting(false);
+      return;
+    }
+
+    loadData();
+    setIsSubmitting(false);
+  };
+
+  const onChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Không được để trống thông tin');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      toast.error('Mật khẩu mới không hợp lệ');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Mật khẩu mới không giống nhau');
+      return;
+    }
+
+    const token = await getToken();
+    const response = await patchAPIWithToken(
+      '/api/user/password',
+      {
+        oldPassword: currentPassword,
+        newPassword,
+      },
+      token,
+    );
+    console.log(response);
+    if (response.error) {
+      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      return;
+    }
+    toast.success('Cập nhật mật khẩu thành công');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    hideModal(passwordModalID);
+  };
+
   return (
-    <React.Fragment>
+    <div style={{ position: 'relative' }}>
+      <ToastContainer
+        position={toast.POSITION.TOP_RIGHT}
+        autoClose={3000}
+        theme="colored"
+      />
       <h3 className="uk-text-primary uk-text-bold">Thông tin tài khoản</h3>
       <div>
         <table className="uk-table uk-width-4-5">
@@ -13,15 +180,9 @@ const AccountInfo = () => {
                 <input
                   className="uk-input uk-width-expand"
                   type="text"
-                  value={'Hồng Quốc Lâm'}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                 />
-                <button className="uk-button uk-padding-remove-left uk-padding-remove-right uk-width-auto uk-flex">
-                  <span
-                    className="uk-icon uk-padding-small uk-padding-remove-top uk-padding-remove-bottom"
-                    uk-icon="icon: check"
-                    style={{ alignSelf: 'center' }}
-                  ></span>
-                </button>
               </td>
             </tr>
             <tr className="uk-flex uk-flex-middle">
@@ -29,18 +190,12 @@ const AccountInfo = () => {
               <td className="uk-width-4-5 uk-padding-remove-right uk-flex uk-flex-stretch">
                 <input
                   className="uk-input uk-width-expand"
-                  type="text"
-                  value={'hqlam2@gmail.com'}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <button className="uk-button uk-button-danger uk-width-auto uk-flex">
                   Xác thực Email
-                </button>
-                <button className="uk-button uk-padding-remove-left uk-padding-remove-right uk-width-auto uk-flex">
-                  <span
-                    className="uk-icon uk-padding-small uk-padding-remove-top uk-padding-remove-bottom"
-                    uk-icon="icon: check"
-                    style={{ alignSelf: 'center' }}
-                  ></span>
                 </button>
               </td>
             </tr>
@@ -50,15 +205,24 @@ const AccountInfo = () => {
                 <input
                   className="uk-input uk-width-expand"
                   type="text"
-                  value={'257 Nguyễn Văn Cừ phường 4 Quận 5'}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
-                <button className="uk-button uk-padding-remove-left uk-padding-remove-right uk-width-auto uk-flex">
-                  <span
-                    className="uk-icon uk-padding-small uk-padding-remove-top uk-padding-remove-bottom"
-                    uk-icon="icon: check"
-                    style={{ alignSelf: 'center' }}
-                  ></span>
-                </button>
+              </td>
+            </tr>
+            <tr className="uk-flex uk-flex-middle">
+              <td className="uk-width-1-5 uk-padding-remove-left">Ngày sinh</td>
+              <td className="uk-width-4-5 uk-padding-remove-right uk-flex uk-flex-stretch">
+                <DatePicker
+                  className="uk-input uk-width-1-1"
+                  style={{
+                    border: 'solid 0.5px #666',
+                  }}
+                  selected={birthDate}
+                  onChange={(date) => setBirthDate(date)}
+                  dateFormat="dd/MM/yyyy"
+                  onChangeRaw={(e) => e.preventDefault()}
+                />
               </td>
             </tr>
             <tr className="uk-flex uk-flex-middle">
@@ -66,15 +230,74 @@ const AccountInfo = () => {
               <td className="uk-width-4-5 uk-text-right uk-padding-remove-right">
                 <button
                   className="uk-button uk-button-secondary"
-                  uk-toggle="target: #modal-example"
+                  onClick={() => showModal(passwordModalID)}
                 >
                   Đổi mật khẩu
                 </button>
               </td>
             </tr>
+            <tr>
+              <td className="uk-padding-remove-left">
+                <button
+                  className="uk-button uk-button-primary"
+                  type="button"
+                  onClick={onSave}
+                  disabled={isSubmitting}
+                >
+                  Cập nhật
+                </button>
+              </td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
-        <div id="modal-example" uk-modal="">
+        <Modal
+          modalID={passwordModalID}
+          title="Đổi mật khẩu"
+          buttonRow={
+            <React.Fragment>
+              <button
+                className="uk-button uk-button-default uk-margin-right"
+                type="button"
+                onClick={() => hideModal(passwordModalID)}
+              >
+                Hủy
+              </button>
+              <button
+                className="uk-button uk-button-primary"
+                type="button"
+                onClick={onChangePassword}
+              >
+                Cập nhật
+              </button>
+            </React.Fragment>
+          }
+        >
+          <div>
+            <input
+              className="uk-input uk-margin-bottom"
+              type="password"
+              placeholder="Mật khẩu hiện tại"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <input
+              className="uk-input uk-margin-bottom"
+              type="password"
+              placeholder="Mật khẩu mới"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <input
+              className="uk-input uk-margin-bottom"
+              type="password"
+              placeholder="Nhập lại mật khẩu mới"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+        </Modal>
+        {/* <div id="modal-example" uk-modal="">
           <div className="uk-modal-dialog uk-modal-body">
             <h4 className="uk-text-bold uk-text-primary">Đổi mật khẩu</h4>
             <div>
@@ -82,16 +305,22 @@ const AccountInfo = () => {
                 className="uk-input uk-margin-bottom"
                 type="password"
                 placeholder="Mật khẩu hiện tại"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
               />
               <input
                 className="uk-input uk-margin-bottom"
                 type="password"
                 placeholder="Mật khẩu mới"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
               <input
                 className="uk-input uk-margin-bottom"
                 type="password"
                 placeholder="Nhập lại mật khẩu mới"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
             <p>
@@ -101,14 +330,33 @@ const AccountInfo = () => {
               >
                 Hủy
               </button>
-              <button className="uk-button uk-button-primary" type="button">
+              <button
+                className="uk-button uk-button-primary"
+                type="button"
+                onClick={onChangePassword}
+              >
                 Cập nhật
               </button>
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
-    </React.Fragment>
+      {isLoading && (
+        <div
+          className="uk-flex uk-flex-center uk-flex-middle"
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            top: 0,
+            left: 0,
+          }}
+        >
+          <span uk-spinner="ratio: 3"></span>
+        </div>
+      )}
+    </div>
   );
 };
 

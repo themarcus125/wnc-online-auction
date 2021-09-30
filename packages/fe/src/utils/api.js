@@ -60,7 +60,7 @@ export const postAPIWithToken = (endpoint, data, token, options = {}) =>
     },
     body: data ? JSON.stringify(data) : null,
     ...options,
-  });
+  }).then((response) => response.json());
 
 export const postAPIFormWithToken = (endpoint, data, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
@@ -102,3 +102,15 @@ export const deleteAPIWithToken = (endpoint, token, options = {}) =>
     },
     ...options,
   });
+
+export const patchAPIWithToken = (endpoint, data, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    method: 'PATCH',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: data ? JSON.stringify(data) : null,
+    ...options,
+  }).then((response) => response.json());
