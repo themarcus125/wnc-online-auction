@@ -21,6 +21,7 @@ const AccountInfo = () => {
   const [birthDate, setBirthDate] = useState(new Date('1/1/1979'));
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(true);
   const originalEmail = useRef('');
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -40,6 +41,7 @@ const AccountInfo = () => {
     setFullName(response.name);
     setAddress(response.address);
     setEmail(response.email);
+    setIsEmailVerified(response.isVerified);
     originalEmail.current = response.email;
     if (response.bod) {
       setBirthDate(response.bod);
@@ -194,9 +196,11 @@ const AccountInfo = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <button className="uk-button uk-button-danger uk-width-auto uk-flex">
-                  Xác thực Email
-                </button>
+                {!isEmailVerified && (
+                  <button className="uk-button uk-button-danger uk-width-auto uk-flex">
+                    Xác thực Email
+                  </button>
+                )}
               </td>
             </tr>
             <tr className="uk-flex uk-flex-middle">
