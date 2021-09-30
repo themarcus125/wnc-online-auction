@@ -19,7 +19,7 @@ export const checkToken = async (token) => {
 
   if (token) {
     const response = await getAPIWithToken('/api/user', token);
-    if (response.error === 'INVALID_TOKEN') {
+    if (response.error) {
       isTokenValid = false;
     }
   }
@@ -41,7 +41,8 @@ export const getToken = async () => {
   let token = '';
   const user = getUser();
   if (user.token) {
-    token = checkToken(user.token) ? user.token : refreshToken(user.token);
+    const check = await checkToken(user.token);
+    token = check ? user.token : await refreshToken(user.token);
 
     if (token !== user.token) {
       setTokenToLocalStorage(token);
