@@ -69,7 +69,7 @@ export const expiredTokenGuard: RequestHandler = async (req, res, next) => {
       expirationTime * 1000
   ) {
     return res.status(401).json({
-      error: 'EXPIRED_TOKEN',
+      error: 'EXPIRED_RESIGN_TOKEN',
     });
   }
   const user = await UserService.findById(verifiedToken.id);
@@ -88,7 +88,7 @@ export const expiredTokenGuard: RequestHandler = async (req, res, next) => {
 };
 
 export const roleGuard =
-  (role: UserRole): RequestHandler =>
+  (role: UserRole, exact: boolean = true): RequestHandler =>
   (req, res, next) => {
     const jwtPayload: JWTPayload = res.locals.jwtPayload;
     if (!jwtPayload) {
@@ -96,7 +96,13 @@ export const roleGuard =
         error: 'INVALID_TOKEN',
       });
     }
-    if (jwtPayload.role !== role) {
+    if (exact) {
+      if (jwtPayload.role !== role) {
+        return res.status(401).json({
+          error: 'INVALID_TOKEN_ROLE',
+        });
+      }
+    } else if (jwtPayload.role < role) {
       return res.status(401).json({
         error: 'INVALID_TOKEN_ROLE',
       });
