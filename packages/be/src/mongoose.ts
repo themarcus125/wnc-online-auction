@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { dbConnect } from './utils/logs';
 
 import { dbConfig } from '~/config';
+import UserService from './user/user.service';
 
 export const connectDB = () => {
   const { url } = dbConfig;
@@ -10,6 +11,14 @@ export const connectDB = () => {
   });
   dbConnect();
   return mongoose.connect(url);
+};
+
+export const seedDB = async () => {
+  try {
+    await UserService.createSA();
+  } catch (e) {
+    console.log('[MG] Seed failed', e);
+  }
 };
 
 // https://mongoosejs.com/docs/typescript/populate.html

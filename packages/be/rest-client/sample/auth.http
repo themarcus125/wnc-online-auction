@@ -1,7 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/auth
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTMwOTAzZTkxOTQ4ZDU0M2Y2OWY5YSIsImVtYWlsIjoidHRodXlraDk5QGdtYWlsLmNvbSIsInJvbGUiOjAsImlzVmVyaWZpZWQiOnRydWUsImlhdCI6MTYzMjg0MDc4NSwiZXhwIjoxNjMyODQ0Mzg1fQ.XNOz_lucFydFmEwKik4_UjpQtdkX2GVEY_PCUk-DS3I
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImlzVmVyaWZpZWQiOmZhbHNlLCJyb2xlIjowLCJlbWFpbCI6Imh1eXRlc3QyQGdtYWlsLmNvbSIsImlhdCI6MTYzMzAxOTg0NCwiZXhwIjoxNjMzMDE5ODc0fQ.SKJbvAqlS0YGv4VxFWbhNB0iytEVTG9ApigJgQkBnd4
 ### Register
 POST {{baseurl}}/register
 content-type: application/json
@@ -17,7 +17,7 @@ POST {{baseurl}}/login
 content-type: application/json
 
 {
-  "email": "tthuykh99@gmail.com",
+  "email": "huytest2@gmail.com",
   "password": "123456"
 }
 ### Login fail

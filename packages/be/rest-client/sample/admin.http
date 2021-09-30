@@ -1,0 +1,31 @@
+@host = localhost
+@port = 3000
+@baseurl = http://{{host}}:{{port}}/api/admin
+@satoken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTViZjY5ZDJjMzJkNDQ4MzEwODk5MSIsImVtYWlsIjoic3VwZXJAYWRtaW4uY29tIiwicm9sZSI6MywiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMDI0MTgyLCJleHAiOjE2MzMwMjc3ODJ9.d_qRavI4hWs67kpwbmRwH2l8T-PBc_chbSG_kqTiVx0
+### Super admin Login 
+POST http://{{host}}:{{port}}/api/auth/login
+content-type: application/json
+
+{
+  "email": "super@admin.com",
+  "password": "uEqxtQNNOeKVP54h"
+}
+### Create new admin
+POST {{baseurl}}
+content-type: application/json
+authorization: Bearer {{satoken}}
+
+{
+  "email": "huyadmin@gmail.com",
+  "name": "huy",
+  "address": "this is a address",
+  "password": "123456"
+}
+### Admin login
+POST http://{{host}}:{{port}}/api/auth/login
+content-type: application/json
+
+{
+  "email": "huyadmin@gmail.com",
+  "password": "123456"
+}

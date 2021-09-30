@@ -20,5 +20,3 @@ export const OtpSchema = new Schema<OtpDoc>(
   },
   { timestamps: true },
 );
-
-export const OtpModel = model<OtpDoc>('Otp', OtpSchema);

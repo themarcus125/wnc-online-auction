@@ -1,7 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTMwOTAzZTkxOTQ4ZDU0M2Y2OWY5YSIsImVtYWlsIjoidHRodXlraDk5QGdtYWlsLmNvbSIsInJvbGUiOjAsImlzVmVyaWZpZWQiOnRydWUsImlhdCI6MTYzMjg0MDc4NSwiZXhwIjoxNjMyODQ0Mzg1fQ.XNOz_lucFydFmEwKik4_UjpQtdkX2GVEY_PCUk-DS3I
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMzAxOTExOSwiZXhwIjoxNjMzMDE5MTQ5fQ.nlW-1z585o_52wnzCaXsrbUyzSaRUjA75uycQVByUNI
 ### Get user info
 GET {{baseurl}}
 authorization: Bearer {{token}}

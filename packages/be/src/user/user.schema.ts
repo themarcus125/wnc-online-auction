@@ -1,15 +1,16 @@
 import { Document, model, Schema } from 'mongoose';
-import { Otp, OtpDoc, OtpSchema } from '@/otp/otp.schema';
+import { OtpDoc, OtpSchema } from '@/otp/otp.schema';
 
 export enum UserRole {
   BIDDER,
   SELLER,
   ADMIN,
+  SUPPER_ADMIN,
 }
 
 export interface User {
   email: string;
-  dob: Date;
+  dob?: Date;
   name: string;
   address: string;
   password: string;
@@ -28,7 +29,7 @@ export const UserSchema = new Schema<UserDoc>(
     dob: Date,
     name: { type: String, required: true, maxlength: 30 },
     address: { type: String, required: true },
-    password: { type: String, required: true, minlength: 6 },
+    password: { type: String, required: true },
     role: { type: Number, enum: UserRole, default: UserRole.BIDDER },
     isVerified: { type: Boolean, default: false },
     verifyOtp: OtpSchema,

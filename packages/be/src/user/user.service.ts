@@ -1,5 +1,5 @@
 import { CreateUserDTO } from './user.dto';
-import { UserModel, UserDoc } from './user.schema';
+import { UserModel, UserDoc, UserRole } from './user.schema';
 import BaseService from '@/utils/base.service';
 import { validateEmail } from '@/utils/validator';
 import { getHashedPassword } from '@/utils/password';
@@ -9,10 +9,36 @@ import {
   EmailOtpMessage,
   ResetPasswordOtpMessage,
 } from './user.message';
+import { appConfig } from '~/config';
 
 class UserService extends BaseService<UserDoc, CreateUserDTO> {
   constructor() {
     super(UserModel);
+  }
+
+  createSA() {
+    const secret = appConfig.jwtSecret;
+    const hashedSecret = getHashedPassword(secret);
+    return this.model.create({
+      email: 'super@admin.com',
+      name: 'superadmin',
+      address: 'superadmin',
+      password: hashedSecret,
+      role: UserRole.SUPPER_ADMIN,
+      isVerified: true,
+    });
+  }
+
+  createAdmin({ email, name, address, password }: CreateUserDTO) {
+    const hashedPassword = getHashedPassword(password);
+    return this.model.create({
+      email,
+      name,
+      address,
+      password: hashedPassword,
+      role: UserRole.ADMIN,
+      isVerified: true,
+    });
   }
 
   async checkEmail(email: string) {
