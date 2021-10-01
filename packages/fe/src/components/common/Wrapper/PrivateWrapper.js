@@ -1,10 +1,28 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { navigate } from 'gatsby-link';
 
-const PrivateWrapper = ({ component: Component, title, ...rest }) => {
-  // Check authentication here
+import { getUser } from '../../../utils/auth';
+import { NOT_LOGIN, LOGIN } from '../../../utils/constants/role';
 
-  // Handle redirect
+const PrivateWrapper = ({ component: Component, title, role, ...rest }) => {
+  const user = getUser();
+
+  switch (role) {
+    case NOT_LOGIN:
+      if (Object.keys(user).length !== 0) {
+        navigate('/');
+        return null;
+      }
+      break;
+    case LOGIN:
+      if (Object.keys(user).length === 0) {
+        navigate('/');
+        return null;
+      }
+      break;
+    default:
+  }
 
   return (
     <>

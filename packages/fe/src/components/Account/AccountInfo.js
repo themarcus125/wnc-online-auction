@@ -120,7 +120,7 @@ const AccountInfo = () => {
       apiRequests,
     );
 
-    if (updateEmailResponse?.error || updateUserResponse.error) {
+    if (updateEmailResponse.error || updateUserResponse.error) {
       toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
       setIsSubmitting(false);
       return;
