@@ -88,7 +88,13 @@ const LoginPage = ({ location }) => {
                   >
                     Đăng nhập
                   </button>
-                  <small className="uk-text-right">
+                  <small className="uk-text-right uk-flex uk-flex-column">
+                    <Link
+                      className="uk-margin-small-bottom"
+                      to="/reset-password"
+                    >
+                      Quên mật khẩu
+                    </Link>
                     <Link to="/register">Tạo tài khoản</Link>
                   </small>
                 </div>
