@@ -39,7 +39,6 @@ export const validateDate = (val?: any) => {
 export const validateOtp = (val?: any) => {
   if (!val) return false;
   const OTP_LENGTH = getOtpLength();
-  if (!(val instanceof String)) return false;
   if (val.length !== OTP_LENGTH) return false;
   return true;
 };

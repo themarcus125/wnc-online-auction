@@ -1,7 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMzAxOTExOSwiZXhwIjoxNjMzMDE5MTQ5fQ.nlW-1z585o_52wnzCaXsrbUyzSaRUjA75uycQVByUNI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMzA5NjU1NCwiZXhwIjoxNjMzMTAwMTU0fQ.77RbqGAmlYE0VX8wbd0hdBKGWXXTIrASLRpGTW3enZI
 ### Get user info
 GET {{baseurl}}
 authorization: Bearer {{token}}
@@ -49,7 +49,7 @@ authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "otp": "6932038"
+    "otp": "6954534"
 }
 ### Get otp to reset password
 POST  {{baseurl}}/password/reset/otp
