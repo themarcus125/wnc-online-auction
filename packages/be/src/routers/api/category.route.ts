@@ -1,8 +1,8 @@
+import express from 'express';
 import { roleGuard, tokenGuard } from '@/auth/auth.guard';
 import { UserRole } from '@/user/user.schema';
-import express from 'express';
-import CategoryController from './category.controller';
-import { createCategoryValidator } from './category.pipe';
+import CategoryController from '@/category/category.controller';
+import { createCategoryValidator } from '@/category/category.pipe';
 
 const categoryRoute = express.Router();
 

@@ -1,7 +1,7 @@
 import express from 'express';
-import AuthController from './auth.controller';
-import { expiredTokenGuard } from './auth.guard';
-import { loginValidator, registerValidator } from './auth.pipe';
+import AuthController from '@/auth/auth.controller';
+import { expiredTokenGuard } from '@/auth/auth.guard';
+import { loginValidator, registerValidator } from '@/auth/auth.pipe';
 const authRoute = express.Router();
 
 authRoute.post('/login', loginValidator, AuthController.login);

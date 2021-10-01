@@ -40,6 +40,7 @@ export const tokenGuard: RequestHandler = async (req, res, next) => {
     role: user.role,
     email: user.email,
   } as JWTPayload;
+  res.locals.user = user;
   next();
 };
 
@@ -84,6 +85,7 @@ export const expiredTokenGuard: RequestHandler = async (req, res, next) => {
     role: user.role,
     email: user.email,
   } as JWTPayload;
+  res.locals.user = user;
   next();
 };
 

@@ -1,14 +1,15 @@
 import express from 'express';
 
 import { emailGuard, tokenGuard } from '@/auth/auth.guard';
-import UserController from './user.controller';
+import UserController from '@/user/user.controller';
 import {
   changeUserPasswordValidator,
   emailBodyValidator,
   resetPasswordValidator,
   updateUserValidator,
   verifyEmailOTPValidator,
-} from './user.pipe';
+} from '@/user/user.pipe';
+import UpgradeRequestController from '@/upgradeRequest/upgradeRequest.controller';
 
 const userRoute = express.Router();
 
@@ -57,5 +58,11 @@ userRoute.patch(
   UserController.verifyEmailOTP,
 );
 userRoute.patch('/email', tokenGuard, UserController.changeUserEmail);
+
+userRoute.post(
+  '/upgrade-request',
+  tokenGuard,
+  UpgradeRequestController.createRequest,
+);
 
 export default userRoute;
