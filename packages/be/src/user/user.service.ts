@@ -19,14 +19,23 @@ class UserService extends BaseService<UserDoc, CreateUserDTO> {
   createSA() {
     const secret = appConfig.jwtSecret;
     const hashedSecret = getHashedPassword(secret);
-    return this.model.create({
-      email: 'super@admin.com',
-      name: 'superadmin',
-      address: 'superadmin',
-      password: hashedSecret,
-      role: UserRole.SUPPER_ADMIN,
-      isVerified: true,
-    });
+    return this.model
+      .create({
+        email: 'super@admin.com',
+        name: 'superadmin',
+        address: 'superadmin',
+        password: hashedSecret,
+        role: UserRole.SUPPER_ADMIN,
+        isVerified: true,
+      })
+      .catch((e) => {
+        return this.model.updateOne(
+          {
+            email: 'super@admin.com',
+          },
+          { password: hashedSecret },
+        );
+      });
   }
 
   createAdmin({ email, name, address, password }: CreateUserDTO) {
