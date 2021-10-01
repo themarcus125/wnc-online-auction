@@ -34,7 +34,7 @@ export const registerValidator: RequestHandler = (req, res, next) => {
 
 export const loginValidator: RequestHandler = (req, res, next) => {
   const { email, password }: LoginDTO = req.body;
-  if (!notNull(email)) {
+  if (!validateEmail(email)) {
     return res.status(400).json({
       errror: 'INVALID_EMAIL',
     });
