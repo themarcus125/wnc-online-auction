@@ -13,6 +13,7 @@ import Modal, { showModal, hideModal } from '../common/Modal';
 
 const isEmail = Yup.string().email('Email không hợp lệ');
 const passwordModalID = 'passwordModal';
+const emailOtpModalID = 'emailOtpModal';
 
 const AccountInfo = () => {
   const [fullName, setFullName] = useState('');
@@ -27,6 +28,8 @@ const AccountInfo = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [emailOtp, setEmailOtp] = useState('');
 
   const loadData = async () => {
     setIsLoading(true);
@@ -116,9 +119,8 @@ const AccountInfo = () => {
     const [updateUserResponse, updateEmailResponse] = await Promise.all(
       apiRequests,
     );
-    console.log('email', updateEmailResponse);
 
-    if (updateEmailResponse?.error || updateUserResponse.error) {
+    if (updateEmailResponse.error || updateUserResponse.error) {
       toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
       setIsSubmitting(false);
       return;
@@ -153,7 +155,6 @@ const AccountInfo = () => {
       },
       token,
     );
-    console.log(response);
     if (response.error) {
       toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
       return;
@@ -163,6 +164,44 @@ const AccountInfo = () => {
     setNewPassword('');
     setConfirmPassword('');
     hideModal(passwordModalID);
+  };
+
+  const openOtpModal = async () => {
+    const token = await getToken();
+    const response = await getAPIWithToken('/api/user/email/verify/otp', token);
+    if (response.error) {
+      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      return;
+    }
+    if (response.status === 'SEND_FAIL') {
+      toast.error('Gửi mã OTP thất bại');
+      return;
+    }
+    showModal(emailOtpModalID);
+  };
+
+  const onVerifyEmailOtp = async () => {
+    if (emailOtp.length > 7) {
+      toast.error('Mã OTP không hợp lệ');
+      return;
+    }
+
+    const token = await getToken();
+    const response = await patchAPIWithToken(
+      '/api/user/email/verify/otp',
+      {
+        otp: emailOtp,
+      },
+      token,
+    );
+    if (response.error) {
+      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      return;
+    }
+
+    hideModal(emailOtpModalID);
+    toast.success('Email đã được xác nhận!');
+    loadData();
   };
 
   return (
@@ -197,7 +236,10 @@ const AccountInfo = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 {!isEmailVerified && (
-                  <button className="uk-button uk-button-danger uk-width-auto uk-flex">
+                  <button
+                    className="uk-button uk-button-danger uk-width-auto uk-flex"
+                    onClick={openOtpModal}
+                  >
                     Xác thực Email
                   </button>
                 )}
@@ -301,49 +343,30 @@ const AccountInfo = () => {
             />
           </div>
         </Modal>
-        {/* <div id="modal-example" uk-modal="">
-          <div className="uk-modal-dialog uk-modal-body">
-            <h4 className="uk-text-bold uk-text-primary">Đổi mật khẩu</h4>
-            <div>
-              <input
-                className="uk-input uk-margin-bottom"
-                type="password"
-                placeholder="Mật khẩu hiện tại"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              <input
-                className="uk-input uk-margin-bottom"
-                type="password"
-                placeholder="Mật khẩu mới"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <input
-                className="uk-input uk-margin-bottom"
-                type="password"
-                placeholder="Nhập lại mật khẩu mới"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-            <p>
-              <button
-                className="uk-button uk-button-default uk-modal-close uk-margin-right"
-                type="button"
-              >
-                Hủy
-              </button>
-              <button
-                className="uk-button uk-button-primary"
-                type="button"
-                onClick={onChangePassword}
-              >
-                Cập nhật
-              </button>
-            </p>
+        <Modal
+          modalID={emailOtpModalID}
+          title="Nhập mã OTP"
+          description="Mã OTP 7 kí tự đã được gửi về email của bạn."
+          buttonRow={
+            <button
+              className="uk-button uk-button-primary"
+              type="button"
+              onClick={onVerifyEmailOtp}
+            >
+              Xác nhận
+            </button>
+          }
+        >
+          <div>
+            <input
+              className="uk-input uk-margin-bottom"
+              type="text"
+              placeholder="Mã OTP"
+              value={emailOtp}
+              onChange={(e) => setEmailOtp(e.target.value)}
+            />
           </div>
-        </div> */}
+        </Modal>
       </div>
       {isLoading && (
         <div

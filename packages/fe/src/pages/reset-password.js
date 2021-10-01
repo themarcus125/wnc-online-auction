@@ -1,19 +1,19 @@
 import React from 'react';
 
 import PrivateWrapper from '../components/common/Wrapper/PrivateWrapper';
-import LoginPage from '../components/LoginPage';
+import ResetPasswordPage from '../components/ResetPasswordPage';
 
 import { NOT_LOGIN } from '../utils/constants/role';
 
-const Login = (props) => {
+const ResetPassword = (props) => {
   return (
     <PrivateWrapper
-      title={'Đăng nhập'}
-      component={LoginPage}
+      title={'Quên mật khẩu'}
+      component={ResetPasswordPage}
       role={NOT_LOGIN}
       {...props}
     />
   );
 };
 
-export default Login;
+export default ResetPassword;
