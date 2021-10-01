@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import UIKit from 'uikit/dist/js/uikit.min.js';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
+import { navigate } from 'gatsby-link';
 
-import { getUser } from '../../utils/auth';
+import { getUser, logout } from '../../utils/auth';
 
 const NavBar = () => {
   const { name: userFullname } = getUser();
-  console.log(getUser());
 
   useEffect(() => {
     UIKit.navbar('#navbar');
@@ -79,7 +79,7 @@ const NavBar = () => {
                     <Link to={'/account'}>Tài khoản</Link>
                   </li>
                   <li>
-                    <a>Đăng xuất</a>
+                    <a onClick={() => logout(() => navigate('/'))}>Đăng xuất</a>
                   </li>
                 </ul>
               </div>

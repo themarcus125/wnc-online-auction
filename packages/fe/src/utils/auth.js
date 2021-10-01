@@ -1,3 +1,5 @@
+import { navigate } from 'gatsby-link';
+
 import { getAPIWithToken } from './api';
 const CURRENT_USER = 'currentUser';
 
@@ -34,6 +36,18 @@ export const refreshToken = async (token) => {
     return response.accessToken;
   }
 
+  if (response.error === 'EXPIRED_RESIGN_TOKEN') {
+    logout(() =>
+      navigate('/login', {
+        state: {
+          toastMsg: 'Hãy đăng nhập lại để tiếp tục',
+          toastType: 'error',
+        },
+      }),
+    );
+    return;
+  }
+
   return token;
 };
 
@@ -50,4 +64,9 @@ export const getToken = async () => {
   }
 
   return token;
+};
+
+export const logout = (cb) => {
+  setUser({});
+  cb && cb();
 };
