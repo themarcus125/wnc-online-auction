@@ -8,7 +8,6 @@ import { UpdateUserDTO } from './user.dto';
 import UserService from './user.service';
 import {
   CheckEmailMessage,
-  CheckPasswordMessage,
   EmailOtpMessage,
   ResetPasswordOtpMessage,
 } from './user.message';
@@ -33,12 +32,13 @@ const getUser: RequestHandler = async (req, res, next) => {
 const updateUser: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
-    const { name, dob }: UpdateUserDTO = req.body;
+    const { name, dob, address }: UpdateUserDTO = req.body;
     const user = await UserService.findOneAndUpdate(
       { _id: id },
       {
         name,
         dob,
+        address,
       },
     ).select('-password -verifyOtp -passwordOtp');
     if (!user) {
@@ -68,12 +68,6 @@ const changeUserPassword: RequestHandler = async (req, res, next) => {
         error: 'WRONG_OLD_PASS',
       });
     }
-    const isPassword = UserService.checkPassword(newPassword || '');
-    if (!newPassword || isPassword !== CheckPasswordMessage.VALID) {
-      return res.status(400).json({
-        error: 'INVALID_NEW_PASSWORD',
-      });
-    }
     const hashedPassword = getHashedPassword(newPassword);
     user.password = hashedPassword;
     await user.save();
@@ -88,7 +82,7 @@ const checkUserEmail: RequestHandler = async (req, res, next) => {
     const { email } = req.body;
     const isEmailMessage = await UserService.checkEmail(email);
     if (isEmailMessage !== CheckEmailMessage.VALID) {
-      return res.status(404).json({
+      return res.status(400).json({
         error: isEmailMessage,
         isEmail: false,
       });
@@ -107,7 +101,7 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
     const { email } = req.body;
     const isEmailMessage = await UserService.checkEmail(email);
     if (isEmailMessage !== CheckEmailMessage.VALID) {
-      return res.status(404).json({
+      return res.status(400).json({
         error: isEmailMessage,
         isEmail: false,
       });
@@ -123,8 +117,8 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
 
 const sendResetPasswordOTP: RequestHandler = async (req, res, next) => {
   try {
-    const email = req.body.email || '';
-    const otp = await OtpService.createOtp();
+    const { email } = req.body;
+    const otp = OtpService.createOtp();
     const user = await UserService.findOneAndUpdate(
       { email },
       { passwordOtp: otp },
@@ -149,23 +143,11 @@ const sendResetPasswordOTP: RequestHandler = async (req, res, next) => {
 
 const resetPassword: RequestHandler = async (req, res, next) => {
   try {
-    const email = req.body.email || '';
-    const password = req.body.password || '';
-    const otp = req.body.otp || '';
+    const { email, password, otp } = req.body;
     const user = await UserService.findOne({ email });
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
-      });
-    }
-    if (!otp) {
-      return res.status(400).json({
-        error: 'INVALID_OTP',
-      });
-    }
-    if (UserService.checkPassword(password) !== CheckPasswordMessage.VALID) {
-      return res.status(400).json({
-        error: 'INVALID_PASSWORD',
       });
     }
     const resetPasswordMessage = await UserService.resetPassword(
@@ -189,7 +171,7 @@ const resetPassword: RequestHandler = async (req, res, next) => {
 const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
   try {
     const { id, email }: JWTPayload = res.locals.jwtPayload;
-    const otp = await OtpService.createOtp();
+    const otp = OtpService.createOtp();
     const user = await UserService.findOneAndUpdate(
       { _id: id, email },
       { verifyOtp: otp },
@@ -215,7 +197,7 @@ const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
 const verifyEmailOTP: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
-    const otp: string = req.body.otp || '';
+    const { otp } = req.body;
     const user = await UserService.findById(id);
     if (!user) {
       return res.status(404).json({

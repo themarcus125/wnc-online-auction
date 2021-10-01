@@ -1,15 +1,16 @@
 import { otpGen } from '@/utils/password';
 import { otpConfig } from '~/config';
 
-const getOtpLength = () => {
+export const getOtpLength = () => {
   return otpConfig.length;
 };
 
 const createOtp = () => {
+  const now = new Date();
   return {
     key: otpGen(getOtpLength()),
-    updatedAt: new Date(),
-    createdAt: new Date(),
+    updatedAt: now,
+    createdAt: now,
   };
 };
 

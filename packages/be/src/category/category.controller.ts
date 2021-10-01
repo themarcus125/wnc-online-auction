@@ -18,14 +18,6 @@ const getCategories: RequestHandler = async (req, res, next) => {
 const createCategory: RequestHandler = async (req, res, next) => {
   try {
     const { name, parent }: CreateCategoryDTO = req.body;
-    if (parent) {
-      const pCateggory = await CategoryService.findById(parent);
-      if (!pCateggory) {
-        return res.status(404).json({
-          error: 'NOT_FOUND_PARENT',
-        });
-      }
-    }
     const category = await CategoryService.create({
       name,
       parent,

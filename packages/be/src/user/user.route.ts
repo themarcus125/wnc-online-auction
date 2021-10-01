@@ -2,15 +2,40 @@ import express from 'express';
 
 import { emailGuard, tokenGuard } from '@/auth/auth.guard';
 import UserController from './user.controller';
+import {
+  changeUserPasswordValidator,
+  emailBodyValidator,
+  resetPasswordValidator,
+  updateUserValidator,
+  verifyEmailOTPValidator,
+} from './user.pipe';
 
 const userRoute = express.Router();
 
 userRoute.get('/', tokenGuard, UserController.getUser);
-userRoute.patch('/', tokenGuard, UserController.updateUser);
+userRoute.patch(
+  '/',
+  tokenGuard,
+  updateUserValidator,
+  UserController.updateUser,
+);
 
-userRoute.post('/password/reset/otp', UserController.sendResetPasswordOTP);
-userRoute.patch('/password/reset/otp', UserController.resetPassword);
-userRoute.patch('/password', tokenGuard, UserController.changeUserPassword);
+userRoute.post(
+  '/password/reset/otp',
+  emailBodyValidator,
+  UserController.sendResetPasswordOTP,
+);
+userRoute.patch(
+  '/password/reset/otp',
+  resetPasswordValidator,
+  UserController.resetPassword,
+);
+userRoute.patch(
+  '/password',
+  tokenGuard,
+  changeUserPasswordValidator,
+  UserController.changeUserPassword,
+);
 
 userRoute.get(
   '/email/verify/otp',
@@ -18,11 +43,17 @@ userRoute.get(
   emailGuard(false),
   UserController.sendVerifyEmailOTP,
 );
-userRoute.post('/email', tokenGuard, UserController.checkUserEmail);
+userRoute.post(
+  '/email',
+  tokenGuard,
+  emailBodyValidator,
+  UserController.checkUserEmail,
+);
 userRoute.patch(
   '/email/verify/otp',
   tokenGuard,
   emailGuard(false),
+  verifyEmailOTPValidator,
   UserController.verifyEmailOTP,
 );
 userRoute.patch('/email', tokenGuard, UserController.changeUserEmail);
