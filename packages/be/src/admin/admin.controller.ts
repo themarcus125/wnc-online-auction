@@ -1,9 +1,11 @@
-import { request, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import UserService from '@/user/user.service';
+import AuthService from '@/auth/auth.service';
 import { RegisterDTO } from '@/auth/auth.dto';
 import { RequestStatus } from '@/upgradeRequest/upgradeRequest.schema';
 import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
 import { UserDoc, UserRole } from '@/user/user.schema';
+import { AdminUpdateUserDTO } from './admin.dto';
 
 const createAdmin: RequestHandler = async (req, res, next) => {
   try {
@@ -74,8 +76,88 @@ export const changeRequestStatus =
     }
   };
 
+export const getUser: RequestHandler = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserService.findById(userId).select(
+      '-password -verifyOtp -passwordOtp',
+    );
+    res.json(user);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getUsers: RequestHandler = async (req, res, next) => {
+  try {
+    const users = await UserService.find({}).select(
+      '-password -verifyOtp -passwordOtp',
+    );
+    res.json(users);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const createUser: RequestHandler = async (req, res, next) => {
+  try {
+    const { email, name, address, password }: RegisterDTO = req.body;
+    const user = await AuthService.register({
+      email,
+      name,
+      address,
+      password,
+    });
+    res.json({
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      address: user.address,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateUser: RequestHandler = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { email, address, dob, role, name, isVerified }: AdminUpdateUserDTO =
+      req.body;
+    const user = await UserService.findOneAndUpdate(
+      { _id: userId },
+      {
+        email,
+        address,
+        dob,
+        role,
+        name,
+        isVerified,
+      },
+    ).select('-password -verifyOtp -passwordOtp');
+    res.json(user);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteUser: RequestHandler = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserService.getModel().findByIdAndDelete(userId);
+    res.json({ id: userId });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   createAdmin,
   changeRequestStatus,
   getPendingRequest,
+  getUser,
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
 };

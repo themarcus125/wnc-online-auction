@@ -7,6 +7,18 @@ import { createCategoryValidator } from '@/category/category.pipe';
 const categoryRoute = express.Router();
 
 categoryRoute.get('/:categoryId', CategoryController.getCategory);
+categoryRoute.patch(
+  '/:categoryId',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  CategoryController.updateCategory,
+);
+categoryRoute.delete(
+  '/:categoryId',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  CategoryController.deleteCategory,
+);
 categoryRoute.get('/', CategoryController.getCategories);
 categoryRoute.post(
   '/',

@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { CreateCategoryDTO } from './category.dto';
+import { CreateCategoryDTO, UpdateCategoryDTO } from './category.dto';
 import CategoryService from './category.service';
 
 const getCategory: RequestHandler = async (req, res, next) => {
@@ -42,8 +42,42 @@ const createCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
+const updateCategory: RequestHandler = async (req, res, next) => {
+  try {
+    const { categoryId } = req.params;
+    const { name, parent }: UpdateCategoryDTO = req.body;
+    const category = await CategoryService.findOneAndUpdate(
+      { _id: categoryId },
+      {
+        name,
+        parent,
+      },
+    );
+    res.json(category);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteCategory: RequestHandler = async (req, res, next) => {
+  try {
+    const { categoryId } = req.params;
+    const category = await CategoryService.findOneAndUpdate(
+      { _id: categoryId },
+      {
+        isDel: true,
+      },
+    );
+    res.json(category);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   getCategories,
   createCategory,
   getCategory,
+  updateCategory,
+  deleteCategory,
 };

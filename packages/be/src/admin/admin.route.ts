@@ -5,12 +5,35 @@ import { UserRole } from '@/user/user.schema';
 import AdminController from '@/admin/admin.controller';
 const adminRoute = express.Router();
 
-adminRoute.post(
-  '/',
+adminRoute.delete(
+  '/user/:userId',
   tokenGuard,
-  roleGuard(UserRole.SUPPER_ADMIN),
-  registerValidator,
-  AdminController.createAdmin,
+  roleGuard(UserRole.ADMIN),
+  AdminController.deleteUser,
+);
+adminRoute.patch(
+  '/user/:userId',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  AdminController.updateUser,
+);
+adminRoute.get(
+  '/user/:userId',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  AdminController.getUser,
+);
+adminRoute.get(
+  '/user',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  AdminController.getUsers,
+);
+adminRoute.post(
+  '/user',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  AdminController.createUser,
 );
 
 adminRoute.patch(
@@ -30,6 +53,13 @@ adminRoute.get(
   tokenGuard,
   roleGuard(UserRole.ADMIN),
   AdminController.getPendingRequest,
+);
+adminRoute.post(
+  '/',
+  tokenGuard,
+  roleGuard(UserRole.SUPPER_ADMIN),
+  registerValidator,
+  AdminController.createAdmin,
 );
 
 export default adminRoute;
