@@ -1,0 +1,139 @@
+import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { navigate } from 'gatsby';
+import { Link } from 'gatsby';
+
+import Modal, { showModal, hideModal } from '../../common/Modal';
+
+import { getAPI } from '../../../utils/api';
+
+const categoryDetailModalID = 'categoryDetailModal';
+
+const CategoryList = () => {
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('');
+  const [subCategories, setSubCategories] = useState([]);
+
+  const loadCategories = async () => {
+    const response = await getAPI('/api/category');
+    if (response.error) {
+      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      return;
+    }
+    setCategories(response);
+  };
+
+  const onAdd = () => {
+    navigate('add');
+  };
+
+  const onDetails = async (categoryId, categoryName) => {
+    showModal(categoryDetailModalID);
+    setSelectedCategoryName(categoryName);
+    const response = await getAPI(`/api/category?parent=${categoryId}`);
+    if (response.error) {
+      return;
+    }
+    setSubCategories(response);
+  };
+
+  const onDelete = (categoryId) => {};
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  return (
+    <div>
+      <h3 className="uk-text-primary uk-text-bold">Danh sách danh mục</h3>
+      <button className="uk-button uk-button-primary" onClick={onAdd}>
+        Thêm mới
+      </button>
+      <ToastContainer
+        position={toast.POSITION.TOP_RIGHT}
+        autoClose={3000}
+        theme="colored"
+      />
+      <div>
+        <table className="uk-table uk-table-divider uk-table-striped">
+          <thead>
+            <tr>
+              <th className="uk-table-shrink">STT</th>
+              <th className="uk-width-2xlarge">Tên danh mục</th>
+              <th className="uk-width-small"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((category, index) => {
+              return (
+                <tr key={category._id}>
+                  <td>{index + 1}</td>
+                  <td>{category.name}</td>
+                  <td>
+                    <span
+                      uk-icon="plus-circle"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => onDetails(category._id, category.name)}
+                    ></span>
+                    <Link to={`edit/${category._id}`}>
+                      <span className="uk-margin-left" uk-icon="pencil"></span>
+                    </Link>
+                    <span
+                      className="uk-margin-left"
+                      uk-icon="trash"
+                      style={{ color: 'red', cursor: 'pointer' }}
+                      onClick={() => onDelete(category._id)}
+                    ></span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <Modal
+          modalID={categoryDetailModalID}
+          isContainer
+          title={`Category con của ${selectedCategoryName}`}
+        >
+          <div>
+            <table className="uk-table uk-table-divider uk-table-striped">
+              <thead>
+                <tr>
+                  <th className="uk-table-shrink">STT</th>
+                  <th className="uk-width-2xlarge">Tên danh mục</th>
+                  <th className="uk-width-small"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {subCategories.map((category, index) => {
+                  return (
+                    <tr key={category._id}>
+                      <td>{index + 1}</td>
+                      <td>{category.name}</td>
+                      <td>
+                        <Link to={`edit/${category._id}`}>
+                          <span
+                            className="uk-margin-left"
+                            uk-icon="pencil"
+                          ></span>
+                        </Link>
+                        <span
+                          className="uk-margin-left"
+                          uk-icon="trash"
+                          style={{ color: 'red', cursor: 'pointer' }}
+                          onClick={() => onDelete(category._id)}
+                        ></span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Modal>
+      </div>
+    </div>
+  );
+};
+
+export default CategoryList;

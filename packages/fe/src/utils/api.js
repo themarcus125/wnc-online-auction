@@ -1,7 +1,7 @@
 const API_URL = process.env.API_URL;
 
 export const getAPI = (endpoint, options = {}) =>
-  fetch(`${API_URL}${endpoint}`, options);
+  fetch(`${API_URL}${endpoint}`, options).then((response) => response.json());
 
 export const putAPI = (endpoint, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
