@@ -8,7 +8,7 @@ module.exports = {
     'gatsby-plugin-react-helmet',
     {
       resolve: `gatsby-plugin-create-client-paths`,
-      options: { prefixes: [`/category/*`] },
+      options: { prefixes: [`/category/*`, `/admin/*`] },
     },
   ],
 };

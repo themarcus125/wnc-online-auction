@@ -1,16 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import UIKit from 'uikit/dist/js/uikit.min.js';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { navigate } from 'gatsby-link';
 
+import { getAPI } from '../../utils/api';
 import { getUser, logout } from '../../utils/auth';
 
 const NavBar = () => {
   const { name: userFullname } = getUser();
+  const [categories, setCategories] = useState([]);
+
+  const loadCategories = async () => {
+    const response = await getAPI('/api/category');
+    if (!response.error) {
+      setCategories(response);
+    }
+  };
 
   useEffect(() => {
     UIKit.navbar('#navbar');
+    loadCategories();
   }, []);
 
   return (
@@ -20,19 +30,22 @@ const NavBar = () => {
           <a href="#">Bootleg Ebay</a>
         </li>
         <li>
-          <a href="#">Category</a>
-          <div className="uk-navbar-dropdown">
-            <ul className="uk-nav uk-navbar-dropdown-nav">
-              <li className="uk-active">
-                <Link to={'/category/1'}>Active</Link>
-              </li>
-              <li>
-                <a href="#">Item</a>
-              </li>
-              <li>
-                <a href="#">Item</a>
-              </li>
-            </ul>
+          <a href="#">Danh mục</a>
+          <div className="uk-navbar-dropdown" style={{ width: 'auto' }}>
+            <GridWrapper className="uk-nav uk-navbar-dropdown-nav">
+              {categories.map((category) => {
+                return (
+                  <GridItem
+                    key={category._id}
+                    className="uk-active uk-background-muted"
+                  >
+                    <Link to={`/category/${category._id}`}>
+                      {category.name}
+                    </Link>
+                  </GridItem>
+                );
+              })}
+            </GridWrapper>
           </div>
         </li>
       </ul>
@@ -127,4 +140,16 @@ const UserTitle = styled.div`
   display: inline-block;
   margin-top: auto;
   margin-bottom: auto;
+`;
+
+const GridWrapper = styled.ul`
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+`;
+
+const GridItem = styled.li`
+  display: block;
+  padding: 20px;
 `;

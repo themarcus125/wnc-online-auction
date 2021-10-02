@@ -5,6 +5,9 @@ const ModalPortal = (props) => {
   const modalRoot = useMemo(() => document.createElement('div'), []);
   modalRoot.setAttribute('uk-modal', '');
   modalRoot.id = props.modalID;
+  if (props.isContainer) {
+    modalRoot.classList.add('uk-modal-container');
+  }
 
   useEffect(() => {
     document.body.appendChild(modalRoot);

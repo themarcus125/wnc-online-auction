@@ -10,9 +10,16 @@ export const hideModal = (modalID) => {
   UIKit.modal(`#${modalID}`).hide();
 };
 
-const Modal = ({ modalID, title, description, children, buttonRow }) => {
+const Modal = ({
+  modalID,
+  title,
+  description,
+  children,
+  buttonRow,
+  isContainer = false,
+}) => {
   return (
-    <ModalPortal modalID={modalID}>
+    <ModalPortal modalID={modalID} isContainer={isContainer}>
       <div className="uk-modal-dialog uk-modal-body">
         {title ? (
           <h4 className="uk-text-bold uk-text-primary">{title}</h4>
