@@ -6,6 +6,7 @@ import { createCategoryValidator } from '@/category/category.pipe';
 
 const categoryRoute = express.Router();
 
+categoryRoute.get('/:categoryId', CategoryController.getCategory);
 categoryRoute.get('/', CategoryController.getCategories);
 categoryRoute.post(
   '/',

@@ -3,7 +3,7 @@ import { sendMail } from '@/mail/mail.service';
 import OtpService from '@/otp/otp.service';
 import { tag } from '@/utils/html';
 import { comparePassword, getHashedPassword } from '@/utils/password';
-import { RequestHandler } from 'express';
+import { request, RequestHandler } from 'express';
 import { UpdateUserDTO } from './user.dto';
 import UserService from './user.service';
 import {
@@ -11,6 +11,8 @@ import {
   EmailOtpMessage,
   ResetPasswordOtpMessage,
 } from './user.message';
+import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
+import { UserDoc } from './user.schema';
 
 const getUser: RequestHandler = async (req, res, next) => {
   try {
@@ -218,6 +220,39 @@ const verifyEmailOTP: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const createRequest: RequestHandler = async (req, res, next) => {
+  try {
+    const user: UserDoc = res.locals.user;
+    const canRequest = await UpgradeRequestService.canRequest(user);
+    if (!canRequest) {
+      return res.status(400).json({
+        error: 'FORBIDDEN',
+      });
+    }
+    const request = await UpgradeRequestService.create({ user: user._id });
+    if (!request) {
+      return res.status(500).json({
+        error: 'SOMETHING_WENT_WRONG',
+      });
+    }
+    res.json({
+      status: 'OK',
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getUserRequest: RequestHandler = async (req, res, next) => {
+  try {
+    const user: UserDoc = res.locals.user;
+    const requests = await UpgradeRequestService.find({ user: user._id });
+    res.json(requests);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   getUser,
   updateUser,
@@ -228,4 +263,6 @@ export default {
   resetPassword,
   sendVerifyEmailOTP,
   verifyEmailOTP,
+  getUserRequest,
+  createRequest,
 };

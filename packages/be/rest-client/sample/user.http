@@ -1,7 +1,7 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMzA5NjU1NCwiZXhwIjoxNjMzMTAwMTU0fQ.77RbqGAmlYE0VX8wbd0hdBKGWXXTIrASLRpGTW3enZI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoidHRodXlraDk5QGdtYWlsLmNvbSIsInJvbGUiOjAsImlzVmVyaWZpZWQiOnRydWUsImlhdCI6MTYzMzE4Mzk2NywiZXhwIjoxNjMzMTg3NTY3fQ.0735mk-0rTJ_39gTD3idyOWo1JWY4tajAWAur31VIfg
 ### Get user info
 GET {{baseurl}}
 authorization: Bearer {{token}}
@@ -58,7 +58,7 @@ Content-Type: application/json
 {
     "email": "tthuykh99@gmail.com"
 }
-###
+### Reset password
 PATCH  {{baseurl}}/password/reset/otp
 authorization: Bearer {{token}}
 Content-Type: application/json
@@ -68,3 +68,11 @@ Content-Type: application/json
     "otp": "7046450",
     "password": "tthuykh99"
 }
+### Get Upgrade Request
+GET  {{baseurl}}/upgrade-request
+authorization: Bearer {{token}}
+Content-Type: application/json
+### Create Upgrade Request
+POST  {{baseurl}}/upgrade-request
+authorization: Bearer {{token}}
+Content-Type: application/json

@@ -9,7 +9,6 @@ import {
   updateUserValidator,
   verifyEmailOTPValidator,
 } from '@/user/user.pipe';
-import UpgradeRequestController from '@/upgradeRequest/upgradeRequest.controller';
 
 const userRoute = express.Router();
 
@@ -59,10 +58,7 @@ userRoute.patch(
 );
 userRoute.patch('/email', tokenGuard, UserController.changeUserEmail);
 
-userRoute.post(
-  '/upgrade-request',
-  tokenGuard,
-  UpgradeRequestController.createRequest,
-);
+userRoute.post('/upgrade-request', tokenGuard, UserController.createRequest);
+userRoute.get('/upgrade-request', tokenGuard, UserController.getUserRequest);
 
 export default userRoute;

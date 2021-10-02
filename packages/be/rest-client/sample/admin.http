@@ -2,6 +2,7 @@
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/admin
 @satoken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTViZjY5ZDJjMzJkNDQ4MzEwODk5MSIsImVtYWlsIjoic3VwZXJAYWRtaW4uY29tIiwicm9sZSI6MywiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMDI0MTgyLCJleHAiOjE2MzMwMjc3ODJ9.d_qRavI4hWs67kpwbmRwH2l8T-PBc_chbSG_kqTiVx0
+@adtoken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVmOTM2MTRjMTRjYWQ2ZTlkOGM2YSIsImVtYWlsIjoiaHV5YWRtaW5AZ21haWwuY29tIiwicm9sZSI6MiwiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMTg0MDE1LCJleHAiOjE2MzMxODc2MTV9.KU3wrxxB4VM3F1cujSuznsCdjf5HW2zPCy8um7yy48U
 ### Super admin Login 
 POST http://{{host}}:{{port}}/api/auth/login
 content-type: application/json
@@ -29,3 +30,12 @@ content-type: application/json
   "email": "huyadmin@gmail.com",
   "password": "123456"
 }
+### Get pending upgrade request
+GET {{baseurl}}/upgrade-request
+content-type: application/json
+authorization: Bearer {{adtoken}}
+
+### Approved request
+PATCH  {{baseurl}}/upgrade-request/615868fd9958f7740f52fd51/approve
+content-type: application/json
+authorization: Bearer {{adtoken}}

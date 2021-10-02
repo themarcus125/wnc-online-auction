@@ -3,7 +3,6 @@ import { roleGuard, tokenGuard } from '@/auth/auth.guard';
 import { registerValidator } from '@/auth/auth.pipe';
 import { UserRole } from '@/user/user.schema';
 import AdminController from '@/admin/admin.controller';
-import UpgradeRequestController from '@/upgradeRequest/upgradeRequest.controller';
 const adminRoute = express.Router();
 
 adminRoute.post(
@@ -15,16 +14,22 @@ adminRoute.post(
 );
 
 adminRoute.patch(
-  '/upgrade-request/approve',
+  '/upgrade-request/:requestId/approve',
   tokenGuard,
   roleGuard(UserRole.ADMIN),
-  UpgradeRequestController.changeRequestStatus(true),
+  AdminController.changeRequestStatus(true),
 );
 adminRoute.patch(
-  '/upgrade-request/reject',
+  '/upgrade-request/:requestId/reject',
   tokenGuard,
   roleGuard(UserRole.ADMIN),
-  UpgradeRequestController.changeRequestStatus(false),
+  AdminController.changeRequestStatus(false),
+);
+adminRoute.get(
+  '/upgrade-request/',
+  tokenGuard,
+  roleGuard(UserRole.ADMIN),
+  AdminController.getPendingRequest,
 );
 
 export default adminRoute;

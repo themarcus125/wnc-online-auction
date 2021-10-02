@@ -7,25 +7,28 @@ import {
   UpgradeRequestModel,
 } from './upgradeRequest.schema';
 
-class CategoryService extends BaseService<UpgradeRequestDoc, CreateRequestDTO> {
+class UpgradeRequestService extends BaseService<
+  UpgradeRequestDoc,
+  CreateRequestDTO
+> {
   constructor() {
     super(UpgradeRequestModel);
   }
   async canRequest(user: UserDoc) {
     if (user.role !== UserRole.BIDDER) return false;
+    if (!user.isVerified) return false;
     const requests = await this.find({
       user: user._id,
     }).sort({ createdAt: 1 });
-    if (!requests.length) return false;
-    return this.isPending(requests[0]);
+    if (!requests.length) return true;
+    if (requests[0].status !== RequestStatus.PENDING) return true;
+    return this.isExpired(requests[0]);
   }
-  isPending({ status, createdAt, expiredIn }: UpgradeRequestDoc) {
-    if (status !== RequestStatus.PENDING) return false;
+  isExpired({ createdAt, expiredIn }: UpgradeRequestDoc) {
     const isExpired =
-      Date.now() - new Date(createdAt).getTime() - expiredIn * 1000 > 0;
-    if (!isExpired) return false;
-    return true;
+      Date.now() - new Date(createdAt).getTime() - expiredIn * 1000 >= 0;
+    return isExpired;
   }
 }
 
-export default new CategoryService();
+export default new UpgradeRequestService();
