@@ -101,7 +101,7 @@ export const deleteAPIWithToken = (endpoint, token, options = {}) =>
       Authorization: `Bearer ${token}`,
     },
     ...options,
-  });
+  }).then((response) => response.json());
 
 export const patchAPIWithToken = (endpoint, data, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {

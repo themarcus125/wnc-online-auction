@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link } from 'gatsby';
+import { navigate } from 'gatsby-link';
 
 import LoadingOverlay from '../../common/LoadingOverlay';
 
-import { postAPIWithToken, getAPI } from '../../../utils/api';
+import {
+  postAPIWithToken,
+  getAPI,
+  patchAPIWithToken,
+} from '../../../utils/api';
 import { getToken } from '../../../utils/auth';
 
 const CategoryForm = ({ id }) => {
@@ -12,6 +17,7 @@ const CategoryForm = ({ id }) => {
   const [selectedParentCategory, setSelectedParentCategory] = useState('');
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasSubCategory, setHasSubCategory] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -31,9 +37,19 @@ const CategoryForm = ({ id }) => {
 
   const loadCategoryDetails = async () => {
     setLoading(true);
-    const response = await getAPI(`/api/category/${id}`);
-    setCategory(response.name);
-    setSelectedParentCategory(response.parent || '');
+    const [categoryDetailsResponse, subCategoryResponse] = await Promise.all([
+      getAPI(`/api/category/${id}`),
+      getAPI(`/api/category?parent=${id}`),
+    ]);
+    if (categoryDetailsResponse.error || categoryDetailsResponse.isDel) {
+      navigate('/admin/category');
+      return;
+    }
+    if (!subCategoryResponse.error) {
+      setHasSubCategory(!!subCategoryResponse.length);
+    }
+    setCategory(categoryDetailsResponse.name);
+    setSelectedParentCategory(categoryDetailsResponse.parent || '');
     setLoading(false);
   };
 
@@ -60,6 +76,30 @@ const CategoryForm = ({ id }) => {
     setSelectedParentCategory('');
   };
 
+  const onEdit = async (e) => {
+    e.preventDefault();
+    const token = await getToken();
+    const data = {
+      name: category,
+      ...(!selectedParentCategory
+        ? {}
+        : {
+            parent: selectedParentCategory,
+          }),
+    };
+    const response = await patchAPIWithToken(
+      `/api/category/${id}`,
+      data,
+      token,
+    );
+    if (response.error) {
+      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      return;
+    }
+
+    navigate('/admin/category');
+  };
+
   return (
     <div>
       <Link to={'/admin/category'} className="uk-text-uppercase">
@@ -77,6 +117,7 @@ const CategoryForm = ({ id }) => {
         <form className="uk-form">
           <fieldset className="uk-fieldset">
             <div className="uk-margin">
+              <label className="uk-form-label">Tên danh mục</label>
               <input
                 className="uk-input"
                 type="text"
@@ -87,10 +128,12 @@ const CategoryForm = ({ id }) => {
             </div>
 
             <div className="uk-margin">
+              <label className="uk-form-label">Danh mục cha</label>
               <select
                 className="uk-select"
                 value={selectedParentCategory}
                 onChange={(e) => setSelectedParentCategory(e.target.value)}
+                disabled={id && hasSubCategory}
               >
                 <option value="">Không có danh mục cha</option>
                 {parentCategories.map((parentCategory) => {
@@ -102,8 +145,12 @@ const CategoryForm = ({ id }) => {
                 })}
               </select>
             </div>
-            <button className="uk-button uk-button-primary" onClick={onCreate}>
-              Tạo
+            <button
+              className="uk-button uk-button-primary"
+              disabled={!category}
+              onClick={id ? onEdit : onCreate}
+            >
+              {id ? 'Lưu' : 'Tạo'}
             </button>
           </fieldset>
         </form>
