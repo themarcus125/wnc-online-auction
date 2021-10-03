@@ -78,6 +78,7 @@ const CategoryForm = ({ id }) => {
 
   const onEdit = async (e) => {
     e.preventDefault();
+    // Check if category has product or not before delete
     const token = await getToken();
     const data = {
       name: category,

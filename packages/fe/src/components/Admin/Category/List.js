@@ -49,7 +49,6 @@ const CategoryList = () => {
           `/api/category/${categoryId}`,
           token,
         );
-        console.log(response);
         if (response.error) {
           toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
           return;
