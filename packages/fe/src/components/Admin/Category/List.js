@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { navigate } from 'gatsby';
 import { Link } from 'gatsby';
+import UIKit from 'uikit/dist/js/uikit.min.js';
 
 import Modal, { showModal, hideModal } from '../../common/Modal';
 
-import { getAPI } from '../../../utils/api';
+import { getAPI, deleteAPIWithToken } from '../../../utils/api';
+import { getToken } from '../../../utils/auth';
 
 const categoryDetailModalID = 'categoryDetailModal';
 
@@ -37,7 +39,26 @@ const CategoryList = () => {
     setSubCategories(response);
   };
 
-  const onDelete = (categoryId) => {};
+  const onDelete = (categoryId) => {
+    hideModal(categoryDetailModalID);
+    UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
+    UIKit.modal.confirm('Bạn có chắc chắn muốn xóa danh mục?').then(
+      async () => {
+        const token = await getToken();
+        const response = await deleteAPIWithToken(
+          `/api/category/${categoryId}`,
+          token,
+        );
+        console.log(response);
+        if (response.error) {
+          toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+          return;
+        }
+        loadCategories();
+      },
+      () => {},
+    );
+  };
 
   useEffect(() => {
     loadCategories();

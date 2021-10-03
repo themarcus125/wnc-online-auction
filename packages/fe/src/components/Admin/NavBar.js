@@ -10,7 +10,7 @@ const AdminNavBar = () => {
       </Link>
       <ul className="uk-nav uk-margin-top">
         <li className="uk-parent">
-          <Link className="uk-text-secondary" to="/">
+          <Link className="uk-text-secondary" to="category">
             Danh mục
           </Link>
         </li>

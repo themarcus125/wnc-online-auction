@@ -8,7 +8,7 @@ import { getAPI } from '../../utils/api';
 import { getUser, logout } from '../../utils/auth';
 
 const NavBar = () => {
-  const { name: userFullname } = getUser();
+  const { name: userFullname, role = 0 } = getUser();
   const [categories, setCategories] = useState([]);
 
   const loadCategories = async () => {
@@ -88,6 +88,11 @@ const NavBar = () => {
               </div>
               <div className="uk-navbar-dropdown">
                 <ul className="uk-nav uk-navbar-dropdown-nav">
+                  {role === 2 && (
+                    <li>
+                      <Link to={'/admin'}>Trang chủ Admin</Link>
+                    </li>
+                  )}
                   <li>
                     <Link to={'/account'}>Tài khoản</Link>
                   </li>
