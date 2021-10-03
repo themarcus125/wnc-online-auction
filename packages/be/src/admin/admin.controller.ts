@@ -90,9 +90,11 @@ export const getUser: RequestHandler = async (req, res, next) => {
 
 export const getUsers: RequestHandler = async (req, res, next) => {
   try {
-    const users = await UserService.find({}).select(
-      '-password -verifyOtp -passwordOtp',
-    );
+    const users = await UserService.find({
+      $or: [{ role: UserRole.BIDDER }, { role: UserRole.SELLER }],
+    })
+      .select('-password -verifyOtp -passwordOtp')
+      .sort({ role: 1 });
     res.json(users);
   } catch (e) {
     next(e);
