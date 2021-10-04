@@ -14,12 +14,17 @@ class UpgradeRequestService extends BaseService<
   constructor() {
     super(UpgradeRequestModel);
   }
-  async canRequest(user: UserDoc) {
+  async canRequest(user: UserDoc, requestsP?: UpgradeRequestDoc[]) {
     if (user.role !== UserRole.BIDDER) return false;
     if (!user.isVerified) return false;
-    const requests = await this.find({
-      user: user._id,
-    }).sort({ createdAt: 1 });
+    const requests = requestsP
+      ? requestsP
+      : await this.find({
+          user: user._id,
+        }).sort({ createdAt: 1 });
+    return this.canRequestWithRequests(requests);
+  }
+  canRequestWithRequests(requests: UpgradeRequestDoc[]) {
     if (!requests.length) return true;
     if (requests[0].status !== RequestStatus.PENDING) return true;
     return this.isExpired(requests[0]);
