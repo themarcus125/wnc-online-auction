@@ -71,7 +71,7 @@ export const postAPIFormWithToken = (endpoint, data, token, options = {}) =>
     },
     body: data ? new URLSearchParams(data) : null,
     ...options,
-  });
+  }).then((response) => response.json());
 
 export const postAPIForm = (endpoint, data, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
