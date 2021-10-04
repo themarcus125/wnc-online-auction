@@ -33,7 +33,6 @@ const UserForm = () => {
       },
       token,
     );
-    console.log('res', res);
     setSubmitting(false);
     if (res.error) {
       toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');

@@ -66,7 +66,6 @@ const UpdateUserForm = ({ id }) => {
       },
       token,
     );
-    console.log(response);
     if (response.error) {
       toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
       return;
@@ -130,19 +129,21 @@ const UpdateUserForm = ({ id }) => {
                 />
               </td>
             </tr>
-            <tr>
-              <Title>Phân hệ</Title>
-              <td>
-                <select
-                  className="uk-select"
-                  value={role}
-                  onChange={(e) => setRole(+e.target.value)}
-                >
-                  <option value={BIDDER_VALUE}>BIDDER</option>
-                  <option value={SELLER_VALUE}>SELLER</option>
-                </select>
-              </td>
-            </tr>
+            {role === SELLER_VALUE && (
+              <tr>
+                <Title>Phân hệ</Title>
+                <td>
+                  <select
+                    className="uk-select"
+                    value={role}
+                    onChange={(e) => setRole(+e.target.value)}
+                  >
+                    <option value={BIDDER_VALUE}>BIDDER</option>
+                    <option value={SELLER_VALUE}>SELLER</option>
+                  </select>
+                </td>
+              </tr>
+            )}
             <tr>
               <Title>Địa chỉ</Title>
               <td>

@@ -6,3 +6,4 @@ export const LOGIN = 'login';
 
 export const BIDDER_VALUE = 0;
 export const SELLER_VALUE = 1;
+export const ADMIN_VALUE = 2;
