@@ -1,9 +1,10 @@
 import express from 'express';
 import { loading } from '@/utils/logs';
+
 import authRoute from '@/auth/auth.route';
-import userRoute from '@/user/user.route';
+import userRoute from '@/user/route/user.route';
 import categoryRoute from '@/category/category.route';
-import adminRoute from '@/admin/admin.route';
+import adminRoute from '@/admin/route/admin.route';
 
 const apiRouter = express.Router();
 loading('API router');

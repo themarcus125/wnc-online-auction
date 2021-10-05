@@ -4,7 +4,7 @@ import { UserRole } from '@/user/user.schema';
 import CategoryController from '@/category/category.controller';
 import { createCategoryValidator } from '@/category/category.pipe';
 
-const categoryRoute = express.Router();
+export const categoryRoute = express.Router();
 
 categoryRoute.get('/:categoryId', CategoryController.getCategory);
 categoryRoute.patch(
