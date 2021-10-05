@@ -247,7 +247,7 @@ export const getUserRequest: RequestHandler = async (req, res, next) => {
   try {
     const user: UserDoc = res.locals.user;
     const requests = await UpgradeRequestService.find({ user: user._id });
-    const canRequest = UpgradeRequestService.canRequest(user, requests);
+    const canRequest = await UpgradeRequestService.canRequest(user, requests);
     res.json({ requests, canRequest });
   } catch (e) {
     next(e);

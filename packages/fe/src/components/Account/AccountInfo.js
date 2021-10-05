@@ -11,6 +11,12 @@ import {
 import { getToken, setUser } from '../../utils/auth';
 import Modal, { showModal, hideModal } from '../common/Modal';
 
+import {
+  BIDDER_VALUE,
+  SELLER_VALUE,
+  ADMIN_VALUE,
+} from '../../utils/constants/role';
+
 const isEmail = Yup.string().email('Email không hợp lệ');
 const passwordModalID = 'passwordModal';
 const emailOtpModalID = 'emailOtpModal';
@@ -23,6 +29,7 @@ const AccountInfo = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
+  const [role, setRole] = useState(BIDDER_VALUE);
   const originalEmail = useRef('');
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -31,24 +38,31 @@ const AccountInfo = () => {
 
   const [emailOtp, setEmailOtp] = useState('');
 
+  const [haveRequestedUpgrade, setHasRequestedUpgrade] = useState(true);
+
   const loadData = async () => {
     setIsLoading(true);
     const token = await getToken();
-    const response = await getAPIWithToken('/api/user', token);
-    if (response.error) {
+    const [userResponse, upgradeRequestResponse] = await Promise.all([
+      getAPIWithToken('/api/user', token),
+      getAPIWithToken('/api/user/upgrade-request', token),
+    ]);
+    if (userResponse.error || upgradeRequestResponse.error) {
       toast.error('Đã có lỗi xảy ra!');
       return;
     }
 
-    setUser({ ...response, token });
-    setFullName(response.name);
-    setAddress(response.address);
-    setEmail(response.email);
-    setIsEmailVerified(response.isVerified);
-    originalEmail.current = response.email;
-    if (response.bod) {
-      setBirthDate(response.bod);
+    setUser({ ...userResponse, token });
+    setFullName(userResponse.name);
+    setAddress(userResponse.address);
+    setEmail(userResponse.email);
+    setIsEmailVerified(userResponse.isVerified);
+    setRole(userResponse.role);
+    originalEmail.current = userResponse.email;
+    if (userResponse.bod) {
+      setBirthDate(userResponse.bod);
     }
+    setHasRequestedUpgrade(!upgradeRequestResponse.canRequest);
     setIsLoading(false);
   };
 
@@ -204,6 +218,36 @@ const AccountInfo = () => {
     loadData();
   };
 
+  const renderRole = () => {
+    switch (role) {
+      case BIDDER_VALUE:
+        return 'BIDDER';
+      case SELLER_VALUE:
+        return 'SELLER';
+      case ADMIN_VALUE:
+        return 'ADMIN';
+      default:
+        return '';
+    }
+  };
+
+  const onRequestUpgrade = async () => {
+    setHasRequestedUpgrade(true);
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      '/api/user/upgrade-request',
+      {},
+      token,
+    );
+    if (response.error) {
+      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      setHasRequestedUpgrade(false);
+      return;
+    }
+    toast.success('Đã gửi yêu cầu!');
+    loadData();
+  };
+
   return (
     <div style={{ position: 'relative' }}>
       <ToastContainer
@@ -224,6 +268,23 @@ const AccountInfo = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                 />
+              </td>
+            </tr>
+            <tr className="uk-flex uk-flex-middle">
+              <td className="uk-width-1-5 uk-padding-remove-left">Phân hệ</td>
+              <td className="uk-width-4-5 uk-padding-remove-right uk-flex uk-flex-stretch uk-flex-middle uk-flex-between uk-text-bold">
+                {renderRole()}
+                {role === BIDDER_VALUE && (
+                  <button
+                    className="uk-button uk-button-primary uk-width-auto uk-flex uk-text-normal"
+                    onClick={onRequestUpgrade}
+                    disabled={haveRequestedUpgrade}
+                  >
+                    {haveRequestedUpgrade
+                      ? 'Đã gửi yêu cầu nâng cấp'
+                      : 'Nâng cấp thành Seller'}
+                  </button>
+                )}
               </td>
             </tr>
             <tr className="uk-flex uk-flex-middle">
