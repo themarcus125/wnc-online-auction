@@ -4,7 +4,7 @@ import { CategoryDoc } from '@/category/category.schema';
 
 export interface Product {
   name: string;
-  description: string;
+  descriptions: string[];
   category: PopulatedDoc<CategoryDoc>;
   images: string[];
   seller: PopulatedDoc<UserDoc>;
@@ -13,7 +13,7 @@ export interface Product {
   buyPrice?: number;
   currentPrice?: number;
   currentBidder?: PopulatedDoc<UserDoc>;
-  expiredAt: Date;
+  expiredIn: number;
   createdAt: Date;
 }
 
@@ -22,7 +22,7 @@ export type ProductDoc = Product & Document;
 export const ProductSchema = new Schema<ProductDoc>(
   {
     name: { type: String, required: true, maxlength: 30 },
-    description: { type: String, required: true, maxlength: 200 },
+    descriptions: { type: [String], required: true },
     category: { type: Schema.Types.ObjectId, required: true, ref: 'Category' },
     images: {
       type: [String],
@@ -32,7 +32,7 @@ export const ProductSchema = new Schema<ProductDoc>(
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
-    expiredAt: { type: Date, require: true },
+    expiredIn: { type: Number, require: true },
   },
   { timestamps: true },
 );

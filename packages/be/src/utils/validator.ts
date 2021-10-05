@@ -16,7 +16,7 @@ export const notNull = (val?: any): boolean => {
 };
 
 export const length = (
-  val?: string,
+  val?: string | Array<any>,
   minLength?: number,
   maxLength?: number,
 ) => {
@@ -41,4 +41,8 @@ export const validateOtp = (val?: any) => {
   const OTP_LENGTH = getOtpLength();
   if (val.length !== OTP_LENGTH) return false;
   return true;
+};
+
+export const isInt = (val?: any) => {
+  return Number.isInteger(val);
 };
