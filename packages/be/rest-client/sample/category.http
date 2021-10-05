@@ -1,28 +1,44 @@
-@host = localhost
-@port = 3000
-@baseurl = http://{{host}}:{{port}}/api/category
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVmOTM2MTRjMTRjYWQ2ZTlkOGM2YSIsImVtYWlsIjoiaHV5YWRtaW5AZ21haWwuY29tIiwicm9sZSI6MiwiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMDI0MzQ2LCJleHAiOjE2MzMwMjc5NDZ9.r8-JdbPDLoaDedGYOIUOEh1oqidHdg-FUu4FB9zJHLA
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoiaHV5dGVzdDJAZ21haWwuY29tIiwicm9sZSI6MCwiaXNWZXJpZmllZCI6ZmFsc2UsImlhdCI6MTYzMzAyNDQxMywiZXhwIjoxNjMzMDI4MDEzfQ.cXv3AExHgA2glxMGQIKcNQDqF0gaGDqRX_7A_SeFacE
-### Create parent
-POST {{baseurl}}
-authorization: Bearer {{adminToken}}
+@baseurl = {{$dotenv baseUrl}}/category
+@adminToken = {{$dotenv adminToken}}
+@userToken = {{$dotenv biddlerToken}}
+@loginToken = {{login.response.body.$.accessToken}}
+@token = {{loginToken}}
+@parent = {{newParentId}}
+###
+# @name login
+POST {{$dotenv baseUrl}}/auth/login
 content-type: application/json
 
 {
-    "name": "parent 2"
+  "email": "huyadmin@gmail.com",
+  "password": "123456"
+}
+
+### Create parent
+# @name newParent
+@newParentId = {{newParent.response.body.$._id}}
+POST {{baseurl}}
+authorization: Bearer {{token}}
+content-type: application/json
+
+{
+    "name": "parent 10 - 6 2"
 }
 ### Create child
 POST {{baseurl}}
-authorization: Bearer {{adminToken}}
+authorization: Bearer {{token}}
 content-type: application/json
 
 {
     "name": "child 12",
-    "parent": "6155f9c314c14cad6e9d8c6f"
+    "parent": "{{parent}}"
 }
 ### Get all parent
+# @name parents
+@parentId = {{parent.response.body.$[0]._id}}
 Get {{baseurl}}
 content-type: application/json
-### Get all child
-Get {{baseurl}}?parent=6155f9c314c14cad6e9d8c6f
+### Get all child of parent
+Get {{baseurl}}
+    ?parent={{parent}}
 content-type: application/json

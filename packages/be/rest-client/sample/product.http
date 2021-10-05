@@ -1,0 +1,27 @@
+@host = localhost
+@port = 3000
+@baseUrl = {{$dotenv baseUrl}}/product
+
+# USER
+### Seller login
+# @name sellerLogin
+@sellerToken = {{sellerLogin.response.body.$.accessToken}}
+POST {{$dotenv baseUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "tthuykh99@gmail.com",
+  "password": "123456"
+}
+### Create product
+@categoryId = 615c9a3684124202d6dfc8a9
+POST {{baseUrl}}/user
+authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+    "name": "Iphone 13",
+    "descriptions": ["description 1"],
+    "category": "{{categoryId}}",
+    
+}

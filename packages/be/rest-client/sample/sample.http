@@ -1,5 +1,0 @@
-@host = localhost
-@port = 3000
-@baseurl = http://{{host}}:{{port}}
-###
-GET {{baseurl}}/status

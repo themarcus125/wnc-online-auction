@@ -1,9 +1,9 @@
 @host = localhost
 @port = 3000
 @baseurl = http://{{host}}:{{port}}/api/admin
-@satoken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTViZjY5ZDJjMzJkNDQ4MzEwODk5MSIsImVtYWlsIjoic3VwZXJAYWRtaW4uY29tIiwicm9sZSI6MywiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMDI0MTgyLCJleHAiOjE2MzMwMjc3ODJ9.d_qRavI4hWs67kpwbmRwH2l8T-PBc_chbSG_kqTiVx0
-@adtoken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVmOTM2MTRjMTRjYWQ2ZTlkOGM2YSIsImVtYWlsIjoiaHV5YWRtaW5AZ21haWwuY29tIiwicm9sZSI6MiwiaXNWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjMzMTg0MDE1LCJleHAiOjE2MzMxODc2MTV9.KU3wrxxB4VM3F1cujSuznsCdjf5HW2zPCy8um7yy48U
 ### Super admin Login 
+# @name salogin
+@satoken = {{salogin.response.body.$.accessToken}}
 POST http://{{host}}:{{port}}/api/auth/login
 content-type: application/json
 
@@ -17,12 +17,14 @@ content-type: application/json
 authorization: Bearer {{satoken}}
 
 {
-  "email": "huyadmin@gmail.com",
+  "email": "huyadmin2@gmail.com",
   "name": "huy",
   "address": "this is a address",
   "password": "123456"
 }
 ### Admin login
+# @name alogin
+@adtoken = {{alogin.response.body.$.accessToken}}
 POST http://{{host}}:{{port}}/api/auth/login
 content-type: application/json
 
@@ -30,12 +32,33 @@ content-type: application/json
   "email": "huyadmin@gmail.com",
   "password": "123456"
 }
+### Create user
+POST {{baseurl}}/user
+content-type: application/json
+authorization: Bearer {{adtoken}}
+
+{
+  "email": "huybidder@gmail.com",
+  "name": "huy",
+  "address": "this is a address",
+  "password": "123456"
+}
+### Update User
+@userId = 615c7d07f18bd04a3748dddb
+PATCH {{baseurl}}/user/{{userId}}
+content-type: application/json
+authorization: Bearer {{adtoken}}
+
+{
+  "isVerified": true
+}
 ### Get pending upgrade request
 GET {{baseurl}}/upgrade-request
 content-type: application/json
 authorization: Bearer {{adtoken}}
 
 ### Approved request
-PATCH  {{baseurl}}/upgrade-request/615868fd9958f7740f52fd51/approve
+@requestId = 615868fd9958f7740f52fd51
+PATCH  {{baseurl}}/upgrade-request/{{requestId}}/approve
 content-type: application/json
 authorization: Bearer {{adtoken}}

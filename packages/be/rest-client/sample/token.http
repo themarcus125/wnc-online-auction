@@ -1,0 +1,36 @@
+@baseUrl = {{$dotenv baseUrl}}/auth/login
+# @name Bidder
+POST {{baseUrl}}
+content-type: application/json
+
+{
+  "email": "huybidder@gmail.com",
+  "password": "123456"
+}
+###
+# @name Seller
+POST {{baseUrl}}
+content-type: application/json
+
+{
+  "email": "tthuykh99@gmail.com",
+  "password": "123456"
+}
+###
+# @name Admin
+POST {{baseUrl}}
+content-type: application/json
+
+{
+  "email": "huyadmin@gmail.com",
+  "password": "123456"
+}
+###
+# @name SuperAdmin
+POST {{baseUrl}}
+content-type: application/json
+
+{
+  "email": "super@admin.com",
+  "password": "uEqxtQNNOeKVP54h"
+}
