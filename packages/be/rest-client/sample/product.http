@@ -13,15 +13,79 @@ content-type: application/json
   "email": "tthuykh99@gmail.com",
   "password": "123456"
 }
+### Get all product
+GET {{baseUrl}}
+### Get all child category
+# @name childCategories
+@categoryId = {{childCategories.response.body.$[1]._id}}
+Get {{$dotenv baseUrl}}/category
+    ?mode=child
 ### Create product
-@categoryId = 615c9a3684124202d6dfc8a9
 POST {{baseUrl}}/user
 authorization: Bearer {{sellerToken}}
-Content-Type: application/json
+Content-Type:  multipart/form-data; boundary=---XXX---
 
-{
-    "name": "Iphone 13",
-    "descriptions": ["description 1"],
-    "category": "{{categoryId}}",
-    
-}
+-----XXX---
+Content-Disposition: form-data; name="name"
+
+Product 1
+-----XXX---
+Content-Disposition: form-data; name="description"
+
+Product 1 of tthuykh99@gmail.com
+-----XXX---
+Content-Disposition: form-data; name="category"
+
+{{categoryId}}
+-----XXX---
+Content-Disposition: form-data; name="startPrice"
+
+10000
+-----XXX---
+Content-Disposition: form-data; name="stepPrice"
+
+10000
+-----XXX---
+Content-Disposition: form-data; name="expiredIn"
+
+24
+-----XXX---
+Content-Disposition: form-data; name="productImages"; filename="avatar.png"
+Content-Type: image/png
+
+< ../../public/images/pepekora.png
+-----XXX---
+Content-Disposition: form-data; name="productImages"; filename="image1.png"
+Content-Type: image/png
+
+< ../../public/images/copium.png
+-----XXX---
+Content-Disposition: form-data; name="productImages"; filename="image2.png"
+Content-Type: image/png
+
+< ../../public/images/pepe-angry.png
+-----XXX---
+Content-Disposition: form-data; name="productImages"; filename="image3.png"
+Content-Type: image/png
+
+< ../../public/images/pepe-hand.png
+-----XXX-----
+### Test upload
+POST http://localhost:3000/upload
+Content-Type:  multipart/form-data; boundary=---XXX---
+
+-----XXX---
+Content-Disposition: form-data; name="title"
+
+error
+-----XXX---
+Content-Disposition: form-data; name="multipleFiles"; filename="pepe-hand.png"
+Content-Type: image/png
+
+< ../../public/images/pepe-hand.png
+-----XXX---
+Content-Disposition: form-data; name="multipleFiles"; filename="pepe-angry.png"
+Content-Type: image/png
+
+< ../../public/images/pepe-angry.png
+-----XXX-----

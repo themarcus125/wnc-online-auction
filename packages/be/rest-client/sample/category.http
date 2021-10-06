@@ -3,7 +3,7 @@
 @userToken = {{$dotenv biddlerToken}}
 @loginToken = {{login.response.body.$.accessToken}}
 @token = {{loginToken}}
-@parent = {{newParentId}}
+@parent = {{parentId}}
 ###
 # @name login
 POST {{$dotenv baseUrl}}/auth/login
@@ -35,10 +35,16 @@ content-type: application/json
 }
 ### Get all parent
 # @name parents
-@parentId = {{parent.response.body.$[0]._id}}
+@parentId = {{parents.response.body.$[0]._id}}
 Get {{baseurl}}
+    ?mode=parent
+content-type: application/json
+### Get all child
+Get {{baseurl}}
+    ?mode=child
 content-type: application/json
 ### Get all child of parent
 Get {{baseurl}}
-    ?parent={{parent}}
+    ?mode=child
+    &parent={{parent}}
 content-type: application/json

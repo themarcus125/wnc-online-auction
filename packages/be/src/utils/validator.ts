@@ -1,4 +1,5 @@
 import { getOtpLength } from '@/otp/otp.service';
+import { safeInt } from './parser';
 
 export const validateEmail = (val?: string): boolean => {
   if (!val) return false;
@@ -43,6 +44,12 @@ export const validateOtp = (val?: any) => {
   return true;
 };
 
-export const isInt = (val?: any) => {
-  return Number.isInteger(val);
+export const validateInt = (max?: Number, min?: Number) => (val?: any) => {
+  const [canParse, value] = safeInt(val);
+  if (!canParse) {
+    return false;
+  }
+  if (max && value > max) return false;
+  if (min && value < min) return false;
+  return true;
 };

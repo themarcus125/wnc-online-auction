@@ -41,6 +41,11 @@ export default class RepositoryService<DocT, CreateDtoT> {
   }
 }
 
+export type ModeQuery<DocT, T = DocT> = (
+  mode: string,
+  payload: T,
+) => FilterQuery<DocT>;
+
 export const createBaseService = <DocT, CreateDtoT>(model: Model<DocT>) => {
   return new RepositoryService<DocT, CreateDtoT>(model);
 };

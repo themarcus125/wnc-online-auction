@@ -1,15 +1,65 @@
-import { length, notNull } from '@/utils/validator';
+import { removeAll } from '@/utils/file';
+import { safePositive } from '@/utils/parser';
+import { length, notNull, validateInt } from '@/utils/validator';
 import { RequestHandler } from 'express';
 import { CreateProductDTO } from './product.dto';
 
-export const createProductValidator: RequestHandler = (req, res, next) => {
+export const validateCreateProductBody = (body: any) => {
   const {
     name,
-    descriptions,
+    description,
     category,
-    images,
     startPrice,
     stepPrice,
+    buyPrice,
+    expiredIn,
+  } = body;
+  if (!notNull(description)) {
+    return 'DESC';
+  }
+  body.descriptions = [description];
+  if (!length(name, 1, 30)) {
+    return 'NAME';
+  }
+  if (!notNull(category)) {
+    return 'CAT';
+  }
+  const [safeStartPrice, startPriceValue] = safePositive(startPrice);
+  if (!safeStartPrice) {
+    return 'SPRICE';
+  }
+  body.startPrice = startPriceValue;
+  const [safeStepPrice, stepPriceValue] = safePositive(stepPrice);
+  if (!safeStepPrice) {
+    return 'STPRICE';
+  }
+  body.stepPrice = stepPriceValue;
+  if (notNull(buyPrice)) {
+    const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
+    if (!safeBuyPrice) {
+      return 'BPRICE';
+    }
+    body.buyPrice = buyPriceValue;
+  }
+  if (!validateInt(undefined, 24)(expiredIn)) {
+    return 'EXP';
+  }
+  return 'VALID';
+};
+
+export const createProductValidator: RequestHandler = (req, res, next) => {
+  if (!notNull(req.body.description)) {
+    return res.status(400).json({
+      error: 'INVALID_DESC',
+    });
+  }
+  req.body.descriptions = [req.body.description];
+  const {
+    name,
+    category,
+    startPrice,
+    stepPrice,
+    buyPrice,
     expiredIn,
   }: CreateProductDTO = req.body;
   if (!length(name, 1, 30)) {
@@ -17,35 +67,51 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_NAME',
     });
   }
-  if (!length(descriptions, 1, 1)) {
-    return res.status(400).json({
-      error: 'INVALID_DESC',
-    });
-  }
   if (!notNull(category)) {
     return res.status(400).json({
       error: 'INVALID_CAT',
     });
   }
-  if (!length(images, 4)) {
-    return res.status(400).json({
-      error: 'INVALID_AVATAR_OR_SUBIMAGES',
-    });
-  }
-  if (!notNull(startPrice)) {
+  const [safeStartPrice, startPriceValue] = safePositive(startPrice);
+  if (!safeStartPrice) {
     return res.status(400).json({
       error: 'INVALID_START_PRICE',
     });
   }
-  if (!notNull(stepPrice)) {
+  req.body.startPrice = startPriceValue;
+  const [safeStepPrice, stepPriceValue] = safePositive(stepPrice);
+  if (!safeStepPrice) {
     return res.status(400).json({
       error: 'INVALID_STEP_PRICE',
     });
   }
-  if (!notNull(expiredIn)) {
+  req.body.stepPrice = stepPriceValue;
+  if (notNull(buyPrice)) {
+    const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
+    if (!safeBuyPrice) {
+      return res.status(400).json({
+        error: 'INVALID_BUY_PRICE',
+      });
+    }
+    req.body.buyPrice = buyPriceValue;
+  }
+  if (!validateInt(undefined, 24)(expiredIn)) {
     return res.status(400).json({
       error: 'INVALID_EXPIRED_TIME',
     });
   }
+  next();
+};
+
+export const mapImagesToBody: RequestHandler = (req, res, next) => {
+  const files = req.files as Express.Multer.File[];
+  const filePaths = files.map((file) => `${file.destination}/${file.filename}`);
+  if (!length(files, 4)) {
+    removeAll(filePaths);
+    return res.status(400).json({
+      error: 'INVALID_AVATAR_OR_SUBIMAGES',
+    });
+  }
+  req.body.images = filePaths;
   next();
 };

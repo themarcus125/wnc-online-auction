@@ -5,6 +5,7 @@ import path from 'path';
 import type { ErrorRequestHandler } from 'express';
 
 import router from './routers';
+import { badRequestHandler } from './error';
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,7 @@ app.use('*', (req, res) => {
   });
 });
 
+app.use(badRequestHandler);
 app.use(((err, req, res, next) => {
   res.status(err.status || 500);
   if (err.name) {
@@ -29,7 +31,7 @@ app.use(((err, req, res, next) => {
       error: err.name,
     });
   }
-  res.json({
+  return res.json({
     message: 'Internal server error',
     error: err.message,
   });

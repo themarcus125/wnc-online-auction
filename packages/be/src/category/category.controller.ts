@@ -1,6 +1,10 @@
 import { RequestHandler } from 'express';
-import { CreateCategoryDTO, UpdateCategoryDTO } from './category.dto';
-import CategoryService from './category.service';
+import {
+  CreateCategoryDTO,
+  QueryCategoryDTO,
+  UpdateCategoryDTO,
+} from './category.dto';
+import CategoryService, { modeQuery } from './category.service';
 
 const getCategory: RequestHandler = async (req, res, next) => {
   try {
@@ -14,15 +18,10 @@ const getCategory: RequestHandler = async (req, res, next) => {
 
 const getCategories: RequestHandler = async (req, res, next) => {
   try {
-    const { parent, all } = req.query;
+    const { parent, mode, populate }: QueryCategoryDTO = req.query;
     const categories = await CategoryService.find(
-      all === 'true'
-        ? { isDel: false }
-        : {
-            isDel: false,
-            parent: parent ? parent : undefined,
-          },
-    );
+      modeQuery(mode || '', { parent }),
+    ).populate(populate === 'true' ? 'parent' : undefined);
     res.json(categories);
   } catch (e) {
     next(e);

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="fileForm" enctype="multipart/form-data">
+      <!-- <div><input type="text" name="title" /></div> -->
+      <div>
+        <input id="file" type="file" name="multipleFiles" multiple="multiple" />
+      </div>
+      <input type="submit" value="Upload" />
+    </form>
+  </body>
+  <script>
+    const form = document.querySelector('#fileForm');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        // formData.append('title[]', 'test');
+        console.log(formData);
+        console.log(formData.getAll('title'));
+        console.log(formData.getAll('multipleFiles'));
+        const response = await fetch('http:localhost:3000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+      } catch (e) {}
+    };
+  </script>
+</html>

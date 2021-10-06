@@ -95,7 +95,7 @@ export const roleGuard =
     const jwtPayload: JWTPayload = res.locals.jwtPayload;
     if (!jwtPayload) {
       return res.status(401).json({
-        error: 'INVALID_TOKEN',
+        error: 'NO_ROLE_PAYLOAD',
       });
     }
     if (exact) {
