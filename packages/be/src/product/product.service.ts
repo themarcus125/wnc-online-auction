@@ -1,8 +1,8 @@
-import BaseService from '@/utils/base.service';
+import RepositoryService from '@/db/repository.service';
 import { CreateProductDTO } from './product.dto';
 import { ProductDoc, ProductModel } from './product.schema';
 
-class CategoryService extends BaseService<ProductDoc, CreateProductDTO> {
+class CategoryService extends RepositoryService<ProductDoc, CreateProductDTO> {
   constructor() {
     super(ProductModel);
   }

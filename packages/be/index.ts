@@ -1,7 +1,8 @@
 import { appConfig } from '~/config';
 import { serverStart } from '@/utils/logs';
-import app from './app';
-import { connectDB, seedDB } from './mongoose';
+import app from '@/app';
+import { connectDB } from '@/db/connect';
+import { seedDB } from '@/db/seed';
 
 const bootstrap = async () => {
   await connectDB();

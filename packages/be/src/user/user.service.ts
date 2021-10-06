@@ -1,6 +1,6 @@
 import { CreateUserDTO } from './user.dto';
 import { UserModel, UserDoc, UserRole } from './user.schema';
-import BaseService from '@/utils/base.service';
+import RepositoryService from '@/db/repository.service';
 import { validateEmail } from '@/utils/validator';
 import { getHashedPassword } from '@/utils/password';
 import {
@@ -11,7 +11,7 @@ import {
 } from './user.message';
 import { appConfig } from '~/config';
 
-class UserService extends BaseService<UserDoc, CreateUserDTO> {
+class UserService extends RepositoryService<UserDoc, CreateUserDTO> {
   constructor() {
     super(UserModel);
   }

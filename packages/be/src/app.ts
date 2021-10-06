@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 import type { ErrorRequestHandler } from 'express';
 
 import router from './routers';
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(router);
 app.use('*', (req, res) => {

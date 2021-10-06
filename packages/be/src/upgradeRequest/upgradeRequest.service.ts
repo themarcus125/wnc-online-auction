@@ -1,5 +1,5 @@
 import { UserDoc, UserRole } from '@/user/user.schema';
-import BaseService from '@/utils/base.service';
+import RepositoryService from '@/db/repository.service';
 import { CreateRequestDTO } from './upgradeRequest.dto';
 import {
   RequestStatus,
@@ -7,7 +7,7 @@ import {
   UpgradeRequestModel,
 } from './upgradeRequest.schema';
 
-class UpgradeRequestService extends BaseService<
+class UpgradeRequestService extends RepositoryService<
   UpgradeRequestDoc,
   CreateRequestDTO
 > {

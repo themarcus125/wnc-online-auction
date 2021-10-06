@@ -1,6 +1,6 @@
 import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
 
-export default class BaseService<DocT, CreateDtoT> {
+export default class RepositoryService<DocT, CreateDtoT> {
   model: Model<DocT>;
   constructor(model: Model<DocT>) {
     this.model = model;
@@ -42,5 +42,5 @@ export default class BaseService<DocT, CreateDtoT> {
 }
 
 export const createBaseService = <DocT, CreateDtoT>(model: Model<DocT>) => {
-  return new BaseService<DocT, CreateDtoT>(model);
+  return new RepositoryService<DocT, CreateDtoT>(model);
 };
