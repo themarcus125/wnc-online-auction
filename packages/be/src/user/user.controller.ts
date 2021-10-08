@@ -246,8 +246,13 @@ export const createRequest: RequestHandler = async (req, res, next) => {
 export const getUserRequest: RequestHandler = async (req, res, next) => {
   try {
     const user: UserDoc = res.locals.user;
-    const requests = await UpgradeRequestService.find({ user: user._id });
-    const canRequest = await UpgradeRequestService.canRequest(user, requests);
+    const requests = await UpgradeRequestService.find({ user: user._id }).sort({
+      createdAt: -1,
+    });
+    const canRequest = await UpgradeRequestService.canRequest(
+      user,
+      requests[0],
+    );
     res.json({ requests, canRequest });
   } catch (e) {
     next(e);

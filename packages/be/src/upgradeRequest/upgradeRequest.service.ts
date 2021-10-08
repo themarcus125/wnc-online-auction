@@ -14,20 +14,21 @@ class UpgradeRequestService extends RepositoryService<
   constructor() {
     super(UpgradeRequestModel);
   }
-  async canRequest(user: UserDoc, requestsP?: UpgradeRequestDoc[]) {
+  async canRequest(user: UserDoc, lastedRequest?: UpgradeRequestDoc) {
     if (user.role !== UserRole.BIDDER) return false;
     if (!user.isVerified) return false;
-    const requests = requestsP
-      ? requestsP
-      : await this.find({
-          user: user._id,
-        }).sort({ createdAt: 1 });
-    return this.canRequestWithRequests(requests);
+    const request =
+      lastedRequest !== undefined
+        ? lastedRequest
+        : await this.findOne({
+            user: user._id,
+          }).sort({ createdAt: -1 });
+    return this.canRequestWithLastestRequest(request);
   }
-  canRequestWithRequests(requests: UpgradeRequestDoc[]) {
-    if (!requests.length) return true;
-    if (requests[0].status !== RequestStatus.PENDING) return true;
-    return this.isExpired(requests[0]);
+  canRequestWithLastestRequest(request: UpgradeRequestDoc | null | undefined) {
+    if (!request) return true;
+    if (request.status !== RequestStatus.PENDING) return true;
+    return this.isExpired(request);
   }
   isExpired({ createdAt, expiredIn }: UpgradeRequestDoc) {
     const isExpired =
