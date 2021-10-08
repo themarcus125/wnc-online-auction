@@ -10,32 +10,17 @@ import {
   ResetPasswordOtpMessage,
 } from './user.message';
 import { appConfig } from '~/config';
+import { UserSeed } from '@/db/seed';
 
 class UserService extends RepositoryService<UserDoc, CreateUserDTO> {
   constructor() {
     super(UserModel);
   }
 
-  async createSA() {
-    const secret = appConfig.jwtSecret;
-    const hashedSecret = getHashedPassword(secret);
-    return this.model
-      .create({
-        email: 'super@admin.com',
-        name: 'superadmin',
-        address: 'superadmin',
-        password: hashedSecret,
-        role: UserRole.SUPPER_ADMIN,
-        isVerified: true,
-      })
-      .catch((e) =>
-        this.model.findOneAndUpdate(
-          {
-            email: 'super@admin.com',
-          },
-          { password: hashedSecret },
-        ),
-      );
+  async seed(userSeeds: UserSeed[]) {
+    const { mode } = appConfig;
+    if (mode !== 'development') return null;
+    return this.model.insertMany(userSeeds).catch((e) => null);
   }
 
   createAdmin({ email, name, address, password }: CreateUserDTO) {

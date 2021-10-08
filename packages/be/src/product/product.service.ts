@@ -3,7 +3,6 @@ import { parseIntDefault } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import {
   productJoinCategoryPipeline,
-  remainingTimePipeline,
   ProductDoc,
   ProductModel,
 } from './product.schema';
@@ -18,16 +17,15 @@ class CategoryService
 
   async modeFind(mode = '', { category, limit, skip }: QueryProductDTO = {}) {
     if (mode === 'finishSoon') {
-      const products: ProductDoc[] = await this.getModel()
-        .aggregate(remainingTimePipeline)
-        .match({
-          $expr: {
-            $gt: ['$remainingTime', 0],
-          },
+      return await this.find({
+        expiredAt: {
+          $gt: new Date(),
+        },
+      })
+        .sort({
+          expiredAt: 1,
         })
-        .sort({ remainingTime: 1 })
         .limit(parseIntDefault(limit, 5));
-      return products;
     }
     if (mode === 'bidCount') {
       return await this.find({})
@@ -44,15 +42,15 @@ class CategoryService
         .limit(parseIntDefault(limit, 5));
     }
     if (mode == 'search') {
-      const products: ProductDoc[] = await this.getModel()
-        .aggregate(productJoinCategoryPipeline)
-        .skip(parseIntDefault(skip, 0))
-        .limit(parseIntDefault(limit, 10));
-      return products;
+      // const products: ProductDoc[] = await this.getModel()
+      //   .aggregate(productJoinCategoryPipeline)
+      //   .skip(parseIntDefault(skip, 0))
+      //   .limit(parseIntDefault(limit, 10));
+      // return products;
     }
     return await this.find({})
       .sort({
-        createdAt: -1,
+        _id: -1,
       })
       .skip(parseIntDefault(skip, 0))
       .limit(parseIntDefault(limit, 10));

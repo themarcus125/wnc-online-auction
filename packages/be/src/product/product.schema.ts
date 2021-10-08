@@ -14,7 +14,7 @@ export interface Product {
   currentPrice: number;
   currentBidder?: PopulatedDoc<UserDoc>;
   bidCount: number;
-  expiredIn: number;
+  expiredAt: Date;
   createdAt: Date;
   remainingTime?: number;
 }
@@ -23,7 +23,7 @@ export type ProductDoc = Product & Document;
 
 export const ProductSchema = new Schema<ProductDoc>(
   {
-    name: { type: String, required: true, maxlength: 30 },
+    name: { type: String, required: true, maxlength: 30, index: 'text' },
     descriptions: { type: [String], required: true },
     category: { type: Schema.Types.ObjectId, required: true, ref: 'Category' },
     images: {
@@ -34,15 +34,14 @@ export const ProductSchema = new Schema<ProductDoc>(
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
-    currentPrice: { type: Number, require: true },
+    currentPrice: { type: Number, require: true, index: 1 },
     currentBidder: { type: Schema.Types.ObjectId, ref: 'User' },
-    bidCount: { type: Number, default: 0 },
-    expiredIn: { type: Number, require: true },
+    bidCount: { type: Number, default: 0, index: 1 },
+    expiredAt: { type: Date, require: true, index: 1 },
   },
   { timestamps: true },
 );
 export const ProductModel = model<ProductDoc>('Product', ProductSchema);
-ProductSchema.index({ name: 'text' });
 
 export const remainingTimePipeline: any[] = [
   {

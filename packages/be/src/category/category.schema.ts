@@ -10,7 +10,7 @@ export interface Category {
 
 export const CategorySchema = new Schema<CategoryDoc>(
   {
-    name: { type: String, required: true, maxlength: 30 },
+    name: { type: String, required: true, maxlength: 30, index: 'text' },
     parent: { type: Schema.Types.ObjectId, ref: 'Category' },
     isDel: { type: Boolean, default: false },
   },
@@ -18,4 +18,3 @@ export const CategorySchema = new Schema<CategoryDoc>(
 );
 
 export const CategoryModel = model<CategoryDoc>('Category', CategorySchema);
-CategorySchema.index({ name: 'text' });

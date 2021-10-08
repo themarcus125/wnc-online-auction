@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { JWTPayload } from '@/auth/auth.dto';
 import {
   CreateProductDTO,
+  CreateProductRequestDTO,
   QueryProductDTO,
   UpdateProductDTO,
 } from './product.dto';
@@ -18,7 +19,7 @@ const createProduct: RequestHandler = async (req, res, next) => {
     startPrice,
     stepPrice,
     expiredIn,
-  }: CreateProductDTO = req.body;
+  }: CreateProductRequestDTO = req.body;
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const product = await ProductService.create({
@@ -30,8 +31,8 @@ const createProduct: RequestHandler = async (req, res, next) => {
       startPrice,
       stepPrice,
       buyPrice,
+      expiredAt: new Date(Date.now() + expiredIn * 1000 * 3600),
       currentPrice: startPrice,
-      expiredIn,
     });
     res.json(product);
   } catch (e) {

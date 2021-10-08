@@ -22,7 +22,7 @@ class UpgradeRequestService extends RepositoryService<
         ? lastedRequest
         : await this.findOne({
             user: user._id,
-          }).sort({ createdAt: -1 });
+          }).sort({ _id: -1 });
     return this.canRequestWithLastestRequest(request);
   }
   canRequestWithLastestRequest(request: UpgradeRequestDoc | null | undefined) {

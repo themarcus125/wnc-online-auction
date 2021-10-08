@@ -2,7 +2,7 @@ import { removeAll } from '@/utils/file';
 import { safePositive } from '@/utils/parser';
 import { length, notNull, validateInt } from '@/utils/validator';
 import { RequestHandler } from 'express';
-import { CreateProductDTO } from './product.dto';
+import { CreateProductRequestDTO } from './product.dto';
 
 export const validateCreateProductBody = (body: any) => {
   const {
@@ -42,7 +42,7 @@ export const validateCreateProductBody = (body: any) => {
     body.buyPrice = buyPriceValue;
   }
   if (!validateInt(undefined, 24)(expiredIn)) {
-    return 'EXP';
+    return 'EXP_HOUR';
   }
   return 'VALID';
 };
@@ -61,7 +61,7 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
     stepPrice,
     buyPrice,
     expiredIn,
-  }: CreateProductDTO = req.body;
+  }: CreateProductRequestDTO = req.body;
   if (!length(name, 1, 30)) {
     return res.status(400).json({
       error: 'INVALID_NAME',
@@ -97,7 +97,7 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
   }
   if (!validateInt(undefined, 24)(expiredIn)) {
     return res.status(400).json({
-      error: 'INVALID_EXPIRED_TIME',
+      error: 'INVALID_EXPIRED_TIME_HOUR',
     });
   }
   next();
