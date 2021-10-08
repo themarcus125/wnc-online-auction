@@ -18,3 +18,4 @@ export const CategorySchema = new Schema<CategoryDoc>(
 );
 
 export const CategoryModel = model<CategoryDoc>('Category', CategorySchema);
+CategorySchema.index({ name: 'text' });

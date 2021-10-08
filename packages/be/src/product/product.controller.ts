@@ -1,6 +1,10 @@
 import { RequestHandler } from 'express';
 import { JWTPayload } from '@/auth/auth.dto';
-import { CreateProductDTO, UpdateProductDTO } from './product.dto';
+import {
+  CreateProductDTO,
+  QueryProductDTO,
+  UpdateProductDTO,
+} from './product.dto';
 import ProductService from './product.service';
 import { removeAll } from '@/utils/file';
 
@@ -23,9 +27,10 @@ const createProduct: RequestHandler = async (req, res, next) => {
       descriptions,
       category,
       images,
-      buyPrice,
       startPrice,
       stepPrice,
+      buyPrice,
+      currentPrice: startPrice,
       expiredIn,
     });
     res.json(product);
@@ -37,7 +42,12 @@ const createProduct: RequestHandler = async (req, res, next) => {
 
 const getProducts: RequestHandler = async (req, res, next) => {
   try {
-    const products = await ProductService.find({});
+    const { mode, category, limit, skip }: QueryProductDTO = req.query;
+    const products = await ProductService.modeFind(mode, {
+      category,
+      limit,
+      skip,
+    });
     res.json(products);
   } catch (e) {
     next(e);

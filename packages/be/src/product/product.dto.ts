@@ -8,6 +8,7 @@ export interface CreateProductDTO {
   startPrice: number;
   stepPrice: number;
   expiredIn: number;
+  currentPrice?: number;
 }
 
 export interface UpdateProductDTO {
@@ -22,4 +23,11 @@ export interface UpdateProductDTO {
   expiredIn: number;
   currentBidder?: string;
   currentPrice?: number;
+}
+
+export interface QueryProductDTO {
+  mode?: string;
+  category?: string;
+  limit?: string;
+  skip?: string;
 }

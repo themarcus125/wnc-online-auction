@@ -1,6 +1,6 @@
-import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
+import { FilterQuery, Model, QueryOptions, UpdateQuery, Query } from 'mongoose';
 
-export default class RepositoryService<DocT, CreateDtoT> {
+export default abstract class RepositoryService<DocT, CreateDtoT> {
   model: Model<DocT>;
   constructor(model: Model<DocT>) {
     this.model = model;
@@ -41,11 +41,7 @@ export default class RepositoryService<DocT, CreateDtoT> {
   }
 }
 
-export type ModeQuery<DocT, T = DocT> = (
-  mode: string,
-  payload: T,
-) => FilterQuery<DocT>;
-
-export const createBaseService = <DocT, CreateDtoT>(model: Model<DocT>) => {
-  return new RepositoryService<DocT, CreateDtoT>(model);
-};
+export interface ModeQuery<DocT, QueryDtoT> {
+  modeFilterQuery?(mode: string, payload: QueryDtoT): FilterQuery<DocT>;
+  modeFind(mode: string, payload: QueryDtoT): Promise<DocT[]>;
+}

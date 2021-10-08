@@ -4,7 +4,7 @@ import {
   QueryCategoryDTO,
   UpdateCategoryDTO,
 } from './category.dto';
-import CategoryService, { modeQuery } from './category.service';
+import CategoryService from './category.service';
 
 const getCategory: RequestHandler = async (req, res, next) => {
   try {
@@ -19,9 +19,10 @@ const getCategory: RequestHandler = async (req, res, next) => {
 const getCategories: RequestHandler = async (req, res, next) => {
   try {
     const { parent, mode, populate }: QueryCategoryDTO = req.query;
-    const categories = await CategoryService.find(
-      modeQuery(mode || '', { parent }),
-    ).populate(populate === 'true' ? 'parent' : undefined);
+    const categories = await CategoryService.modeFind(mode, {
+      parent,
+      populate,
+    });
     res.json(categories);
   } catch (e) {
     next(e);
