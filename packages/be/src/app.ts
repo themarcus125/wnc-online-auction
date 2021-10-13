@@ -2,10 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
-import type { ErrorRequestHandler } from 'express';
 
 import router from './routers';
-import { badRequestHandler } from './error';
+import { badRequestHandler, defaultErrorHandler } from './error';
 
 const app = express();
 app.use(cors());
@@ -23,18 +22,6 @@ app.use('*', (req, res) => {
 });
 
 app.use(badRequestHandler);
-app.use(((err, req, res, next) => {
-  res.status(err.status || 500);
-  if (err.name) {
-    return res.json({
-      message: err.message,
-      error: err.name,
-    });
-  }
-  return res.json({
-    message: 'Internal server error',
-    error: err.message,
-  });
-}) as ErrorRequestHandler);
+app.use(defaultErrorHandler);
 
 export default app;
