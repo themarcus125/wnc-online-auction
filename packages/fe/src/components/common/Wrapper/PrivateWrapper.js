@@ -3,7 +3,14 @@ import { Helmet } from 'react-helmet';
 import { navigate } from 'gatsby-link';
 
 import { getUser } from '../../../utils/auth';
-import { NOT_LOGIN, LOGIN, ADMIN } from '../../../utils/constants/role';
+import {
+  NOT_LOGIN,
+  LOGIN,
+  ADMIN,
+  SELLER,
+  ADMIN_VALUE,
+  SELLER_VALUE,
+} from '../../../utils/constants/role';
 
 const PrivateWrapper = ({ component: Component, title, role, ...rest }) => {
   const user = getUser();
@@ -21,8 +28,14 @@ const PrivateWrapper = ({ component: Component, title, role, ...rest }) => {
         return null;
       }
       break;
+    case SELLER:
+      if (Object.keys(user).length === 0 || user.role !== SELLER_VALUE) {
+        navigate('/');
+        return null;
+      }
+      break;
     case ADMIN:
-      if (Object.keys(user).length === 0 || user.role !== 2) {
+      if (Object.keys(user).length === 0 || user.role !== ADMIN_VALUE) {
         navigate('/');
         return null;
       }

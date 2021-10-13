@@ -39,7 +39,7 @@ const CategoryForm = ({ id }) => {
     setLoading(true);
     const [categoryDetailsResponse, subCategoryResponse] = await Promise.all([
       getAPI(`/api/category/${id}`),
-      getAPI(`/api/category?parent=${id}`),
+      getAPI(`/api/category?mode=child&&parent=${id}`),
     ]);
     if (categoryDetailsResponse.error || categoryDetailsResponse.isDel) {
       navigate('/admin/category');
