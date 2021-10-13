@@ -7,6 +7,7 @@ const storage = multer.diskStorage({
     cb(null, 'public/images/uploads');
   },
   filename: (req, file, cb) => {
+    console.log(file);
     const ext = path.extname(file.originalname);
     cb(null, `${file.fieldname.toLocaleLowerCase()}-${Date.now()}${ext}`);
   },
@@ -19,6 +20,7 @@ export const uploadHandler = (bodyValidator?: (body: any) => string) =>
       fileSize: 5 * 1024 * 1024,
     },
     fileFilter: (req, file, cb) => {
+      console.log(req.files);
       if (!req.body.isValidated && bodyValidator) {
         const isValid = bodyValidator(req.body);
         if (isValid !== 'VALID') {

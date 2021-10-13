@@ -1,11 +1,7 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { parseIntDefault } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
-import {
-  productJoinCategoryPipeline,
-  ProductDoc,
-  ProductModel,
-} from './product.schema';
+import { ProductDoc, ProductModel } from './product.schema';
 
 class CategoryService
   extends RepositoryService<ProductDoc, CreateProductDTO>

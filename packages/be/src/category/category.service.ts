@@ -1,6 +1,5 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { CreateCategoryDTO, QueryCategoryDTO } from './category.dto';
-import categoryRoute from './category.route';
 import { CategoryDoc, CategoryModel } from './category.schema';
 
 class CategoryService
@@ -10,6 +9,7 @@ class CategoryService
   constructor() {
     super(CategoryModel);
   }
+
   modeFilterQuery(mode = '', { parent }: QueryCategoryDTO = {}) {
     if (mode === 'parent') {
       return {
@@ -27,6 +27,7 @@ class CategoryService
       isDel: false,
     };
   }
+
   async modeFind(mode = '', { parent, populate }: QueryCategoryDTO = {}) {
     const categories = await this.find(
       this.modeFilterQuery(mode, { parent }),

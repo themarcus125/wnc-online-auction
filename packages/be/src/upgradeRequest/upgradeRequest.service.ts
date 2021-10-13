@@ -14,6 +14,7 @@ class UpgradeRequestService extends RepositoryService<
   constructor() {
     super(UpgradeRequestModel);
   }
+
   async canRequest(user: UserDoc, lastedRequest?: UpgradeRequestDoc) {
     if (user.role !== UserRole.BIDDER) return false;
     if (!user.isVerified) return false;

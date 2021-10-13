@@ -1,4 +1,4 @@
-import { CategorySeed, UserSeed } from '@/db/seed';
+import { CategorySeed, ProductSeed, UserSeed } from '@/db/seed.t';
 import { UserRole } from '@/user/user.schema';
 import { getHashedPassword } from '@/utils/password';
 import { appConfig } from '~/config';
@@ -19,7 +19,7 @@ export const userSeeds: UserSeed[] = [
     email: 'seller1@sample.com',
     name: 'seller1',
     address: 'seller1',
-    password: 'seller1',
+    password: hashedPassword,
     role: UserRole.SELLER,
     isVerified: true,
   },
@@ -27,75 +27,178 @@ export const userSeeds: UserSeed[] = [
     email: 'seller2@sample.com',
     name: 'seller2',
     address: 'seller2',
-    password: 'seller2',
+    password: hashedPassword,
     role: UserRole.SELLER,
     isVerified: true,
   },
   {
-    email: 'seller2@sample.com',
-    name: 'seller2',
-    address: 'seller2',
-    password: 'seller2',
+    email: 'seller3@sample.com',
+    name: 'seller3',
+    address: 'seller3',
+    password: hashedPassword,
     role: UserRole.SELLER,
     isVerified: true,
   },
 ];
 
-export const parentCategory: CategorySeed[] = [
+export const parentCategorySeeds: CategorySeed[] = [
   {
     name: 'parent 1',
-    childs: [
-      {
-        name: 'parent 1 child 1',
-      },
-      {
-        name: 'parent 1 child 2',
-      },
-      {
-        name: 'parent 1 child 3',
-      },
-    ],
   },
   {
     name: 'parent 2',
-    childs: [
-      {
-        name: 'parent 2 child 1',
-      },
-      {
-        name: 'parent 2 child 2',
-      },
-      {
-        name: 'parent 2 child 3',
-      },
-    ],
   },
   {
     name: 'parent 3',
-    childs: [
-      {
-        name: 'parent 3 child 1',
-      },
-      {
-        name: 'parent 3 child 2',
-      },
-      {
-        name: 'parent 3 child 3',
-      },
-    ],
   },
   {
     name: 'parent 4',
-    childs: [
-      {
-        name: 'parent 4 child 1',
-      },
-      {
-        name: 'parent 4 child 2',
-      },
-      {
-        name: 'parent 4 child 3',
-      },
+  },
+];
+
+export const childCategorySeeds: CategorySeed[] = [
+  {
+    name: 'parent 1 child 1',
+    index: 1,
+  },
+  {
+    name: 'parent 1 child 2',
+    index: 1,
+  },
+  {
+    name: 'parent 1 child 3',
+    index: 1,
+  },
+  {
+    name: 'parent 2 child 1',
+    index: 2,
+  },
+  {
+    name: 'parent 2 child 2',
+    index: 2,
+  },
+  {
+    name: 'parent 2 child 3',
+    index: 2,
+  },
+  {
+    name: 'parent 3 child 1',
+    index: 3,
+  },
+  {
+    name: 'parent 3 child 2',
+    index: 3,
+  },
+  {
+    name: 'parent 3 child 3',
+    index: 3,
+  },
+  {
+    name: 'parent 4 child 1',
+    index: 4,
+  },
+  {
+    name: 'parent 4 child 2',
+    index: 4,
+  },
+  {
+    name: 'parent 4 child 3',
+    index: 4,
+  },
+];
+
+export const expiredProductSeeds: ProductSeed[] = [
+  {
+    name: 'expiredProduct1',
+    descriptions: ['expiredProduct1 - seller1'],
+    category: 0,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
     ],
+    seller: 0,
+    startPrice: 10000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 1000),
+  },
+  {
+    name: 'expiredProduct2',
+    descriptions: ['expiredProduct2 - seller1'],
+    category: 0,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 0,
+    startPrice: 20000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 1000),
+  },
+  {
+    name: 'expiredProduct3',
+    descriptions: ['expiredProduct3 - seller1'],
+    category: 0,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 0,
+    startPrice: 30000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 1000),
+  },
+];
+
+export const productSeeds: ProductSeed[] = [
+  {
+    name: 'product1',
+    descriptions: ['product1 - seller2'],
+    category: 1,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 1,
+    startPrice: 10000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+  },
+  {
+    name: 'product2',
+    descriptions: ['product2 - seller2'],
+    category: 1,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 1,
+    startPrice: 20000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+  },
+  {
+    name: 'product3',
+    descriptions: ['product3 - seller2'],
+    category: 1,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 1,
+    startPrice: 30000,
+    stepPrice: 1000,
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
 ];

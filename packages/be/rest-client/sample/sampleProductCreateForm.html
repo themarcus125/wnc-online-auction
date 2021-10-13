@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="fileForm" enctype="multipart/form-data">
+      <input id="file" type="file" name="images" accept="image/*" multiple />
+      <input type="submit" value="Upload" />
+    </form>
+  </body>
+  <script>
+    const form = document.querySelector('#fileForm');
+    const file = document.querySelector('#file');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      console.log(file.files);
+      const formData = new FormData();
+      formData.append('name', 'Product 1');
+      formData.append('description', 'Product 1 of tthuykh99@gmail.com');
+      formData.append('category', '6155fa6914c14cad6e9d8c80');
+      formData.append('startPrice', 10000);
+      formData.append('stepPrice', 10000);
+      formData.append('expiredIn', 24);
+      formData.append('productImages', file.files[0]);
+      formData.append('productImages', file.files[1]);
+      formData.append('productImages', file.files[2]);
+      formData.append('productImages', file.files[3]);
+      console.log(formData.getAll('productImages'));
+      const response = await fetch('http:localhost:3000/api/product/user', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          authorization:
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTVjMDU0NDg1MzQxOTEzNmE4Y2YwOCIsImVtYWlsIjoidHRodXlraDk5QGdtYWlsLmNvbSIsInJvbGUiOjEsImlzVmVyaWZpZWQiOnRydWUsImlhdCI6MTYzMzk2ODQ5NywiZXhwIjoxNjMzOTcyMDk3fQ.66P-_tprmoZmLLvGGKM5cbx6nQ7VZY19oktHouiNnLQ',
+        },
+      });
+    };
+  </script>
+</html>

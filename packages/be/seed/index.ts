@@ -1,4 +1,4 @@
 import { seedDB } from '@/db/seed';
-import { userSeeds } from './seedData';
+import { childCategorySeeds, parentCategorySeeds, userSeeds } from './testData';
 
-seedDB(userSeeds);
+seedDB(userSeeds, [parentCategorySeeds, childCategorySeeds]);

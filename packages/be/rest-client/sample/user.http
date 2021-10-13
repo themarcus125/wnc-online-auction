@@ -1,6 +1,6 @@
 @baseurl = {{$dotenv baseUrl}}/user
 @token = {{login.response.body.$.accessToken}}
-@email = huybidder@gmail.com
+@email = tthuykh99@gmail.com
 @newEmail = huynonstop@gmail.com
 @password = 123456
 @newPassword = 654321

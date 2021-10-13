@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { loading } from '@/utils/logs';
-import { AppConfig, DatabaseConfig, MailConfig, JwtConfig } from './config.i';
+import { AppConfig, DatabaseConfig, MailConfig, JwtConfig } from './config.t';
 dotenvExpand(dotenv.config());
 
 const { APPNAME, NODE_ENV, HOST, PORT, JWT_SECRET_KEY, JWT_EXPIRATION_TIME } =

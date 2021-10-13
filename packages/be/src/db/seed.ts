@@ -1,23 +1,123 @@
-import { UserRole } from '@/user/user.schema';
+import CategoryService from '@/category/category.service';
 import UserService from '@/user/user.service';
+import ProductService from '@/product/product.service';
+import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
+import { CategorySeed, ProductSeed, UserSeed } from './seed.t';
+import { appConfig } from '~/config';
+import { UserDoc } from '@/user/user.schema';
+import { CategoryDoc } from '@/category/category.schema';
 
-export interface UserSeed {
-  email: string;
-  name: string;
-  address: string;
-  password: string;
-  role: UserRole;
-  isVerified: boolean;
-}
+const { mode } = appConfig;
+let userA: UserDoc[];
+let categoryA: CategoryDoc[];
 
-export interface CategorySeed {
-  name: string;
-  childs?: CategorySeed[];
-}
+const upgradeRequestSeed = async () => {
+  if (mode !== 'development') return false;
+  const model = UpgradeRequestService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  return true;
+};
 
-export const seedDB = async (userSeeds: UserSeed[]) => {
+const userSeed = async (userSeeds: UserSeed[]) => {
+  if (mode !== 'development') return false;
+  const model = UserService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  userA = await model.insertMany(userSeeds);
+  return true;
+};
+
+const categorySeed = async (
+  parentSeeds: CategorySeed[],
+  childSeeds: CategorySeed[],
+) => {
+  if (mode !== 'development') return false;
+  const model = CategoryService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  const parentData = parentSeeds.map(({ name }) => ({
+    name,
+  }));
+  const parentDoc = await model.insertMany(parentData);
+  const childData = childSeeds.map(({ name, index }) => ({
+    name,
+    parent: index ? parentDoc[index]?._id : undefined,
+  }));
+  categoryA = await model.insertMany(childData);
+  return true;
+};
+
+const productSeed = async (
+  expriedProductSeeds: ProductSeed[],
+  productSeeds: ProductSeed[],
+) => {
+  if (mode !== 'development') return false;
+  if (!userA || !categoryA) return false;
+  const model = ProductService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  await model.insertMany(
+    expriedProductSeeds.map(
+      ({
+        name,
+        descriptions,
+        images,
+        startPrice,
+        stepPrice,
+        expiredAt,
+        category,
+        seller,
+      }) => ({
+        name,
+        descriptions,
+        images,
+        startPrice,
+        stepPrice,
+        expiredAt,
+        category: categoryA[category]?._id,
+        seller: userA[seller]?._id,
+      }),
+    ),
+  );
+  await model.insertMany(
+    productSeeds.map(
+      ({
+        name,
+        descriptions,
+        images,
+        startPrice,
+        stepPrice,
+        expiredAt,
+        category,
+        seller,
+      }) => ({
+        name,
+        descriptions,
+        images,
+        startPrice,
+        stepPrice,
+        expiredAt,
+        category: categoryA[category]?._id,
+        seller: userA[seller]?._id,
+      }),
+    ),
+  );
+  return true;
+};
+
+export const seedDB = async (
+  userSeeds: UserSeed[],
+  cateSeeds: [CategorySeed[], CategorySeed[]],
+  productSeeds: [ProductSeed[], ProductSeed[]],
+) => {
   try {
-    await Promise.allSettled([UserService.seed(userSeeds)]);
+    await Promise.allSettled([
+      userSeed(userSeeds),
+      upgradeRequestSeed(),
+      categorySeed(cateSeeds[0], cateSeeds[1]),
+    ]);
+    await productSeed(productSeeds[0], productSeeds[1]);
     console.log('[MG] Seed complete');
   } catch (e) {
     console.log('[MG] Seed failed', e);

@@ -9,18 +9,10 @@ import {
   EmailOtpMessage,
   ResetPasswordOtpMessage,
 } from './user.message';
-import { appConfig } from '~/config';
-import { UserSeed } from '@/db/seed';
 
 class UserService extends RepositoryService<UserDoc, CreateUserDTO> {
   constructor() {
     super(UserModel);
-  }
-
-  async seed(userSeeds: UserSeed[]) {
-    const { mode } = appConfig;
-    if (mode !== 'development') return null;
-    return this.model.insertMany(userSeeds).catch((e) => null);
   }
 
   createAdmin({ email, name, address, password }: CreateUserDTO) {

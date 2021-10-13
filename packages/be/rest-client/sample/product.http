@@ -53,22 +53,22 @@ Content-Disposition: form-data; name="expiredIn"
 Content-Disposition: form-data; name="productImages"; filename="avatar.png"
 Content-Type: image/png
 
-< ../../public/images/pepekora.png
+< ./images/pepekora.png
 -----XXX---
 Content-Disposition: form-data; name="productImages"; filename="image1.png"
 Content-Type: image/png
 
-< ../../public/images/copium.png
+< ./images/copium.png
 -----XXX---
 Content-Disposition: form-data; name="productImages"; filename="image2.png"
 Content-Type: image/png
 
-< ../../public/images/pepe-angry.png
+< ./images/pepe-angry.png
 -----XXX---
 Content-Disposition: form-data; name="productImages"; filename="image3.png"
 Content-Type: image/png
 
-< ../../public/images/pepe-hand.png
+< ./images/pepe-hand.png
 -----XXX-----
 ### Test upload
 POST http://localhost:3000/upload
