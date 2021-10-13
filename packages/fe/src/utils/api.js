@@ -91,7 +91,7 @@ export const postFileAPIWithToken = (endpoint, formData, token, options = {}) =>
     },
     body: formData,
     ...options,
-  });
+  }).then((response) => response.json());
 
 export const deleteAPIWithToken = (endpoint, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {

@@ -6,13 +6,15 @@ import { navigate } from 'gatsby-link';
 
 import { getAPI } from '../../utils/api';
 import { getUser, logout } from '../../utils/auth';
+import { ADMIN_VALUE, SELLER_VALUE } from '../../utils/constants/role';
 
 const NavBar = () => {
   const { name: userFullname, role = 0 } = getUser();
   const [categories, setCategories] = useState([]);
 
   const loadCategories = async () => {
-    const response = await getAPI('/api/category');
+    const response = await getAPI('/api/category?mode=parent');
+    console.log(response);
     if (!response.error) {
       setCategories(response);
     }
@@ -27,7 +29,7 @@ const NavBar = () => {
     <nav id="navbar" className="uk-navbar-container" uk-navbar="">
       <ul className="uk-navbar-nav">
         <li className="uk-active">
-          <a href="#">Bootleg Ebay</a>
+          <Link to="/">BIDDLY</Link>
         </li>
         <li>
           <a href="#">Danh mục</a>
@@ -50,7 +52,6 @@ const NavBar = () => {
         </li>
       </ul>
       <NavBarInputWrapper className="uk-search uk-search-navbar uk-flex uk-flex-1 uk-flex-middle">
-        <span uk-search-icon></span>
         <NavBarInput
           className="uk-search-input"
           type="search"
@@ -88,9 +89,14 @@ const NavBar = () => {
               </div>
               <div className="uk-navbar-dropdown">
                 <ul className="uk-nav uk-navbar-dropdown-nav">
-                  {role === 2 && (
+                  {role === ADMIN_VALUE && (
                     <li>
                       <Link to={'/admin'}>Trang chủ Admin</Link>
+                    </li>
+                  )}
+                  {role === SELLER_VALUE && (
+                    <li>
+                      <Link to={'/seller/add-product'}>Thêm sản phẩm</Link>
                     </li>
                   )}
                   <li>

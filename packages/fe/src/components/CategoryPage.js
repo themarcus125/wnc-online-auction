@@ -21,7 +21,7 @@ const CategoryPage = ({ categoryId }) => {
     setLoading(true);
     const [categoryResponse, subCategoriesResponse] = await Promise.all([
       getAPI(`/api/category/${categoryId}`),
-      getAPI(`/api/category?parent=${categoryId}`),
+      getAPI(`/api/category?mode=child&&parent=${categoryId}`),
     ]);
 
     if (!categoryResponse.error) {

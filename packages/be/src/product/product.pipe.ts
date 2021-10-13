@@ -106,7 +106,7 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
 export const mapImagesToBody: RequestHandler = (req, res, next) => {
   const files = req.files as Express.Multer.File[];
   const filePaths = files.map((file) => `${file.destination}/${file.filename}`);
-  if (!length(files, 4)) {
+  if (!length(files, 3)) {
     removeAll(filePaths);
     return res.status(400).json({
       error: 'INVALID_AVATAR_OR_SUBIMAGES',
