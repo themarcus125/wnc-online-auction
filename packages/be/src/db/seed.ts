@@ -6,6 +6,7 @@ import { CategorySeed, ProductSeed, UserSeed } from './seed.t';
 import { appConfig } from '~/config';
 import { UserDoc } from '@/user/user.schema';
 import { CategoryDoc } from '@/category/category.schema';
+import { connectDB } from './connect';
 
 const { mode } = appConfig;
 let userA: UserDoc[];
@@ -53,10 +54,10 @@ const productSeed = async (
   productSeeds: ProductSeed[],
 ) => {
   if (mode !== 'development') return false;
-  if (!userA || !categoryA) return false;
   const model = ProductService.getModel();
   await model.collection.drop();
   await model.syncIndexes();
+  if (!userA || !categoryA) return false;
   await model.insertMany(
     expriedProductSeeds.map(
       ({
@@ -111,15 +112,20 @@ export const seedDB = async (
   cateSeeds: [CategorySeed[], CategorySeed[]],
   productSeeds: [ProductSeed[], ProductSeed[]],
 ) => {
+  const connect = await connectDB();
   try {
-    await Promise.allSettled([
-      userSeed(userSeeds),
-      upgradeRequestSeed(),
-      categorySeed(cateSeeds[0], cateSeeds[1]),
-    ]);
-    await productSeed(productSeeds[0], productSeeds[1]);
+    console.log(
+      await Promise.allSettled([
+        userSeed(userSeeds),
+        upgradeRequestSeed(),
+        categorySeed(cateSeeds[0], cateSeeds[1]),
+      ]),
+    );
+    console.log(await productSeed(productSeeds[0], productSeeds[1]));
     console.log('[MG] Seed complete');
   } catch (e) {
     console.log('[MG] Seed failed', e);
+  } finally {
+    return connect.disconnect();
   }
 };
