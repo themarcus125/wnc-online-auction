@@ -19,7 +19,7 @@ const ProductItem = ({ productData }) => {
       <div className="uk-flex uk-flex-1 uk-flex-column">
         <div className="uk-flex uk-flex-row uk-flex-between">
           <p className="uk-text-large uk-margin-remove-bottom ">{name}</p>
-          {dayjs().diff(dayjs(createdAt), 'hour') <= 24 && (
+          {dayjs().diff(dayjs(createdAt), 'hour') < 24 && (
             <span className="banner uk-text-bold uk-background-primary">
               MỚI
             </span>
