@@ -9,16 +9,19 @@ import { getAPI } from '../utils/api';
 const CategoryProductPage = ({ categoryId, subCategoryId }) => {
   const [category, setCategory] = useState({});
   const [subCategory, setSubCategory] = useState({});
+  const [productList, setProductList] = useState([]);
 
   useEffect(() => {
-    loadCategories();
+    loadData();
   }, []);
 
-  const loadCategories = async () => {
-    const [categoryResponse, subCategoryResponse] = await Promise.all([
-      getAPI(`/api/category/${categoryId}`),
-      getAPI(`/api/category/${subCategoryId}`),
-    ]);
+  const loadData = async () => {
+    const [categoryResponse, subCategoryResponse, productListResponse] =
+      await Promise.all([
+        getAPI(`/api/category/${categoryId}`),
+        getAPI(`/api/category/${subCategoryId}`),
+        getAPI(`/api/product?category=${subCategoryId}&&limit=10&&skip=0`),
+      ]);
 
     if (!categoryResponse.error) {
       setCategory(categoryResponse);
@@ -26,6 +29,10 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
 
     if (!subCategoryResponse.error) {
       setSubCategory(subCategoryResponse);
+    }
+
+    if (!productListResponse.error) {
+      setProductList(productListResponse);
     }
   };
 
@@ -61,7 +68,9 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
           </select>
         </div>
         <div className="uk-margin-top uk-margin-bottom">
-          <ProductItem />
+          {productList.map((product) => {
+            return <ProductItem key={product._id} productData={product} />;
+          })}
         </div>
       </div>
     </Wrapper>
