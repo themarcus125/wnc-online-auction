@@ -27,7 +27,7 @@ const CategoryForm = ({ id }) => {
   }, []);
 
   const onLoadParentCategories = async () => {
-    const response = await getAPI('/api/category');
+    const response = await getAPI('/api/category?mode=parent');
     if (response.error) {
       toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
       return;
