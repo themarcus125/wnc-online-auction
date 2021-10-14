@@ -17,7 +17,7 @@ const CategoryList = () => {
   const [subCategories, setSubCategories] = useState([]);
 
   const loadCategories = async () => {
-    const response = await getAPI('/api/category');
+    const response = await getAPI('/api/category?mode=parent');
     if (response.error) {
       toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
       return;
@@ -32,7 +32,9 @@ const CategoryList = () => {
   const onDetails = async (categoryId, categoryName) => {
     showModal(categoryDetailModalID);
     setSelectedCategoryName(categoryName);
-    const response = await getAPI(`/api/category?parent=${categoryId}`);
+    const response = await getAPI(
+      `/api/category?mode=child&&parent=${categoryId}`,
+    );
     if (response.error) {
       return;
     }
