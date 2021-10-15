@@ -34,3 +34,4 @@
 - Count
   https://stackoverflow.com/questions/21803290/get-a-count-of-total-documents-with-mongodb-when-using-limit
   https://stackoverflow.com/questions/20348093/mongodb-aggregation-how-to-get-total-records-count/49483919
+  https://stackoverflow.com/questions/48521896/how-to-implement-pagination-and-total-with-mongoose/48522084

@@ -38,7 +38,7 @@ GET {{baseUrl}}
 GET {{baseUrl}}
     ?mode=search
     &productName=product1
-    &categoryName=child
+    &categoryId={{categoryId}}
 
 ### Create product
 POST {{baseUrl}}/user

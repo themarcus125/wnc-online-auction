@@ -42,7 +42,7 @@ export interface QueryProductDTO {
   mode?: string;
   category?: string;
   productName?: string;
-  categoryName?: string;
+  categoryId?: string;
   price?: string;
   end?: string;
   notExpired?: string;

@@ -12,46 +12,6 @@ class CategoryService
     super(ProductModel);
   }
 
-  searchName({ productName, categoryName, notExpired }: QueryProductDTO) {
-    let query = this.model.aggregate();
-    if (productName)
-      query = query.match({
-        $text: {
-          $search: productName,
-        },
-      });
-    if (notExpired === 'true')
-      query = query.match({
-        expiredAt: {
-          $gt: new Date(),
-        },
-      });
-    query = query
-      .lookup({
-        from: CategoryModel.collection.name,
-        let: { category: '$category' },
-        pipeline: [
-          {
-            $match: categoryName
-              ? {
-                  $expr: { $eq: ['$$category', '$_id'] },
-                  $text: {
-                    $search: categoryName,
-                  },
-                }
-              : {
-                  $expr: { $eq: ['$$category', '$_id'] },
-                },
-          },
-        ],
-        as: 'category',
-      })
-      .unwind({
-        path: '$category',
-      });
-    return query;
-  }
-
   async modeFind(
     mode = '',
     {
@@ -59,7 +19,7 @@ class CategoryService
       limit,
       skip,
       productName,
-      categoryName,
+      categoryId,
       price,
       end,
       notExpired,
@@ -128,24 +88,31 @@ class CategoryService
       if (parseSort(end)) {
         sorter.expiredAt = parseSort(end);
       }
-      return (
-        await this.searchName({
-          productName,
-          categoryName,
-          notExpired,
-        })
-          .sort(sorter)
-          .facet({
-            products: [
-              { $skip: parseIntDefault(skip, 0) },
-              { $limit: parseIntDefault(limit, 10) },
-            ],
-            page: [{ $count: 'totalCount' }],
-          })
-          .unwind({
-            path: '$page',
-          })
-      )[0];
+      const query: any = {};
+      if (productName) {
+        query.$text = {
+          $search: productName,
+        };
+      }
+      if (categoryId) {
+        query.category = categoryId;
+      }
+      if (notExpired === 'true') {
+        query.expiredAt = {
+          $gt: new Date(),
+        };
+      }
+      const products = await this.find(query)
+        .sort(sorter)
+        .skip(parseIntDefault(skip, 0))
+        .limit(parseIntDefault(limit, 10));
+      const totalCount = await this.model.countDocuments(query);
+      return {
+        products,
+        page: {
+          totalCount,
+        },
+      };
     }
     const products = await this.find({})
       .sort({
