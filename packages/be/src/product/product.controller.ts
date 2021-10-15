@@ -1,7 +1,6 @@
 import { RequestHandler } from 'express';
 import { JWTPayload } from '@/auth/auth.dto';
 import {
-  CreateProductDTO,
   CreateProductRequestDTO,
   QueryProductDTO,
   UpdateProductDTO,
@@ -54,7 +53,7 @@ const getProducts: RequestHandler = async (req, res, next) => {
       price,
       notExpired,
     }: QueryProductDTO = req.query;
-    const products = await ProductService.modeFind(mode, {
+    const productsData = await ProductService.modeFind(mode, {
       category,
       limit,
       skip,
@@ -64,7 +63,7 @@ const getProducts: RequestHandler = async (req, res, next) => {
       price,
       notExpired,
     });
-    res.json(products);
+    res.json(productsData);
   } catch (e) {
     next(e);
   }

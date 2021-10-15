@@ -25,7 +25,7 @@ const createAdmin: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getPendingRequest: RequestHandler = async (req, res, next) => {
+const getPendingRequest: RequestHandler = async (req, res, next) => {
   try {
     const pendingRequest = await UpgradeRequestService.find({
       status: RequestStatus.PENDING,
@@ -40,7 +40,7 @@ export const getPendingRequest: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const changeRequestStatus =
+const changeRequestStatus =
   (mode: boolean): RequestHandler =>
   async (req, res, next) => {
     try {
@@ -76,7 +76,7 @@ export const changeRequestStatus =
     }
   };
 
-export const getUser: RequestHandler = async (req, res, next) => {
+const getUser: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await UserService.findById(userId).select(
@@ -88,7 +88,7 @@ export const getUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getUsers: RequestHandler = async (req, res, next) => {
+const getUsers: RequestHandler = async (req, res, next) => {
   try {
     const users = await UserService.find({
       $or: [{ role: UserRole.BIDDER }, { role: UserRole.SELLER }],
@@ -101,7 +101,7 @@ export const getUsers: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const createUser: RequestHandler = async (req, res, next) => {
+const createUser: RequestHandler = async (req, res, next) => {
   try {
     const { email, name, address, password }: RegisterDTO = req.body;
     const user = await AuthService.register({
@@ -121,7 +121,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const updateUser: RequestHandler = async (req, res, next) => {
+const updateUser: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const { email, address, dob, role, name, isVerified }: AdminUpdateUserDTO =
@@ -143,7 +143,7 @@ export const updateUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const deleteUser: RequestHandler = async (req, res, next) => {
+const deleteUser: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await UserService.getModel().findByIdAndDelete(userId);

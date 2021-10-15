@@ -64,9 +64,9 @@ class CategoryService
       end,
       notExpired,
     }: QueryProductDTO = {},
-  ) {
+  ): Promise<any> {
     if (mode === 'finishSoon') {
-      return await this.find({
+      const products = await this.find({
         expiredAt: {
           $gt: new Date(),
         },
@@ -75,23 +75,32 @@ class CategoryService
           expiredAt: 1,
         })
         .limit(parseIntDefault(limit, 5));
+      return {
+        products,
+      };
     }
     if (mode === 'bidCount') {
-      return await this.find({})
+      const products = await this.find({})
         .sort({
           bidCount: -1,
         })
         .limit(parseIntDefault(limit, 5));
+      return {
+        products,
+      };
     }
     if (mode === 'price') {
-      return await this.find({})
+      const products = await this.find({})
         .sort({
           currentPrice: -1,
         })
         .limit(parseIntDefault(limit, 5));
+      return {
+        products,
+      };
     }
     if (mode === 'category') {
-      return await this.find({
+      const products = await this.find({
         category,
       })
         .sort({
@@ -99,6 +108,15 @@ class CategoryService
         })
         .skip(parseIntDefault(skip, 0))
         .limit(parseIntDefault(limit, 10));
+      const totalCount = await this.model.countDocuments({
+        category,
+      });
+      return {
+        products,
+        page: {
+          totalCount,
+        },
+      };
     }
     if (mode == 'search') {
       const sorter: any = {
@@ -110,21 +128,38 @@ class CategoryService
       if (parseSort(end)) {
         sorter.expiredAt = parseSort(end);
       }
-      return await this.searchName({
-        productName,
-        categoryName,
-        notExpired,
-      })
-        .sort(sorter)
-        .skip(parseIntDefault(skip, 0))
-        .limit(parseIntDefault(limit, 10));
+      return (
+        await this.searchName({
+          productName,
+          categoryName,
+          notExpired,
+        })
+          .sort(sorter)
+          .facet({
+            products: [
+              { $skip: parseIntDefault(skip, 0) },
+              { $limit: parseIntDefault(limit, 10) },
+            ],
+            page: [{ $count: 'totalCount' }],
+          })
+          .unwind({
+            path: '$page',
+          })
+      )[0];
     }
-    return await this.find({})
+    const products = await this.find({})
       .sort({
         _id: -1,
       })
       .skip(parseIntDefault(skip, 0))
       .limit(parseIntDefault(limit, 10));
+    const totalCount = await this.model.countDocuments({});
+    return {
+      products,
+      page: {
+        totalCount,
+      },
+    };
   }
 }
 

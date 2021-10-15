@@ -31,3 +31,6 @@
   https://stackoverflow.com/questions/24096546/mongoose-populate-vs-object-nesting
   https://stackoverflow.com/questions/38051977/what-does-populate-in-mongoose-mean
   https://stackoverflow.com/questions/36371190/mongoose-query-to-filter-an-array-and-populate-related-content
+- Count
+  https://stackoverflow.com/questions/21803290/get-a-count-of-total-documents-with-mongodb-when-using-limit
+  https://stackoverflow.com/questions/20348093/mongodb-aggregation-how-to-get-total-records-count/49483919

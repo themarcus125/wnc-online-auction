@@ -1,7 +1,6 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 import { UserDoc } from '@/user/user.schema';
-import { CategoryDoc, CategoryModel } from '@/category/category.schema';
-import { QueryProductDTO } from './product.dto';
+import { CategoryDoc } from '@/category/category.schema';
 
 export interface Product {
   name: string;
