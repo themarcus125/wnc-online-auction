@@ -7,16 +7,15 @@ import { hoursToString } from '../../utils/time';
 const API_URL = process.env.API_URL;
 
 const ProductItem = ({ productData }) => {
-  const { name, startPrice, buyPrice, images, createdAt, bidCount, expiredIn } =
+  const { name, startPrice, buyPrice, images, createdAt, bidCount, expiredAt } =
     productData;
-  const expireDate = dayjs(createdAt).add(expiredIn, 'hour');
-  const hourDiff = dayjs(expireDate).diff(dayjs(), 'hour');
+  const hourDiff = dayjs(expiredAt).diff(dayjs(), 'hour');
   const timeLeft = hoursToString(hourDiff);
 
   return (
     <Product className="uk-flex uk-flex-row uk-margin-bottom">
       <img className="image" src={`${API_URL}/${images[0]}`} />
-      <div className="uk-flex uk-flex-1 uk-flex-column">
+      <div className="uk-flex uk-flex-1 uk-flex-column uk-flex-between">
         <div className="uk-flex uk-flex-row uk-flex-between">
           <p className="uk-text-large uk-margin-remove-bottom ">{name}</p>
           {dayjs().diff(dayjs(createdAt), 'hour') < 24 && (
@@ -33,15 +32,26 @@ const ProductItem = ({ productData }) => {
             Giá mua ngay: {Number(buyPrice).toLocaleString()} đ
           </p>
         )}
-        <p className="uk-margin-remove-bottom">
-          <small className="uk-margin-right">Số lượt ra giá: {bidCount}</small>{' '}
-          {timeLeft && (
-            <span>
-              Thời gian còn lại: <b>{timeLeft}</b>
-            </span>
-          )}
-        </p>
-        <small>Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}</small>
+        <div className="uk-flex uk-flex-row uk-flex-between uk-flex-bottom">
+          <p className="uk-margin-remove-bottom">
+            <p className="uk-margin-remove-bottom">
+              <small className="uk-margin-right">
+                Số lượt ra giá: {bidCount}
+              </small>{' '}
+              {timeLeft && (
+                <small>
+                  Thời gian còn lại: <b>{timeLeft}</b>
+                </small>
+              )}
+            </p>
+            <small>
+              Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}
+            </small>
+          </p>
+          <span className="uk-text-danger" style={{ cursor: 'pointer' }}>
+            Yêu thích <span uk-icon="heart"></span>
+          </span>
+        </div>
       </div>
     </Product>
   );

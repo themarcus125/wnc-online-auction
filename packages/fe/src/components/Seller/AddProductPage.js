@@ -275,6 +275,7 @@ const AddProductPage = () => {
                     handleChange({ target: { name: 'description', value: e } });
                   }}
                   name="description"
+                  value={values.description}
                 />
                 <ErrorMessage name="description" component={FormErrorMessage} />
               </div>

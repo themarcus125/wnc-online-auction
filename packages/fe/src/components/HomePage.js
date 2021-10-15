@@ -1,26 +1,63 @@
-import React from 'react';
-import styled from 'styled-components';
+import dayjs from 'dayjs';
+import React, { useState, useEffect } from 'react';
+import styled, { css } from 'styled-components';
+
+import { getAPI } from '../utils/api';
 
 import CarouselItems from './common/Carouseltems';
 
+const API_URL = process.env.API_URL;
+
 const HomePage = () => {
+  const [almostExpiredProducts, setAlmostExpiredProducts] = useState([]);
+  const [popularProducts, setPopularProducts] = useState([]);
+  const [highestPriceProducts, setHighestPriceProducts] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    const [almostExpiredResponse, popularResponse, highestPriceResponse] =
+      await Promise.all([
+        getAPI('/api/product?mode=finishSoon&&limit=5'),
+        getAPI('/api/product?mode=bidCount&&limit=5'),
+        getAPI('/api/product?mode=price&&limit=5'),
+      ]);
+
+    if (!almostExpiredResponse.error) {
+      setAlmostExpiredProducts(almostExpiredResponse);
+    }
+
+    if (!popularResponse.error) {
+      setPopularProducts(popularResponse);
+    }
+
+    if (!highestPriceResponse.error) {
+      setHighestPriceProducts(highestPriceResponse);
+    }
+  };
+
   return (
     <div className="uk-padding-small">
       <div className="page uk-margin-auto">
-        <p className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase">
+        <Title
+          first
+          className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase"
+        >
           Sản phẩm sắp hết hạn
-        </p>
+        </Title>
         <CarouselItems
-          data={[1, 2, 3, 4, 5]}
+          data={almostExpiredProducts}
           renderItem={(item) => {
             return (
               <AlmostExpireProduct
-                key={item}
+                key={item._id}
                 className="uk-card uk-card-default"
               >
                 <div className="uk-card-media-top">
                   <img
-                    src="https://picsum.photos/seed/picsum/200/300"
+                    src={`${API_URL}/${item.images[0]}`}
                     style={{
                       objectFit: 'cover',
                       width: '100%',
@@ -29,35 +66,35 @@ const HomePage = () => {
                   />
                 </div>
                 <div className="uk-card-body">
-                  <h3 className="uk-card-title title">
-                    PS5 tên title rất là dài dài dài ơi là dài luônnn
-                  </h3>
+                  <h3 className="uk-card-title title">{item.name}</h3>
                   <p className="uk-margin-remove-top uk-margin-remove-bottom">
-                    2, 999, 000 đ
+                    Giá hiện tại:{' '}
+                    <b>{Number(item.currentPrice).toLocaleString()} đ</b>
                   </p>
-                  <small>Số lượt ra giá: 10</small>
-                  <p className="uk-text-danger uk-margin-remove-top uk-margin-remove-bottom">
-                    16/09/2021 - 20:00
+                  <small>Số lượt ra giá: {item.bidCount}</small>
+                  <p className="uk-text-danger uk-text-bold uk-margin-remove-top uk-margin-remove-bottom">
+                    Hết hạn:{' '}
+                    {dayjs(item.expiredAt).format('HH:mm - DD/MM/YYYY')}
                   </p>
                 </div>
               </AlmostExpireProduct>
             );
           }}
         />
-        <p className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase">
+        <Title className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase">
           Sản phẩm nổi bật
-        </p>
+        </Title>
         <CarouselItems
-          data={[1, 2, 3, 4, 5]}
+          data={popularProducts}
           renderItem={(item) => {
             return (
               <MostPopularProduct
-                key={item}
+                key={item._id}
                 className="uk-card uk-card-default"
               >
                 <div className="uk-card-media-top">
                   <img
-                    src="https://picsum.photos/seed/picsum/200/300"
+                    src={`${API_URL}/${item.images[0]}`}
                     style={{
                       objectFit: 'cover',
                       width: '100%',
@@ -66,37 +103,35 @@ const HomePage = () => {
                   />
                 </div>
                 <div className="uk-card-body">
-                  <h3 className="uk-card-title title">
-                    PS5 tên title rất là dài dài dài ơi là dài luônnn
-                  </h3>
+                  <h3 className="uk-card-title title">{item.name}</h3>
                   <p className="uk-margin-remove-top uk-margin-remove-bottom">
-                    2, 999, 000 đ
+                    Giá hiện tại: {Number(item.currentPrice).toLocaleString()} đ
                   </p>
                   <h4
                     className="uk-text-bold uk-margin-remove-top uk-margin-remove-bottom"
                     style={{ color: '#666' }}
                   >
-                    Số lượt ra giá: 10
+                    Số lượt ra giá: {item.bidCount}
                   </h4>
                 </div>
               </MostPopularProduct>
             );
           }}
         />
-        <p className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase">
+        <Title className="uk-text-center uk-text-bold uk-text-large uk-text-uppercase">
           Sản phẩm giá cao nhất
-        </p>
+        </Title>
         <CarouselItems
-          data={[1, 2, 3, 4, 5]}
+          data={highestPriceProducts}
           renderItem={(item) => {
             return (
               <HighestPriceProduct
-                key={item}
+                key={item._id}
                 className="uk-card uk-card-default"
               >
                 <div className="uk-card-media-top">
                   <img
-                    src="https://picsum.photos/seed/picsum/200/300"
+                    src={`${API_URL}/${item.images[0]}`}
                     style={{
                       objectFit: 'cover',
                       width: '100%',
@@ -105,14 +140,12 @@ const HomePage = () => {
                   />
                 </div>
                 <div className="uk-card-body">
-                  <h3 className="uk-card-title title">
-                    PS5 tên title rất là dài dài dài ơi là dài luônnn
-                  </h3>
+                  <h3 className="uk-card-title title">{item.name}</h3>
                   <h4
                     className="uk-text-bold uk-margin-remove-top uk-margin-remove-bottom"
                     style={{ color: '#666' }}
                   >
-                    2, 999, 000 đ
+                    Giá hiện tại: {Number(item.currentPrice).toLocaleString()} đ
                   </h4>
                 </div>
               </HighestPriceProduct>
@@ -133,6 +166,7 @@ const AlmostExpireProduct = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    height: 70px;
   }
 `;
 
@@ -143,6 +177,7 @@ const MostPopularProduct = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    height: 70px;
   }
 `;
 
@@ -153,5 +188,14 @@ const HighestPriceProduct = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    height: 70px;
   }
+`;
+
+const Title = styled.p`
+  ${(props) =>
+    !props.first &&
+    css`
+      margin-top: 100px;
+    `}
 `;

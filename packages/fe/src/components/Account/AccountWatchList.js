@@ -6,12 +6,7 @@ const AccountWatchList = () => {
   return (
     <React.Fragment>
       <h3 className="uk-text-primary uk-text-bold">Sản phẩm yêu thích</h3>
-      <div>
-        <ProductItem />
-        <ProductItem />
-        <ProductItem />
-        <ProductItem />
-      </div>
+      <div></div>
     </React.Fragment>
   );
 };
