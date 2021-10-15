@@ -22,5 +22,6 @@ export interface ProductSeed {
   seller: number;
   startPrice: number;
   stepPrice: number;
+  currentPrice: number;
   expiredAt: Date;
 }

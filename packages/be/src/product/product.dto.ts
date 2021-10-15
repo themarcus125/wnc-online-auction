@@ -41,6 +41,11 @@ export interface UpdateProductDTO {
 export interface QueryProductDTO {
   mode?: string;
   category?: string;
+  productName?: string;
+  categoryName?: string;
+  price?: string;
+  end?: string;
+  notExpired?: string;
   limit?: string;
   skip?: string;
 }

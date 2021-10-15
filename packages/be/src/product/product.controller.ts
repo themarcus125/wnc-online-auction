@@ -43,11 +43,26 @@ const createProduct: RequestHandler = async (req, res, next) => {
 
 const getProducts: RequestHandler = async (req, res, next) => {
   try {
-    const { mode, category, limit, skip }: QueryProductDTO = req.query;
+    const {
+      mode,
+      category,
+      limit,
+      skip,
+      productName,
+      categoryName,
+      end,
+      price,
+      notExpired,
+    }: QueryProductDTO = req.query;
     const products = await ProductService.modeFind(mode, {
       category,
       limit,
       skip,
+      productName: productName || '',
+      categoryName: categoryName || '',
+      end,
+      price,
+      notExpired,
     });
     res.json(products);
   } catch (e) {

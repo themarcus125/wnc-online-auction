@@ -1,6 +1,7 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 import { UserDoc } from '@/user/user.schema';
 import { CategoryDoc, CategoryModel } from '@/category/category.schema';
+import { QueryProductDTO } from './product.dto';
 
 export interface Product {
   name: string;
@@ -23,14 +24,27 @@ export type ProductDoc = Product & Document;
 
 export const ProductSchema = new Schema<ProductDoc>(
   {
-    name: { type: String, required: true, maxlength: 30, index: 'text' },
+    name: {
+      type: String,
+      required: true,
+      maxlength: 30,
+      index: 'text',
+    },
     descriptions: { type: [String], required: true },
-    category: { type: Schema.Types.ObjectId, required: true, ref: 'Category' },
+    category: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Category',
+    },
     images: {
       type: [String],
       required: true,
     },
-    seller: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    seller: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
@@ -42,50 +56,3 @@ export const ProductSchema = new Schema<ProductDoc>(
   { timestamps: true },
 );
 export const ProductModel = model<ProductDoc>('Product', ProductSchema);
-
-export const remainingTimePipeline: any[] = [
-  {
-    $addFields: {
-      remainingTime: {
-        $subtract: [
-          {
-            $add: [
-              '$createdAt',
-              {
-                $multiply: ['$expiredIn', 3600 * 1000],
-              },
-            ],
-          },
-          '$$NOW',
-        ],
-      },
-    },
-  },
-];
-
-export const expiredAtPipeline: any[] = [
-  {
-    $addFields: {
-      expiredAt: {
-        $add: [
-          '$createdAt',
-          {
-            $multiply: ['$expiredIn', 3600 * 1000],
-          },
-        ],
-      },
-    },
-  },
-];
-
-export const productJoinCategoryPipeline: any[] = [
-  {
-    $lookup: {
-      from: CategoryModel.collection.collectionName,
-      localField: 'category',
-      foreignField: '_id',
-      as: 'category',
-    },
-  },
-  { $unwind: '$category' },
-];

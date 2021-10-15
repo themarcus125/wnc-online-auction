@@ -1,5 +1,6 @@
+import { CategoryModel } from '@/category/category.schema';
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
-import { parseIntDefault } from '@/utils/parser';
+import { parseIntDefault, parseSort } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel } from './product.schema';
 
@@ -11,7 +12,59 @@ class CategoryService
     super(ProductModel);
   }
 
-  async modeFind(mode = '', { category, limit, skip }: QueryProductDTO = {}) {
+  searchName({ productName, categoryName, notExpired }: QueryProductDTO) {
+    let query = this.model.aggregate();
+    if (productName)
+      query = query.match({
+        $text: {
+          $search: productName,
+        },
+      });
+    if (notExpired === 'true')
+      query = query.match({
+        expiredAt: {
+          $gt: new Date(),
+        },
+      });
+    query = query
+      .lookup({
+        from: CategoryModel.collection.name,
+        let: { category: '$category' },
+        pipeline: [
+          {
+            $match: categoryName
+              ? {
+                  $expr: { $eq: ['$$category', '$_id'] },
+                  $text: {
+                    $search: categoryName,
+                  },
+                }
+              : {
+                  $expr: { $eq: ['$$category', '$_id'] },
+                },
+          },
+        ],
+        as: 'category',
+      })
+      .unwind({
+        path: '$category',
+      });
+    return query;
+  }
+
+  async modeFind(
+    mode = '',
+    {
+      category,
+      limit,
+      skip,
+      productName,
+      categoryName,
+      price,
+      end,
+      notExpired,
+    }: QueryProductDTO = {},
+  ) {
     if (mode === 'finishSoon') {
       return await this.find({
         expiredAt: {
@@ -37,12 +90,29 @@ class CategoryService
         })
         .limit(parseIntDefault(limit, 5));
     }
+    if (mode === 'category') {
+      return await this.find({
+        category,
+      })
+        .sort({
+          _id: -1,
+        })
+        .skip(parseIntDefault(skip, 0))
+        .limit(parseIntDefault(limit, 10));
+    }
     if (mode == 'search') {
-      // const products: ProductDoc[] = await this.getModel()
-      //   .aggregate(productJoinCategoryPipeline)
-      //   .skip(parseIntDefault(skip, 0))
-      //   .limit(parseIntDefault(limit, 10));
-      // return products;
+      return await this.searchName({
+        productName,
+        categoryName,
+        notExpired,
+      })
+        .sort({
+          currentPrice: parseSort(price),
+          expiredAt: parseSort(end),
+          _id: -1,
+        })
+        .skip(parseIntDefault(skip, 0))
+        .limit(parseIntDefault(limit, 10));
     }
     return await this.find({})
       .sort({

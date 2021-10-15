@@ -2,7 +2,7 @@
 @port = 3000
 @baseUrl = {{$dotenv baseUrl}}/product
 
-# USER
+# SETUP
 ### Seller login
 # @name sellerLogin
 @sellerToken = {{sellerLogin.response.body.$.accessToken}}
@@ -13,13 +13,33 @@ content-type: application/json
   "email": "tthuykh99@gmail.com",
   "password": "123456"
 }
-### Get all product
-GET {{baseUrl}}
 ### Get all child category
 # @name childCategories
 @categoryId = {{childCategories.response.body.$[1]._id}}
 Get {{$dotenv baseUrl}}/category
     ?mode=child
+
+### Get all product
+GET {{baseUrl}}
+### Get 5 finish soon
+GET {{baseUrl}}
+    ?mode=finishSoon
+### Get 5 top bid count
+GET {{baseUrl}}
+    ?mode=bidCount
+### Get 5 top price
+GET {{baseUrl}}
+    ?mode=price
+### Get product of category
+GET {{baseUrl}}
+    ?mode=category
+    &category={{categoryId}}
+### Search
+GET {{baseUrl}}
+    ?mode=search
+    &productName=product1
+    &categoryName=3
+
 ### Create product
 POST {{baseUrl}}/user
 authorization: Bearer {{sellerToken}}
@@ -69,23 +89,4 @@ Content-Disposition: form-data; name="productImages"; filename="image3.png"
 Content-Type: image/png
 
 < ./images/pepe-hand.png
------XXX-----
-### Test upload
-POST http://localhost:3000/upload
-Content-Type:  multipart/form-data; boundary=---XXX---
-
------XXX---
-Content-Disposition: form-data; name="title"
-
-error
------XXX---
-Content-Disposition: form-data; name="multipleFiles"; filename="pepe-hand.png"
-Content-Type: image/png
-
-< ../../public/images/pepe-hand.png
------XXX---
-Content-Disposition: form-data; name="multipleFiles"; filename="pepe-angry.png"
-Content-Type: image/png
-
-< ../../public/images/pepe-angry.png
 -----XXX-----

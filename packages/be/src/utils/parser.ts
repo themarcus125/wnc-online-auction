@@ -14,3 +14,10 @@ export const parseIntDefault = (val: any, defaultValue: number) => {
   if (isNaN(parsed)) return defaultValue;
   return parsed;
 };
+
+export const parseSort = (val?: any) => {
+  if (!val) return undefined;
+  if (val === 'desc') return -1;
+  if (val === 'asc') return 1;
+  return undefined;
+};
