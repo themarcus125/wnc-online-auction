@@ -101,16 +101,21 @@ class CategoryService
         .limit(parseIntDefault(limit, 10));
     }
     if (mode == 'search') {
+      const sorter: any = {
+        _id: -1,
+      };
+      if (parseSort(price)) {
+        sorter.currentPrice = parseSort(price);
+      }
+      if (parseSort(end)) {
+        sorter.expiredAt = parseSort(end);
+      }
       return await this.searchName({
         productName,
         categoryName,
         notExpired,
       })
-        .sort({
-          currentPrice: parseSort(price),
-          expiredAt: parseSort(end),
-          _id: -1,
-        })
+        .sort(sorter)
         .skip(parseIntDefault(skip, 0))
         .limit(parseIntDefault(limit, 10));
     }
