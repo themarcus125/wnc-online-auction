@@ -14,7 +14,6 @@ const NavBar = () => {
 
   const loadCategories = async () => {
     const response = await getAPI('/api/category?mode=parent');
-    console.log(response);
     if (!response.error) {
       setCategories(response);
     }
@@ -24,6 +23,10 @@ const NavBar = () => {
     UIKit.navbar('#navbar');
     loadCategories();
   }, []);
+
+  const onCategory = (categoryId) => {
+    navigate(`/category/${categoryId}`);
+  };
 
   return (
     <nav id="navbar" className="uk-navbar-container" uk-navbar="">
@@ -40,10 +43,9 @@ const NavBar = () => {
                   <GridItem
                     key={category._id}
                     className="uk-active uk-background-muted"
+                    onClick={() => onCategory(category._id)}
                   >
-                    <Link to={`/category/${category._id}`}>
-                      {category.name}
-                    </Link>
+                    <span>{category.name}</span>
                   </GridItem>
                 );
               })}
@@ -163,4 +165,10 @@ const GridWrapper = styled.ul`
 const GridItem = styled.li`
   display: block;
   padding: 20px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
 `;

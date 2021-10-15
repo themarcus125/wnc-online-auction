@@ -1,28 +1,47 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as dayjs from 'dayjs';
 
-const ProductItem = () => {
+import { hoursToString } from '../../utils/time';
+
+const API_URL = process.env.API_URL;
+
+const ProductItem = ({ productData }) => {
+  const { name, startPrice, buyPrice, images, createdAt, bidCount, expiredIn } =
+    productData;
+  const expireDate = dayjs(createdAt).add(expiredIn, 'hour');
+  const hourDiff = dayjs(expireDate).diff(dayjs(), 'hour');
+  const timeLeft = hoursToString(hourDiff);
+
   return (
-    <Product className="uk-flex uk-flex-row">
-      <img className="image" src="https://picsum.photos/seed/picsum/200/300" />
+    <Product className="uk-flex uk-flex-row uk-margin-bottom">
+      <img className="image" src={`${API_URL}/${images[0]}`} />
       <div className="uk-flex uk-flex-1 uk-flex-column">
         <div className="uk-flex uk-flex-row uk-flex-between">
-          <p className="uk-text-large uk-margin-remove-bottom ">
-            PS5 mới toanh
-          </p>
-          <span className="banner uk-text-bold uk-background-primary">NEW</span>
+          <p className="uk-text-large uk-margin-remove-bottom ">{name}</p>
+          {dayjs().diff(dayjs(createdAt), 'hour') < 24 && (
+            <span className="banner uk-text-bold uk-background-primary">
+              MỚI
+            </span>
+          )}
         </div>
         <p className="uk-margin-remove-bottom">
-          2,999,999 đ - Bidder: Trần Văn A
+          {Number(startPrice).toLocaleString()} đ - Bidder: Trần Văn A
         </p>
-        <p className="uk-text-large uk-margin-remove-bottom uk-text-bold">
-          Giá mua ngay: 15,000,000 đ
-        </p>
+        {!!buyPrice && (
+          <p className="uk-text-large uk-margin-remove-bottom uk-text-bold">
+            Giá mua ngay: {Number(buyPrice).toLocaleString()} đ
+          </p>
+        )}
         <p className="uk-margin-remove-bottom">
-          <small className="uk-margin-right">Số lượt ra giá: 10</small> Thời
-          gian còn lại: <b>15 ngày</b>
+          <small className="uk-margin-right">Số lượt ra giá: {bidCount}</small>{' '}
+          {timeLeft && (
+            <span>
+              Thời gian còn lại: <b>{timeLeft}</b>
+            </span>
+          )}
         </p>
-        <small>Ngày đăng: 21/8/2021</small>
+        <small>Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}</small>
       </div>
     </Product>
   );
