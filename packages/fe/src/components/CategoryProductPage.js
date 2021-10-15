@@ -20,7 +20,9 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
       await Promise.all([
         getAPI(`/api/category/${categoryId}`),
         getAPI(`/api/category/${subCategoryId}`),
-        getAPI(`/api/product?category=${subCategoryId}&&limit=10&&skip=0`),
+        getAPI(
+          `/api/product?mode=category&&category=${subCategoryId}&&notExpired=true&&limit=10&&skip=0`,
+        ),
       ]);
 
     if (!categoryResponse.error) {
@@ -59,13 +61,6 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
           >
             {subCategory.name}
           </span>
-        </div>
-
-        <div className="uk-flex uk-flex-right">
-          <select className="uk-select drop-down">
-            <option>Thời gian kết thúc giảm dần</option>
-            <option>Giá tăng dần</option>
-          </select>
         </div>
         <div className="uk-margin-top uk-margin-bottom">
           {productList.map((product) => {
