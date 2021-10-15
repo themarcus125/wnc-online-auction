@@ -70,7 +70,21 @@ const getProducts: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getProduct: RequestHandler = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await ProductService.findById(productId)
+      .populate('seller', '-password -verifyOtp -passwordOtp')
+      .populate('category')
+      .populate('currentBidder', '-password -verifyOtp -passwordOtp');
+    res.json(product);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   createProduct,
   getProducts,
+  getProduct,
 };

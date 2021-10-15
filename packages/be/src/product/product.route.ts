@@ -16,6 +16,7 @@ productRoute.post(
   mapImagesToBody,
   ProductController.createProduct,
 );
+productRoute.get('/:productId', productController.getProduct);
 productRoute.get('/', productController.getProducts);
 
 export default productRoute;
