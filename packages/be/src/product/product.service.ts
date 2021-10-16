@@ -1,4 +1,3 @@
-import { CategoryModel } from '@/category/category.schema';
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { parseIntDefault, parseSort } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
@@ -18,6 +17,7 @@ class CategoryService
       category,
       limit,
       skip,
+      productId,
       productName,
       categoryId,
       price,
@@ -60,9 +60,13 @@ class CategoryService
       };
     }
     if (mode === 'category') {
-      const products = await this.find({
-        category,
-      })
+      const query: any = { category };
+      if (productId) {
+        query._id = {
+          $ne: productId,
+        };
+      }
+      const products = await this.find(query)
         .sort({
           _id: -1,
         })

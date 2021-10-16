@@ -42,27 +42,8 @@ const createProduct: RequestHandler = async (req, res, next) => {
 
 const getProducts: RequestHandler = async (req, res, next) => {
   try {
-    const {
-      mode,
-      category,
-      limit,
-      skip,
-      productName,
-      categoryId,
-      end,
-      price,
-      notExpired,
-    }: QueryProductDTO = req.query;
-    const productsData = await ProductService.modeFind(mode, {
-      category,
-      limit,
-      skip,
-      productName,
-      categoryId,
-      end,
-      price,
-      notExpired,
-    });
+    const { mode }: QueryProductDTO = req.query;
+    const productsData = await ProductService.modeFind(mode, req.query);
     res.json(productsData);
   } catch (e) {
     next(e);
