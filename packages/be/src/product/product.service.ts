@@ -79,15 +79,14 @@ class CategoryService
       };
     }
     if (mode == 'search') {
-      const sorter: any = {
-        _id: -1,
-      };
+      const sorter: any = {};
       if (parseSort(price)) {
         sorter.currentPrice = parseSort(price);
       }
       if (parseSort(end)) {
         sorter.expiredAt = parseSort(end);
       }
+      sorter._id = -1;
       const query: any = {};
       if (productName) {
         query.$text = {
