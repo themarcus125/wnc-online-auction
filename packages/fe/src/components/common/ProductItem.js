@@ -1,19 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import * as dayjs from 'dayjs';
+import { navigate } from 'gatsby-link';
 
 import { hoursToString } from '../../utils/time';
 
 const API_URL = process.env.API_URL;
 
 const ProductItem = ({ productData }) => {
-  const { name, startPrice, buyPrice, images, createdAt, bidCount, expiredAt } =
-    productData;
+  const {
+    name,
+    startPrice,
+    buyPrice,
+    images,
+    createdAt,
+    bidCount,
+    expiredAt,
+    _id,
+  } = productData;
   const hourDiff = dayjs(expiredAt).diff(dayjs(), 'hour');
   const timeLeft = hoursToString(hourDiff);
 
+  const onClick = () => {
+    navigate(`/product/${_id}`);
+  };
+
   return (
-    <Product className="uk-flex uk-flex-row uk-margin-bottom">
+    <Product className="uk-flex uk-flex-row uk-margin-bottom" onClick={onClick}>
       <img className="image" src={`${API_URL}/${images[0]}`} />
       <div className="uk-flex uk-flex-1 uk-flex-column uk-flex-between">
         <div className="uk-flex uk-flex-row uk-flex-between">
@@ -33,7 +46,7 @@ const ProductItem = ({ productData }) => {
           </p>
         )}
         <div className="uk-flex uk-flex-row uk-flex-between uk-flex-bottom">
-          <p className="uk-margin-remove-bottom">
+          <div className="uk-margin-remove-bottom">
             <p className="uk-margin-remove-bottom">
               <small className="uk-margin-right">
                 Số lượt ra giá: {bidCount}
@@ -47,7 +60,7 @@ const ProductItem = ({ productData }) => {
             <small>
               Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}
             </small>
-          </p>
+          </div>
           <span className="uk-text-danger" style={{ cursor: 'pointer' }}>
             Yêu thích <span uk-icon="heart"></span>
           </span>
@@ -60,6 +73,7 @@ const ProductItem = ({ productData }) => {
 const Product = styled.div`
   padding: 10px;
   border: 0.5px solid #666 !important;
+  cursor: pointer;
   .banner {
     color: white;
     align-self: flex-start;

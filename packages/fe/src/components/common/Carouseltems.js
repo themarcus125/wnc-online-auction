@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import UIKit from 'uikit/dist/js/uikit.min.js';
-import styled from 'styled-components';
 
-const CarouselItems = ({ data, renderItem }) => {
+const CarouselItems = ({ data, renderItem, itemsPerPage = 3 }) => {
   useEffect(() => {
     UIKit.slider('#slider');
   }, []);
@@ -21,9 +20,13 @@ const CarouselItems = ({ data, renderItem }) => {
         className="uk-position-relative uk-visible-toggle uk-light"
         tabIndex={-1}
       >
-        <ul className="uk-slider-items uk-child-width-1-3@s uk-grid">
+        <ul
+          className={`uk-slider-items uk-child-width-1-${
+            itemsPerPage > 3 ? 3 : itemsPerPage
+          }@s uk-grid`}
+        >
           {data.map((item) => {
-            return <li key={item._id}>{renderItem(item)}</li>;
+            return <li key={item._id || item}>{renderItem(item)}</li>;
           })}
         </ul>
 

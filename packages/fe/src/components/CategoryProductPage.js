@@ -1,29 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 
 import ProductItem from './common/ProductItem';
+import PaginationButtonGroup from './common/PaginationButtonGroup';
 
 import { getAPI } from '../utils/api';
+
+import { PRODUCTS_PER_PAGE } from '../utils/constants/product';
 
 const CategoryProductPage = ({ categoryId, subCategoryId }) => {
   const [category, setCategory] = useState({});
   const [subCategory, setSubCategory] = useState({});
   const [productList, setProductList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const numOfPage = useRef(0);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    loadProducts();
+  }, [currentPage]);
+
+  const loadProducts = async () => {
+    setLoading(true);
+    const productListResponse = await getAPI(
+      `/api/product?mode=category&&category=${subCategoryId}&&notExpired=true&&limit=${PRODUCTS_PER_PAGE}&&skip=${
+        (currentPage - 1) * PRODUCTS_PER_PAGE
+      }`,
+    );
+
+    if (!productListResponse.error) {
+      numOfPage.current = Math.ceil(
+        productListResponse.page.totalCount / PRODUCTS_PER_PAGE,
+      );
+      setProductList(productListResponse.products);
+    }
+    setLoading(false);
+  };
+
   const loadData = async () => {
-    const [categoryResponse, subCategoryResponse, productListResponse] =
-      await Promise.all([
-        getAPI(`/api/category/${categoryId}`),
-        getAPI(`/api/category/${subCategoryId}`),
-        getAPI(
-          `/api/product?mode=category&&category=${subCategoryId}&&notExpired=true&&limit=10&&skip=0`,
-        ),
-      ]);
+    const [categoryResponse, subCategoryResponse] = await Promise.all([
+      getAPI(`/api/category/${categoryId}`),
+      getAPI(`/api/category/${subCategoryId}`),
+    ]);
 
     if (!categoryResponse.error) {
       setCategory(categoryResponse);
@@ -32,9 +55,21 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
     if (!subCategoryResponse.error) {
       setSubCategory(subCategoryResponse);
     }
+  };
 
-    if (!productListResponse.error) {
-      setProductList(productListResponse);
+  const onChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const onNext = () => {
+    if (currentPage < numOfPage.current) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const onPrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -62,11 +97,25 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
             {subCategory.name}
           </span>
         </div>
-        <div className="uk-margin-top uk-margin-bottom">
-          {productList.map((product) => {
-            return <ProductItem key={product._id} productData={product} />;
-          })}
-        </div>
+        {loading ? (
+          <div uk-spinner=""></div>
+        ) : (
+          <>
+            <div className="uk-margin-top uk-margin-bottom">
+              {productList.map((product) => {
+                return <ProductItem key={product._id} productData={product} />;
+              })}
+            </div>
+
+            <PaginationButtonGroup
+              onChangePage={onChangePage}
+              onNext={onNext}
+              onPrev={onPrev}
+              numOfPage={numOfPage.current}
+              currentPage={currentPage}
+            />
+          </>
+        )}
       </div>
     </Wrapper>
   );

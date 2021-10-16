@@ -15,7 +15,7 @@ const AdminNavBar = () => {
           </Link>
         </li>
         <li className="uk-parent">
-          <Link className="uk-text-secondary" to="/">
+          <Link className="uk-text-secondary" to="/admin/product">
             Sản phẩm
           </Link>
         </li>
