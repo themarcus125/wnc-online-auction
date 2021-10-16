@@ -7,7 +7,7 @@ import PaginationButtonGroup from './common/PaginationButtonGroup';
 
 import { getAPI } from '../utils/api';
 
-const PRODUCTS_PER_PAGE = 10;
+import { PRODUCTS_PER_PAGE } from '../utils/constants/product';
 
 const SearchPage = () => {
   const location = useLocation();

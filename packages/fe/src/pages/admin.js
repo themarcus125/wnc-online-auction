@@ -11,6 +11,8 @@ import UserList from '../components/Admin/User/List';
 import UserForm from '../components/Admin/User/UserForm';
 import UpdateUserForm from '../components/Admin/User/UpdateUserForm';
 
+import ProductList from '../components/Admin/Product/List';
+
 import { ADMIN } from '../utils/constants/role';
 
 const Admin = () => {
@@ -52,6 +54,12 @@ const Admin = () => {
             title={'Chỉnh sửa thông tin người dùng'}
             path="/user/edit/:id"
             component={UpdateUserForm}
+            role={ADMIN}
+          />
+          <PrivateWrapper
+            title={'Danh sách sản phẩm'}
+            path="/product"
+            component={ProductList}
             role={ADMIN}
           />
         </Router>
