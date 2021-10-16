@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
+import { navigate } from 'gatsby-link';
 
 import { getAPI } from '../utils/api';
 
@@ -38,6 +39,10 @@ const HomePage = () => {
     }
   };
 
+  const onClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <div className="uk-padding-small">
       <div className="page uk-margin-auto">
@@ -54,6 +59,7 @@ const HomePage = () => {
               <AlmostExpireProduct
                 key={item._id}
                 className="uk-card uk-card-default"
+                onClick={() => onClick(item._id)}
               >
                 <div className="uk-card-media-top">
                   <img
@@ -91,6 +97,7 @@ const HomePage = () => {
               <MostPopularProduct
                 key={item._id}
                 className="uk-card uk-card-default"
+                onClick={() => onClick(item._id)}
               >
                 <div className="uk-card-media-top">
                   <img
@@ -128,6 +135,7 @@ const HomePage = () => {
               <HighestPriceProduct
                 key={item._id}
                 className="uk-card uk-card-default"
+                onClick={() => onClick(item._id)}
               >
                 <div className="uk-card-media-top">
                   <img
@@ -160,6 +168,7 @@ const HomePage = () => {
 export default HomePage;
 
 const AlmostExpireProduct = styled.div`
+  cursor: pointer;
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -171,6 +180,7 @@ const AlmostExpireProduct = styled.div`
 `;
 
 const MostPopularProduct = styled.div`
+  cursor: pointer;
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -182,6 +192,7 @@ const MostPopularProduct = styled.div`
 `;
 
 const HighestPriceProduct = styled.div`
+  cursor: pointer;
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
