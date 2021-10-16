@@ -33,7 +33,7 @@ const ProductItem = ({ productData }) => {
           </p>
         )}
         <div className="uk-flex uk-flex-row uk-flex-between uk-flex-bottom">
-          <p className="uk-margin-remove-bottom">
+          <div className="uk-margin-remove-bottom">
             <p className="uk-margin-remove-bottom">
               <small className="uk-margin-right">
                 Số lượt ra giá: {bidCount}
@@ -47,7 +47,7 @@ const ProductItem = ({ productData }) => {
             <small>
               Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}
             </small>
-          </p>
+          </div>
           <span className="uk-text-danger" style={{ cursor: 'pointer' }}>
             Yêu thích <span uk-icon="heart"></span>
           </span>

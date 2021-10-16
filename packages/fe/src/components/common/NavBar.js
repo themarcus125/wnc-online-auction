@@ -3,19 +3,36 @@ import UIKit from 'uikit/dist/js/uikit.min.js';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { navigate } from 'gatsby-link';
+import { useLocation } from '@reach/router';
 
 import { getAPI } from '../../utils/api';
 import { getUser, logout } from '../../utils/auth';
 import { ADMIN_VALUE, SELLER_VALUE } from '../../utils/constants/role';
 
 const NavBar = () => {
+  const location = useLocation();
+  const search = new URLSearchParams(location.search);
+  const keyword = search.get('s') || '';
+  const category = search.get('category') || '';
   const { name: userFullname, role = 0 } = getUser();
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState(category);
+  const [searchString, setSearchString] = useState(keyword);
 
   const loadCategories = async () => {
-    const response = await getAPI('/api/category?mode=parent');
-    if (!response.error) {
-      setCategories(response);
+    const [categoriesResponse, subcategoriesResponse] = await Promise.all([
+      getAPI('/api/category?mode=parent'),
+      getAPI('/api/category?mode=child'),
+    ]);
+    if (!categoriesResponse.error) {
+      setCategories(categoriesResponse);
+    }
+    if (!subcategoriesResponse.error) {
+      setSubcategories(subcategoriesResponse);
+      if (!selectedSubcategories) {
+        setSelectedSubcategories(subcategoriesResponse[0]._id);
+      }
     }
   };
 
@@ -26,6 +43,13 @@ const NavBar = () => {
 
   const onCategory = (categoryId) => {
     navigate(`/category/${categoryId}`);
+  };
+
+  const onSearch = () => {
+    if (!searchString) return;
+    navigate(
+      `/search?s=${searchString.trim()}&&category=${selectedSubcategories}`,
+    );
   };
 
   return (
@@ -58,12 +82,27 @@ const NavBar = () => {
           className="uk-search-input"
           type="search"
           placeholder="Search"
+          value={searchString}
+          onChange={(e) => setSearchString(e.target.value)}
         />
-        <NavBarInputDropDown className="uk-select">
-          <option>Category 01</option>
-          <option>Categoryyyyyy 02</option>
+        <NavBarInputDropDown
+          className="uk-select"
+          value={selectedSubcategories}
+          onChange={(e) => setSelectedSubcategories(e.target.value)}
+        >
+          {subcategories.map((subcategory) => {
+            return (
+              <option key={subcategory._id} value={subcategory._id}>
+                {subcategory.name}
+              </option>
+            );
+          })}
         </NavBarInputDropDown>
-        <NavBarInputButton className="uk-button uk-button-primary">
+        <NavBarInputButton
+          className="uk-button uk-button-primary"
+          type="button"
+          onClick={onSearch}
+        >
           Tìm kiếm
         </NavBarInputButton>
       </NavBarInputWrapper>

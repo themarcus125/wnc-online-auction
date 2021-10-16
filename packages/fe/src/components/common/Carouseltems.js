@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import UIKit from 'uikit/dist/js/uikit.min.js';
-import styled from 'styled-components';
 
 const CarouselItems = ({ data, renderItem }) => {
   useEffect(() => {

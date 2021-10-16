@@ -26,15 +26,15 @@ const HomePage = () => {
       ]);
 
     if (!almostExpiredResponse.error) {
-      setAlmostExpiredProducts(almostExpiredResponse);
+      setAlmostExpiredProducts(almostExpiredResponse.products);
     }
 
     if (!popularResponse.error) {
-      setPopularProducts(popularResponse);
+      setPopularProducts(popularResponse.products);
     }
 
     if (!highestPriceResponse.error) {
-      setHighestPriceProducts(highestPriceResponse);
+      setHighestPriceProducts(highestPriceResponse.products);
     }
   };
 
