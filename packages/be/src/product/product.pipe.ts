@@ -1,6 +1,6 @@
 import { removeAll } from '@/utils/file';
 import { safePositive } from '@/utils/parser';
-import { length, notNull, validateInt } from '@/utils/validator';
+import { length, notEmpty, validateInt } from '@/utils/validator';
 import { RequestHandler } from 'express';
 import { CreateProductRequestDTO } from './product.dto';
 
@@ -14,14 +14,14 @@ export const validateCreateProductBody = (body: any) => {
     buyPrice,
     expiredIn,
   } = body;
-  if (!notNull(description)) {
+  if (!notEmpty(description)) {
     return 'DESC';
   }
   body.descriptions = [description];
   if (!length(name, 1, 30)) {
     return 'NAME';
   }
-  if (!notNull(category)) {
+  if (!notEmpty(category)) {
     return 'CAT';
   }
   const [safeStartPrice, startPriceValue] = safePositive(startPrice);
@@ -34,7 +34,7 @@ export const validateCreateProductBody = (body: any) => {
     return 'STPRICE';
   }
   body.stepPrice = stepPriceValue;
-  if (notNull(buyPrice)) {
+  if (notEmpty(buyPrice)) {
     const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
     if (!safeBuyPrice) {
       return 'BPRICE';
@@ -48,7 +48,7 @@ export const validateCreateProductBody = (body: any) => {
 };
 
 export const createProductValidator: RequestHandler = (req, res, next) => {
-  if (!notNull(req.body.description)) {
+  if (!notEmpty(req.body.description)) {
     return res.status(400).json({
       error: 'INVALID_DESC',
     });
@@ -67,7 +67,7 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_NAME',
     });
   }
-  if (!notNull(category)) {
+  if (!notEmpty(category)) {
     return res.status(400).json({
       error: 'INVALID_CAT',
     });
@@ -86,7 +86,7 @@ export const createProductValidator: RequestHandler = (req, res, next) => {
     });
   }
   req.body.stepPrice = stepPriceValue;
-  if (notNull(buyPrice)) {
+  if (notEmpty(buyPrice)) {
     const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
     if (!safeBuyPrice) {
       return res.status(400).json({
