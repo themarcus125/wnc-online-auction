@@ -1,53 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components';
+import { FaThumbsUp } from '@react-icons/all-files/fa/FaThumbsUp';
+import { FaThumbsDown } from '@react-icons/all-files/fa/FaThumbsDown';
 import { navigate } from 'gatsby-link';
-import dayjs from 'dayjs';
 
 import PaginationButtonGroup from '../common/PaginationButtonGroup';
 import Modal, { showModal } from '../common/Modal';
-import RichTextEditor from '../common/RichTextEditor';
 
 import { getAPI } from '../../utils/api';
 
 import { PRODUCTS_PER_PAGE } from '../../utils/constants/product';
 
-const descriptionModalID = 'descriptionModal';
+const reviewModalID = 'reviewModal';
 
-const AccountProductList = () => {
-  const editorRef = useRef(null);
+const AccountProductWonList = () => {
   const [productList, setProductList] = useState([]);
-  const [categoryList, setCategoryList] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const numOfPage = useRef(0);
 
   useEffect(() => {
-    loadCategories();
-  }, []);
-
-  useEffect(() => {
     loadProducts();
   }, [currentPage]);
-
-  const onAdd = () => {
-    navigate('/seller/add-product');
-  };
-
-  const onDetail = (productId) => {
-    navigate(`/product/${productId}`);
-  };
-
-  const onUpdate = () => {
-    editorRef.current.setContent('');
-    showModal(descriptionModalID);
-  };
-
-  const onSave = () => {
-    // if (editorRef.current) {
-    //   console.log(typeof editorRef.current.getContent());
-    // }
-  };
 
   const loadProducts = async () => {
     setLoading(true);
@@ -60,21 +35,10 @@ const AccountProductList = () => {
       numOfPage.current = Math.ceil(
         response.page.totalCount / PRODUCTS_PER_PAGE,
       );
+      console.log(response.products);
       setProductList(response.products);
     }
     setLoading(false);
-  };
-
-  const loadCategories = async () => {
-    const response = await getAPI('/api/category');
-
-    if (!response.error) {
-      const obj = response.reduce(
-        (obj, category) => ((obj[category._id] = category.name), obj),
-        {},
-      );
-      setCategoryList(obj);
-    }
   };
 
   const onChangePage = (pageNumber) => {
@@ -93,14 +57,21 @@ const AccountProductList = () => {
     }
   };
 
+  const onDetails = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const onReview = () => {
+    showModal(reviewModalID);
+  };
+
+  const onSendReview = () => {};
+
   return (
     <React.Fragment>
       <h3 className="uk-text-primary uk-text-bold">
-        Danh sách sản phẩm đang bán
+        Danh sách sản phẩm đã thắng
       </h3>
-      <button className="uk-button uk-button-primary" onClick={onAdd}>
-        Thêm mới
-      </button>
       <ToastContainer
         position={toast.POSITION.TOP_RIGHT}
         autoClose={3000}
@@ -113,10 +84,10 @@ const AccountProductList = () => {
           <table className="uk-table uk-table-divider uk-table-striped">
             <thead>
               <tr>
-                <th style={{ width: '140px' }}>Tên sản phẩm</th>
-                <th>Danh mục</th>
-                <th>Giá hiện tại</th>
-                <th>Ngày hết hạn</th>
+                <th style={{ width: '130px' }}>Tên sản phẩm</th>
+                <th>Giá mua</th>
+                <th>Người bán</th>
+                <th>Email</th>
                 <th></th>
               </tr>
             </thead>
@@ -125,28 +96,24 @@ const AccountProductList = () => {
                 return (
                   <tr key={product._id}>
                     <TableCell>{product.name}</TableCell>
-                    <TableCell>{categoryList[product.category]}</TableCell>
-                    <TableCell style={{ textAlign: 'center' }}>
+                    <TableCell>
                       {Number(product.currentPrice).toLocaleString()} đ
                     </TableCell>
-                    <TableCell style={{ textAlign: 'center' }}>
-                      {dayjs(product.expiredAt).format('HH:mm')}
-                      <br />
-                      {dayjs(product.expiredAt).format('DD/MM/YYYY')}
-                    </TableCell>
+                    <TableCell>Nguyễn Văn A</TableCell>
+                    <TableCell>Nva@gmail.com</TableCell>
                     <TableCell>
                       <p className="uk-flex uk-flex-column">
                         <Button
                           className="uk-button uk-button-primary uk-margin-bottom"
-                          onClick={() => onDetail(product._id)}
+                          onClick={() => onDetails(product._id)}
                         >
                           Chi tiết
                         </Button>
                         <Button
                           className="uk-button uk-button-secondary"
-                          onClick={onUpdate}
+                          onClick={onReview}
                         >
-                          Cập nhật
+                          Đánh giá
                         </Button>
                       </p>
                     </TableCell>
@@ -157,22 +124,44 @@ const AccountProductList = () => {
           </table>
         )}
         <Modal
-          modalID={descriptionModalID}
+          modalID={reviewModalID}
           isContainer
-          title="Cập nhật mô tả sản phẩm"
+          title="Đánh giá người bán"
           buttonRow={
             <button
               className="uk-button uk-button-primary"
               type="button"
-              onClick={onSave}
+              onClick={onSendReview}
             >
-              Cập nhật
+              Gửi đánh giá
             </button>
           }
         >
-          <RichTextEditor
-            onInit={(evt, editor) => (editorRef.current = editor)}
-          />
+          <>
+            <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+              <label>
+                <input
+                  className="uk-radio"
+                  type="radio"
+                  name="radio2"
+                  checked
+                />
+                <FaThumbsUp className="uk-margin-small-left" />
+              </label>
+              <label>
+                <input className="uk-radio" type="radio" name="radio2" />
+                <FaThumbsDown className="uk-margin-small-left" />
+              </label>
+            </div>
+            <div>
+              <small>Lời nhận xét</small>
+              <textarea
+                className="uk-textarea uk-margin-small-top"
+                rows="5"
+                style={{ resize: 'none' }}
+              />
+            </div>
+          </>
         </Modal>
         <PaginationButtonGroup
           onChangePage={onChangePage}
@@ -186,7 +175,7 @@ const AccountProductList = () => {
   );
 };
 
-export default AccountProductList;
+export default AccountProductWonList;
 
 const TableCell = styled.td`
   vertical-align: middle !important;

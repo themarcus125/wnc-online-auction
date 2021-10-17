@@ -8,6 +8,8 @@ import AccountWatchList from './Account/AccountWatchList';
 import AccountBidHistory from './Account/AccountBidHistory';
 import AccountProductList from './Account/AccountProductList';
 import AccountProductSoldList from './Account/AccountProductSoldList';
+import AccountProductBiddingList from './Account/AccountProductBiddingList';
+import AccountProductWonList from './Account/AccountProductWonList';
 
 import { getUser } from '../utils/auth';
 import { SELLER_VALUE } from '../utils/constants/role';
@@ -40,6 +42,12 @@ const AccountPage = () => {
               <li className="uk-active">
                 <a href="#">Tài khoản</a>
               </li>
+              <li>
+                <a href="#">Sản phẩm đang đấu giá</a>
+              </li>
+              <li>
+                <a href="#">Sản phẩm đã thắng</a>
+              </li>
               {role === SELLER_VALUE && (
                 <>
                   <li>
@@ -51,13 +59,10 @@ const AccountPage = () => {
                 </>
               )}
               <li>
-                <a href="#">Đánh giá</a>
-              </li>
-              <li>
                 <a href="#">Sản phẩm yêu thích</a>
               </li>
               <li>
-                <a href="#">Lịch sử đấu giá</a>
+                <a href="#">Đánh giá</a>
               </li>
             </ul>
           </div>
@@ -68,6 +73,12 @@ const AccountPage = () => {
             <ul id="detail-tabs" className="uk-switcher">
               <li>
                 <AccountInfo />
+              </li>
+              <li>
+                <AccountProductBiddingList />
+              </li>
+              <li>
+                <AccountProductWonList />
               </li>
               {role === SELLER_VALUE && (
                 <>
@@ -80,13 +91,10 @@ const AccountPage = () => {
                 </>
               )}
               <li>
-                <AccountReview />
-              </li>
-              <li>
                 <AccountWatchList />
               </li>
               <li>
-                <AccountBidHistory />
+                <AccountReview />
               </li>
             </ul>
           </div>
