@@ -1,14 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage, yupToFormErrors } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components';
-import { Editor } from '@tinymce/tinymce-react';
 import DatePicker from 'react-datepicker';
 import * as dayjs from 'dayjs';
 import { Link } from 'gatsby';
 
 import FormErrorMessage from '../common/Form/ErrorMessage';
+import RichTextEditor from '../common/RichTextEditor';
 
 import { getAPI, postFileAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
@@ -252,25 +252,8 @@ const AddProductPage = () => {
               </div>
               <div className="uk-width-1-1" style={{ zIndex: 0 }}>
                 <small>Mô tả sản phẩm</small>
-                <Editor
-                  apiKey="mqjp19j7s814osukaw32ul1epfsa6tq2gk4zy229fvog9vud"
+                <RichTextEditor
                   onInit={(evt, editor) => (editorRef.current = editor)}
-                  init={{
-                    height: 300,
-                    menubar: false,
-                    plugins: [
-                      'advlist autolink lists link image charmap print preview anchor',
-                      'searchreplace visualblocks code fullscreen',
-                      'insertdatetime media table paste code wordcount',
-                    ],
-                    toolbar:
-                      'undo redo | formatselect | ' +
-                      'bold italic backcolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ' +
-                      'removeformat | link image',
-                    content_style:
-                      'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                  }}
                   onEditorChange={(e) => {
                     handleChange({ target: { name: 'description', value: e } });
                   }}

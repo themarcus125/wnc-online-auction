@@ -25,11 +25,11 @@ const AccountBidHistory = () => {
               <td>24/2/2021</td>
               <td>1.000.000đ</td>
               <td className="uk-flex uk-flex-middle">
-                <Link
+                <a
                   title="Chỉnh sửa"
                   className="uk-icon-link"
                   uk-icon="file-edit"
-                ></Link>
+                ></a>
               </td>
             </tr>
             <tr>

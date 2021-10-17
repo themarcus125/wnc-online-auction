@@ -6,8 +6,15 @@ import AccountInfo from './Account/AccountInfo';
 import AccountReview from './Account/AccountReview';
 import AccountWatchList from './Account/AccountWatchList';
 import AccountBidHistory from './Account/AccountBidHistory';
+import AccountProductList from './Account/AccountProductList';
+import AccountProductSoldList from './Account/AccountProductSoldList';
+
+import { getUser } from '../utils/auth';
+import { SELLER_VALUE } from '../utils/constants/role';
 
 const AccountPage = () => {
+  const { role = 0 } = getUser();
+
   useEffect(() => {
     UIKit.tab('#tabbar');
     UIKit.switcher('#detail-tabs');
@@ -33,6 +40,16 @@ const AccountPage = () => {
               <li className="uk-active">
                 <a href="#">Tài khoản</a>
               </li>
+              {role === SELLER_VALUE && (
+                <>
+                  <li>
+                    <a href="#">Sản phẩm đang bán</a>
+                  </li>
+                  <li>
+                    <a href="#">Sản phẩm đã bán</a>
+                  </li>
+                </>
+              )}
               <li>
                 <a href="#">Đánh giá</a>
               </li>
@@ -52,6 +69,16 @@ const AccountPage = () => {
               <li>
                 <AccountInfo />
               </li>
+              {role === SELLER_VALUE && (
+                <>
+                  <li>
+                    <AccountProductList />
+                  </li>
+                  <li>
+                    <AccountProductSoldList />
+                  </li>
+                </>
+              )}
               <li>
                 <AccountReview />
               </li>
