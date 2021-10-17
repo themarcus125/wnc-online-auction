@@ -1,12 +1,11 @@
 import { RequestHandler } from 'express';
 import { JWTPayload } from '@/auth/auth.dto';
 import {
-  CreateProductRequestDTO,
+  TransformedCreateProductRequestDTO,
   QueryProductDTO,
-  UpdateProductDTO,
 } from './product.dto';
-import ProductService from './product.service';
 import { removeAll } from '@/utils/file';
+import ProductService from './product.service';
 
 const createProduct: RequestHandler = async (req, res, next) => {
   const {
@@ -20,9 +19,10 @@ const createProduct: RequestHandler = async (req, res, next) => {
     allowNoRatingBid,
     images,
     descriptions,
-  }: CreateProductRequestDTO = req.body;
+  }: TransformedCreateProductRequestDTO = req.body;
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
+    const now = Date.now();
     const product = await ProductService.create({
       name,
       seller: id,
@@ -32,7 +32,8 @@ const createProduct: RequestHandler = async (req, res, next) => {
       startPrice,
       stepPrice,
       buyPrice,
-      expiredAt: new Date(Date.now() + expiredIn * 1000 * 3600),
+      createdAt: new Date(now),
+      expiredAt: new Date(now + expiredIn * 1000 * 3600),
       currentPrice: startPrice,
       isAutoRenew,
       allowNoRatingBid,

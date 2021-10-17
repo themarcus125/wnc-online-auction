@@ -8,12 +8,13 @@ export interface CreateProductDTO {
   startPrice: number;
   stepPrice: number;
   expiredAt: Date;
+  createdAt: Date;
   currentPrice: number;
   isAutoRenew?: boolean;
   allowNoRatingBid?: boolean;
 }
 
-export interface CreateProductRequestDTO {
+export interface TransformedCreateProductRequestDTO {
   name: string;
   descriptions: string[];
   category: string;
