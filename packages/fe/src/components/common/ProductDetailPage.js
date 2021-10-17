@@ -6,11 +6,13 @@ import dayjs from 'dayjs';
 import LoadingOverlay from './LoadingOverlay';
 import CarouselItems from './Carouseltems';
 import MostPopularProduct from '../common/Carousel/MostPopularProduct';
+import Modal, { showModal } from './Modal';
 
 import { getAPI } from '../../utils/api';
 import { hoursToString } from '../../utils/time';
 
 const API_URL = process.env.API_URL;
+const bidHistoryModalID = 'bidHistoryModal';
 
 const ProductDetailPage = ({ productId }) => {
   const [product, setProduct] = useState({});
@@ -38,6 +40,10 @@ const ProductDetailPage = ({ productId }) => {
     if (!productListResponse.error) {
       setOtherProducts(productListResponse.products);
     }
+  };
+
+  const openBidHistory = () => {
+    showModal(bidHistoryModalID);
   };
 
   const hourDiff = dayjs(product.expiredAt || '').diff(dayjs(), 'hour');
@@ -82,7 +88,12 @@ const ProductDetailPage = ({ productId }) => {
                   </p>
                   <p className="uk-text-small uk-flex uk-flex-between">
                     <span>Lượt bid: {product.bidCount}</span>
-                    <a>Lịch sử đấu giá</a>
+                    <HistoryButton
+                      className="uk-text-primary"
+                      onClick={openBidHistory}
+                    >
+                      Lịch sử đấu giá
+                    </HistoryButton>
                   </p>
                 </div>
                 <Divider />
@@ -173,6 +184,31 @@ const ProductDetailPage = ({ productId }) => {
             </div>
           </div>
           <LoadingOverlay isLoading={loading} />
+          <Modal modalID={bidHistoryModalID} title="Lịch sử đấu giá">
+            <div>
+              <table className="uk-table uk-table-divider uk-table-striped">
+                <thead>
+                  <tr>
+                    <th>Thời điểm</th>
+                    <th>Người đấu giá</th>
+                    <th>Số tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>19:40 - 20/10/2021</td>
+                    <td>***Khoa</td>
+                    <td>7.000.000đ</td>
+                  </tr>
+                  <tr>
+                    <td>18:40 - 20/10/2021</td>
+                    <td>***Minh</td>
+                    <td>6.000.000đ</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Modal>
         </div>
       </div>
     </>
@@ -209,4 +245,8 @@ const Button = styled.button`
 const BidInput = styled.input`
   width: 250px !important;
   height: 40px;
+`;
+
+const HistoryButton = styled.span`
+  cursor: pointer;
 `;

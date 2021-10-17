@@ -20,7 +20,7 @@ const Modal = ({
 }) => {
   return (
     <ModalPortal modalID={modalID} isContainer={isContainer}>
-      <div className="uk-modal-dialog uk-modal-body">
+      <div className="uk-modal-dialog uk-modal-body" uk-overflow-auto="">
         {title ? (
           <h4 className="uk-text-bold uk-text-primary">{title}</h4>
         ) : null}
