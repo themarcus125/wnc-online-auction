@@ -1,6 +1,6 @@
 import {
   length,
-  notNull,
+  notEmpty,
   validateEmail,
   validatePassword,
   validateDate,
@@ -21,7 +21,7 @@ export const updateUserValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_DOB',
     });
   }
-  if (!notNull(address)) {
+  if (!notEmpty(address)) {
     return res.status(400).json({
       error: 'INVALID_ADDRESS',
     });
@@ -36,7 +36,7 @@ export const changeUserPasswordValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_NEW_PASSWORD',
     });
   }
-  if (!notNull(oldPassword)) {
+  if (!notEmpty(oldPassword)) {
     return res.status(400).json({
       error: 'INVALID_OLD_PASSWORD',
     });

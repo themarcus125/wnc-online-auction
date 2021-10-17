@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { notNull, validatePassword } from './validator';
+import { notEmpty, validatePassword } from './validator';
 
 const baseValidation =
   (
     where: string,
     field: string,
-    validator: (v: any) => boolean = notNull,
+    validator: (v: any) => boolean = notEmpty,
   ): RequestHandler =>
   (req, res, next) => {
     const dict: Record<string, any> = {

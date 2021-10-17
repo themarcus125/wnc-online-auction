@@ -21,3 +21,10 @@ export const parseSort = (val?: any) => {
   if (val === 'asc') return 1;
   return undefined;
 };
+
+export const parseBoolean = (val?: any) => {
+  if (!val) return null;
+  if (val === 'true') return true;
+  if (val === 'false') return false;
+  return null;
+};

@@ -1,6 +1,6 @@
 import {
   length,
-  notNull,
+  notEmpty,
   validateEmail,
   validatePassword,
 } from '@/utils/validator';
@@ -19,7 +19,7 @@ export const registerValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_NAME',
     });
   }
-  if (!notNull(address)) {
+  if (!notEmpty(address)) {
     return res.status(400).json({
       error: 'INVALID_ADDRESS',
     });
@@ -39,7 +39,7 @@ export const loginValidator: RequestHandler = (req, res, next) => {
       error: 'INVALID_EMAIL',
     });
   }
-  if (!notNull(password)) {
+  if (!notEmpty(password)) {
     return res.status(400).json({
       error: 'INVALID_PASSWORD',
     });

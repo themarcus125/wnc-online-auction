@@ -12,8 +12,12 @@ export const validatePassword = (val?: string): boolean => {
   return val.length >= 6;
 };
 
-export const notNull = (val?: any): boolean => {
+export const notEmpty = (val?: any): boolean => {
   return !!val;
+};
+
+export const notNull = (val?: any): boolean => {
+  return val !== null;
 };
 
 export const length = (
