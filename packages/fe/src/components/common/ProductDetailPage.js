@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 import LoadingOverlay from './LoadingOverlay';
 import CarouselItems from './Carouseltems';
+import MostPopularProduct from '../common/Carousel/MostPopularProduct';
 
 import { getAPI } from '../../utils/api';
 import { hoursToString } from '../../utils/time';
@@ -14,18 +15,29 @@ const API_URL = process.env.API_URL;
 const ProductDetailPage = ({ productId }) => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
+  const [otherProducts, setOtherProducts] = useState([]);
+
   useEffect(() => {
     loadProduct();
-  }, []);
+  }, [productId]);
 
   const loadProduct = async () => {
     setLoading(true);
     const response = await getAPI(`/api/product/${productId}`);
-    console.log(response);
     if (!response.error) {
       setProduct(response);
+      loadOtherProduct(response.category._id);
     }
     setLoading(false);
+  };
+
+  const loadOtherProduct = async (categoryId) => {
+    const productListResponse = await getAPI(
+      `/api/product?mode=category&&category=${categoryId}&&productId=${productId}&&limit=5&&skip=0`,
+    );
+    if (!productListResponse.error) {
+      setOtherProducts(productListResponse.products);
+    }
   };
 
   const hourDiff = dayjs(product.expiredAt || '').diff(dayjs(), 'hour');
@@ -147,6 +159,16 @@ const ProductDetailPage = ({ productId }) => {
                 dangerouslySetInnerHTML={{
                   __html: product.descriptions?.[0] || '',
                 }}
+              />
+            </div>
+            <div>
+              <p className="uk-text-bold uk-text-large">Sản phẩm khác</p>
+              <CarouselItems
+                data={otherProducts}
+                renderItem={(item) => {
+                  return <MostPopularProduct key={item._id} item={item} />;
+                }}
+                itemsPerPage={3}
               />
             </div>
           </div>
