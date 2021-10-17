@@ -1,11 +1,13 @@
 export const safeInt = (val: any): [boolean, Number] => {
+  if (!val) return [true, 0];
   const parsed = parseInt(val);
   return [!isNaN(parsed), isNaN(parsed) ? 0 : parsed];
 };
 
 export const safePositive = (val: any): [boolean, Number] => {
+  if (!val) return [true, -1];
   const parsed = Math.abs(parseFloat(val || 0));
-  return [!isNaN(parsed), isNaN(parsed) ? 0 : parsed];
+  return [!isNaN(parsed), isNaN(parsed) ? -1 : parsed];
 };
 
 export const parseIntDefault = (val: any, defaultValue: number) => {

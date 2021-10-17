@@ -9,6 +9,8 @@ export interface CreateProductDTO {
   stepPrice: number;
   expiredAt: Date;
   currentPrice: number;
+  isAutoRenew?: boolean;
+  allowNoRatingBid?: boolean;
 }
 
 export interface CreateProductRequestDTO {
@@ -16,11 +18,24 @@ export interface CreateProductRequestDTO {
   descriptions: string[];
   category: string;
   images: string[];
-  seller: string;
-  buyPrice?: number;
   startPrice: number;
   stepPrice: number;
+  buyPrice?: number;
   expiredIn: number;
+  isAutoRenew?: boolean;
+  allowNoRatingBid?: boolean;
+}
+
+export interface RawCreateProductRequestDTO {
+  name?: string;
+  description?: string;
+  category?: string;
+  startPrice?: string;
+  stepPrice?: string;
+  buyPrice?: string;
+  expiredIn?: string;
+  isAutoRenew?: string;
+  allowNoRatingBid?: string;
 }
 
 export interface UpdateProductDTO {

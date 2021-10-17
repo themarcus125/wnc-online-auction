@@ -1,106 +1,76 @@
 import { removeAll } from '@/utils/file';
-import { safePositive } from '@/utils/parser';
-import { length, notEmpty, validateInt } from '@/utils/validator';
+import { parseBoolean, safePositive } from '@/utils/parser';
+import { length, notEmpty, notNull, validateInt } from '@/utils/validator';
 import { RequestHandler } from 'express';
-import { CreateProductRequestDTO } from './product.dto';
+import { RawCreateProductRequestDTO } from './product.dto';
 
-export const validateCreateProductBody = (body: any) => {
+export const transformCreateProductBody = (body: any) => {
   const {
     name,
-    description,
+    description, // toArray
     category,
-    startPrice,
-    stepPrice,
-    buyPrice,
+    startPrice, // toPositive
+    stepPrice, // toPositive
+    buyPrice, // canEmpty, toPositive
     expiredIn,
-  } = body;
+    isAutoRenew, // canEmpty, toBoolean
+    allowNoRatingBid, // canEmpty, toBoolean
+  }: RawCreateProductRequestDTO = body;
+
   if (!notEmpty(description)) {
     return 'DESC';
   }
   body.descriptions = [description];
+
   if (!length(name, 1, 30)) {
     return 'NAME';
   }
+
   if (!notEmpty(category)) {
     return 'CAT';
   }
+
   const [safeStartPrice, startPriceValue] = safePositive(startPrice);
   if (!safeStartPrice) {
-    return 'SPRICE';
+    return 'S_PRICE';
   }
   body.startPrice = startPriceValue;
+
   const [safeStepPrice, stepPriceValue] = safePositive(stepPrice);
   if (!safeStepPrice) {
-    return 'STPRICE';
+    return 'STP_PRICE';
   }
   body.stepPrice = stepPriceValue;
+
   if (notEmpty(buyPrice)) {
     const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
     if (!safeBuyPrice) {
-      return 'BPRICE';
+      return 'B_PRICE';
     }
     body.buyPrice = buyPriceValue;
   }
+
   if (!validateInt(undefined, 24)(expiredIn)) {
     return 'EXP_HOUR';
   }
-  return 'VALID';
-};
 
-export const createProductValidator: RequestHandler = (req, res, next) => {
-  if (!notEmpty(req.body.description)) {
-    return res.status(400).json({
-      error: 'INVALID_DESC',
-    });
-  }
-  req.body.descriptions = [req.body.description];
-  const {
-    name,
-    category,
-    startPrice,
-    stepPrice,
-    buyPrice,
-    expiredIn,
-  }: CreateProductRequestDTO = req.body;
-  if (!length(name, 1, 30)) {
-    return res.status(400).json({
-      error: 'INVALID_NAME',
-    });
-  }
-  if (!notEmpty(category)) {
-    return res.status(400).json({
-      error: 'INVALID_CAT',
-    });
-  }
-  const [safeStartPrice, startPriceValue] = safePositive(startPrice);
-  if (!safeStartPrice) {
-    return res.status(400).json({
-      error: 'INVALID_START_PRICE',
-    });
-  }
-  req.body.startPrice = startPriceValue;
-  const [safeStepPrice, stepPriceValue] = safePositive(stepPrice);
-  if (!safeStepPrice) {
-    return res.status(400).json({
-      error: 'INVALID_STEP_PRICE',
-    });
-  }
-  req.body.stepPrice = stepPriceValue;
-  if (notEmpty(buyPrice)) {
-    const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
-    if (!safeBuyPrice) {
-      return res.status(400).json({
-        error: 'INVALID_BUY_PRICE',
-      });
+  if (notEmpty(isAutoRenew)) {
+    const parsedIsAutoRenew = parseBoolean(isAutoRenew);
+    if (!notNull(parsedIsAutoRenew)) {
+      return 'AUTO_RENEW';
     }
-    req.body.buyPrice = buyPriceValue;
+    body.isAutoRenew = parsedIsAutoRenew;
   }
-  if (!validateInt(undefined, 24)(expiredIn)) {
-    return res.status(400).json({
-      error: 'INVALID_EXPIRED_TIME_HOUR',
-    });
+
+  if (notEmpty(allowNoRatingBid)) {
+    const parsedAllowNoRatingBid = parseBoolean(allowNoRatingBid);
+    if (!notNull(parsedAllowNoRatingBid)) {
+      return 'ALLOW_RATING';
+    }
+    body.allowNoRatingBid = parsedAllowNoRatingBid;
   }
-  next();
+
+  return null;
 };
 
 export const mapImagesToBody: RequestHandler = (req, res, next) => {

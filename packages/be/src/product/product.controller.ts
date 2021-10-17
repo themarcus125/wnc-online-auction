@@ -11,13 +11,15 @@ import { removeAll } from '@/utils/file';
 const createProduct: RequestHandler = async (req, res, next) => {
   const {
     name,
-    descriptions,
     category,
-    images,
     buyPrice,
     startPrice,
     stepPrice,
     expiredIn,
+    isAutoRenew,
+    allowNoRatingBid,
+    images,
+    descriptions,
   }: CreateProductRequestDTO = req.body;
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
@@ -32,6 +34,8 @@ const createProduct: RequestHandler = async (req, res, next) => {
       buyPrice,
       expiredAt: new Date(Date.now() + expiredIn * 1000 * 3600),
       currentPrice: startPrice,
+      isAutoRenew,
+      allowNoRatingBid,
     });
     res.json(product);
   } catch (e) {
