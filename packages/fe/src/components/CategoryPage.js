@@ -41,7 +41,7 @@ const CategoryPage = ({ categoryId }) => {
 
   return (
     <>
-      <Helmet title={`${category.name || ''}`} defer={false} />
+      <Helmet title={`${category.name || ''} - Biddly`} defer={false} />
       <Wrapper className="uk-padding-small">
         <div className="page uk-margin-auto">
           <div>

@@ -8,7 +8,7 @@ import CommonLayout from '../components/common/Layout/CommonLayout';
 const CategoryHomePage = () => {
   return (
     <CommonLayout>
-      <Router basepath="/category">
+      <Router>
         <CategoryPage path="/:categoryId" />
         <CategoryProductPage path="/:categoryId/:subCategoryId" />
       </Router>

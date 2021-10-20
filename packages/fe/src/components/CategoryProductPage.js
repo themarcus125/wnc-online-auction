@@ -76,7 +76,7 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
 
   return (
     <>
-      <Helmet title={`${subCategory.name || ''}`} defer={false} />
+      <Helmet title={`${subCategory.name || ''} - Biddly`} defer={false} />
       <Wrapper className="uk-padding-small">
         <div className="page uk-margin-auto">
           <div>

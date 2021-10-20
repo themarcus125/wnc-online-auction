@@ -19,7 +19,7 @@ const Admin = () => {
   return (
     <AdminLayout>
       <div className="uk-width-1-1">
-        <Router basepath={'/admin'}>
+        <Router>
           <PrivateWrapper
             title={'Danh sách danh mục'}
             path="/category"

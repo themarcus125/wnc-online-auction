@@ -7,7 +7,7 @@ import CommonLayout from '../components/common/Layout/CommonLayout';
 const Product = () => {
   return (
     <CommonLayout>
-      <Router basepath={'/product'}>
+      <Router>
         <ProductDetailPage path="/:productId" />
       </Router>
     </CommonLayout>

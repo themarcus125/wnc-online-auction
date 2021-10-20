@@ -82,7 +82,7 @@ const ProductDetailPage = ({ productId }) => {
 
   return (
     <>
-      <Helmet title={`${product.name || ''}`} defer={false} />
+      <Helmet title={`${product.name || ''} - Biddly`} defer={false} />
       <div className="uk-padding-small">
         <div className="page uk-margin-auto">
           <div>
