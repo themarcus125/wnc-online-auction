@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 const BaseWrapper = ({ component: Component, title, ...rest }) => {
   return (
     <>
-      <Helmet title={`${title}`} defer={false} />
+      <Helmet title={`${title} - Biddly`} defer={false} />
       <Component {...rest} />
     </>
   );

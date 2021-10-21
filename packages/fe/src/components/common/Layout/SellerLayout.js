@@ -4,7 +4,7 @@ const SellerLayout = ({ children }) => {
   return (
     <div className="uk-flex uk-flex-row" style={{ height: '100vh' }}>
       <div
-        className="uk-flex uk-padding uk-width-1-1"
+        className="uk-flex uk-padding uk-width-1-1 uk-flex-center"
         style={{ overflow: 'auto', height: '100vh' }}
       >
         {children}

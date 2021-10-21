@@ -6,8 +6,17 @@ import AccountInfo from './Account/AccountInfo';
 import AccountReview from './Account/AccountReview';
 import AccountWatchList from './Account/AccountWatchList';
 import AccountBidHistory from './Account/AccountBidHistory';
+import AccountProductList from './Account/AccountProductList';
+import AccountProductSoldList from './Account/AccountProductSoldList';
+import AccountProductBiddingList from './Account/AccountProductBiddingList';
+import AccountProductWonList from './Account/AccountProductWonList';
+
+import { getUser } from '../utils/auth';
+import { SELLER_VALUE } from '../utils/constants/role';
 
 const AccountPage = () => {
+  const { role = 0 } = getUser();
+
   useEffect(() => {
     UIKit.tab('#tabbar');
     UIKit.switcher('#detail-tabs');
@@ -34,13 +43,26 @@ const AccountPage = () => {
                 <a href="#">Tài khoản</a>
               </li>
               <li>
-                <a href="#">Đánh giá</a>
+                <a href="#">Sản phẩm đang đấu giá</a>
               </li>
+              <li>
+                <a href="#">Sản phẩm đã thắng</a>
+              </li>
+              {role === SELLER_VALUE && (
+                <>
+                  <li>
+                    <a href="#">Sản phẩm đang bán</a>
+                  </li>
+                  <li>
+                    <a href="#">Sản phẩm đã bán</a>
+                  </li>
+                </>
+              )}
               <li>
                 <a href="#">Sản phẩm yêu thích</a>
               </li>
               <li>
-                <a href="#">Lịch sử đấu giá</a>
+                <a href="#">Đánh giá</a>
               </li>
             </ul>
           </div>
@@ -53,13 +75,26 @@ const AccountPage = () => {
                 <AccountInfo />
               </li>
               <li>
-                <AccountReview />
+                <AccountProductBiddingList />
               </li>
+              <li>
+                <AccountProductWonList />
+              </li>
+              {role === SELLER_VALUE && (
+                <>
+                  <li>
+                    <AccountProductList />
+                  </li>
+                  <li>
+                    <AccountProductSoldList />
+                  </li>
+                </>
+              )}
               <li>
                 <AccountWatchList />
               </li>
               <li>
-                <AccountBidHistory />
+                <AccountReview />
               </li>
             </ul>
           </div>

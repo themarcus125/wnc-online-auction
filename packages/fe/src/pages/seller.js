@@ -12,7 +12,7 @@ const Seller = () => {
   return (
     <SellerLayout>
       <div className="uk-width-1-1">
-        <Router basepath={'/seller'}>
+        <Router>
           <PrivateWrapper
             title={'Thêm sản phẩm'}
             path="/add-product"

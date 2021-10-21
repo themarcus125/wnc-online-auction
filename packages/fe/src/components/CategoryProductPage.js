@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
+import { Helmet } from 'react-helmet';
 
 import ProductItem from './common/ProductItem';
 import PaginationButtonGroup from './common/PaginationButtonGroup';
@@ -74,50 +75,55 @@ const CategoryProductPage = ({ categoryId, subCategoryId }) => {
   };
 
   return (
-    <Wrapper className="uk-padding-small">
-      <div className="page uk-margin-auto">
-        <div>
-          <ul className="uk-breadcrumb">
-            <li>
-              <Link to={'/'}>Trang chủ</Link>
-            </li>
-            <li>
-              <Link to={`/category/${categoryId}`}>{category.name}</Link>
-            </li>
-            <li className="uk-disabled">
-              <a href="#">{subCategory.name}</a>
-            </li>
-          </ul>
-        </div>
-        <div className="category-banner uk-background-primary uk-margin-small-bottom">
-          <span
-            className="uk-text-large uk-text-bold"
-            style={{ color: 'white' }}
-          >
-            {subCategory.name}
-          </span>
-        </div>
-        {loading ? (
-          <div uk-spinner=""></div>
-        ) : (
-          <>
-            <div className="uk-margin-top uk-margin-bottom">
-              {productList.map((product) => {
-                return <ProductItem key={product._id} productData={product} />;
-              })}
-            </div>
+    <>
+      <Helmet title={`${subCategory.name || ''} - Biddly`} defer={false} />
+      <Wrapper className="uk-padding-small">
+        <div className="page uk-margin-auto">
+          <div>
+            <ul className="uk-breadcrumb">
+              <li>
+                <Link to={'/'}>Trang chủ</Link>
+              </li>
+              <li>
+                <Link to={`/category/${categoryId}`}>{category.name}</Link>
+              </li>
+              <li className="uk-disabled">
+                <a href="#">{subCategory.name}</a>
+              </li>
+            </ul>
+          </div>
+          <div className="category-banner uk-background-primary uk-margin-small-bottom">
+            <span
+              className="uk-text-large uk-text-bold"
+              style={{ color: 'white' }}
+            >
+              {subCategory.name}
+            </span>
+          </div>
+          {loading ? (
+            <div uk-spinner=""></div>
+          ) : (
+            <>
+              <div className="uk-margin-top uk-margin-bottom">
+                {productList.map((product) => {
+                  return (
+                    <ProductItem key={product._id} productData={product} />
+                  );
+                })}
+              </div>
 
-            <PaginationButtonGroup
-              onChangePage={onChangePage}
-              onNext={onNext}
-              onPrev={onPrev}
-              numOfPage={numOfPage.current}
-              currentPage={currentPage}
-            />
-          </>
-        )}
-      </div>
-    </Wrapper>
+              <PaginationButtonGroup
+                onChangePage={onChangePage}
+                onNext={onNext}
+                onPrev={onPrev}
+                numOfPage={numOfPage.current}
+                currentPage={currentPage}
+              />
+            </>
+          )}
+        </div>
+      </Wrapper>
+    </>
   );
 };
 

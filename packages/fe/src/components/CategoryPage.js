@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate } from 'gatsby-link';
+import { Helmet } from 'react-helmet';
 
 import LoadingOverlay from './common/LoadingOverlay';
 
@@ -39,39 +40,42 @@ const CategoryPage = ({ categoryId }) => {
   };
 
   return (
-    <Wrapper className="uk-padding-small">
-      <div className="page uk-margin-auto">
-        <div>
-          <div className="category-banner uk-background-primary uk-margin-small-bottom">
-            <span
-              className="uk-text-large uk-text-bold"
-              style={{ color: 'white' }}
+    <>
+      <Helmet title={`${category.name || ''} - Biddly`} defer={false} />
+      <Wrapper className="uk-padding-small">
+        <div className="page uk-margin-auto">
+          <div>
+            <div className="category-banner uk-background-primary uk-margin-small-bottom">
+              <span
+                className="uk-text-large uk-text-bold"
+                style={{ color: 'white' }}
+              >
+                {category.name}
+              </span>
+            </div>
+            <div
+              className="uk-child-width-1-2 uk-grid-small uk-text-center"
+              uk-grid=""
+              uk-height-match=""
             >
-              {category.name}
-            </span>
-          </div>
-          <div
-            className="uk-child-width-1-2 uk-grid-small uk-text-center"
-            uk-grid=""
-            uk-height-match=""
-          >
-            {subCategories.map((subCategory) => {
-              return (
-                <div key={subCategory._id}>
-                  <div
-                    onClick={() => onLoadSubCategory(subCategory._id)}
-                    className="sub-category-container uk-card uk-card-default uk-background-muted uk-card-body uk-height-1-1 uk-flex uk-flex-center uk-flex-middle"
-                  >
-                    <p>{subCategory.name}</p>
+              {subCategories.map((subCategory) => {
+                return (
+                  <div key={subCategory._id}>
+                    <div
+                      onClick={() => onLoadSubCategory(subCategory._id)}
+                      className="sub-category-container uk-card uk-card-default uk-background-muted uk-card-body uk-height-1-1 uk-flex uk-flex-center uk-flex-middle"
+                    >
+                      <p>{subCategory.name}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
+          <LoadingOverlay isLoading={loading} />
         </div>
-        <LoadingOverlay isLoading={loading} />
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </>
   );
 };
 

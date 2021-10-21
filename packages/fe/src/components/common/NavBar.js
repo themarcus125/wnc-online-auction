@@ -45,7 +45,8 @@ const NavBar = () => {
     navigate(`/category/${categoryId}`);
   };
 
-  const onSearch = () => {
+  const onSearch = (e) => {
+    e.preventDefault();
     if (!searchString) return;
     navigate(
       `/search?s=${searchString.trim()}&&category=${selectedSubcategories}`,
@@ -77,7 +78,10 @@ const NavBar = () => {
           </div>
         </li>
       </ul>
-      <NavBarInputWrapper className="uk-search uk-search-navbar uk-flex uk-flex-1 uk-flex-middle">
+      <NavBarInputWrapper
+        className="uk-search uk-search-navbar uk-flex uk-flex-1 uk-flex-middle"
+        onSubmit={onSearch}
+      >
         <NavBarInput
           className="uk-search-input"
           type="search"

@@ -4,6 +4,7 @@ import * as dayjs from 'dayjs';
 import { navigate } from 'gatsby-link';
 
 import { hoursToString } from '../../utils/time';
+import { getUser } from '../../utils/auth';
 
 const API_URL = process.env.API_URL;
 
@@ -17,7 +18,11 @@ const ProductItem = ({ productData }) => {
     bidCount,
     expiredAt,
     _id,
+    seller,
   } = productData;
+  console.log(productData);
+  const { _id: userId } = getUser();
+  const isOwner = userId === seller;
   const hourDiff = dayjs(expiredAt).diff(dayjs(), 'hour');
   const timeLeft = hoursToString(hourDiff);
 
@@ -61,9 +66,11 @@ const ProductItem = ({ productData }) => {
               Ngày đăng: {dayjs(createdAt).format('HH:mm DD/MM/YYYY')}
             </small>
           </div>
-          <span className="uk-text-danger" style={{ cursor: 'pointer' }}>
-            Yêu thích <span uk-icon="heart"></span>
-          </span>
+          {!isOwner && (
+            <span className="uk-text-danger" style={{ cursor: 'pointer' }}>
+              Yêu thích <span uk-icon="heart"></span>
+            </span>
+          )}
         </div>
       </div>
     </Product>
