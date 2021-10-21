@@ -118,14 +118,12 @@ export const seedDB = async (
 ) => {
   const connect = await connectDB();
   try {
-    console.log(
-      await Promise.allSettled([
-        userSeed(userSeeds),
-        upgradeRequestSeed(),
-        categorySeed(cateSeeds[0], cateSeeds[1]),
-      ]),
-    );
-    console.log(await productSeed(productSeeds[0], productSeeds[1]));
+    await Promise.allSettled([
+      userSeed(userSeeds),
+      upgradeRequestSeed(),
+      categorySeed(cateSeeds[0], cateSeeds[1]),
+    ]);
+    await productSeed(productSeeds[0], productSeeds[1]);
     console.log('[MG] Seed complete');
   } catch (e) {
     console.log('[MG] Seed failed', e);

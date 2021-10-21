@@ -35,3 +35,8 @@
   https://stackoverflow.com/questions/21803290/get-a-count-of-total-documents-with-mongodb-when-using-limit
   https://stackoverflow.com/questions/20348093/mongodb-aggregation-how-to-get-total-records-count/49483919
   https://stackoverflow.com/questions/48521896/how-to-implement-pagination-and-total-with-mongoose/48522084
+- Transaction
+  https://anonystick.com/blog-developer/transaction-la-gi-thuc-hanh-tren-mongodb-40-don-gian-va-de-hieu-2020092343741446
+  https://mongoosejs.com/docs/transactions.html
+  https://stackoverflow.com/questions/51228059/mongo-db-4-0-transactions-with-mongoose-nodejs-express
+  https://stackoverflow.com/questions/41071617/atomically-update-multiple-documents-and-return-them

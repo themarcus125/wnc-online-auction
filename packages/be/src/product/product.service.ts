@@ -3,12 +3,33 @@ import { parseIntDefault, parseSort } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel } from './product.schema';
 
-class CategoryService
+class ProductService
   extends RepositoryService<ProductDoc, CreateProductDTO>
   implements ModeQuery<ProductDoc, QueryProductDTO>
 {
   constructor() {
     super(ProductModel);
+  }
+
+  async findAndAutoRenew(produdctId: string) {
+    const product = await this.findOne({
+      _id: produdctId,
+      isAutoRenew: true,
+    });
+    if (!product) return null;
+    return this.autoRenew(product);
+  }
+
+  async autoRenew(product: ProductDoc) {
+    const now = Date.now();
+    const oldExpiredAt = new Date(product.expiredAt).getTime();
+    const beforeMls = 5 * 60 * 1000;
+    const addMls = 10 * 60 * 1000;
+    if (now >= oldExpiredAt - beforeMls) {
+      product.expiredAt = new Date(oldExpiredAt + addMls);
+      await product.save();
+    }
+    return product;
   }
 
   async modeFind(
@@ -133,4 +154,4 @@ class CategoryService
   }
 }
 
-export default new CategoryService();
+export default new ProductService();

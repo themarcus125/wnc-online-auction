@@ -50,7 +50,6 @@ export interface UpdateProductDTO {
   stepPrice?: number;
   expiredIn?: number;
   expiredAt?: Date;
-  currentBidder?: string;
   currentPrice?: number;
 }
 

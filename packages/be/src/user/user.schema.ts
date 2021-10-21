@@ -1,6 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { OtpDoc, OtpSchema } from '@/otp/otp.schema';
 
+export const UserModelName = 'User';
 export enum UserRole {
   BIDDER,
   SELLER,
@@ -38,4 +39,4 @@ export const UserSchema = new Schema<UserDoc>(
   { timestamps: true },
 );
 
-export const UserModel = model<UserDoc>('User', UserSchema);
+export const UserModel = model<UserDoc>(UserModelName, UserSchema);

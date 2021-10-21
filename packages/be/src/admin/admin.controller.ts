@@ -6,6 +6,7 @@ import { RequestStatus } from '@/upgradeRequest/upgradeRequest.schema';
 import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
 import { UserDoc, UserRole } from '@/user/user.schema';
 import { AdminUpdateUserDTO } from './admin.dto';
+import ProductService from '@/product/product.service';
 
 const createAdmin: RequestHandler = async (req, res, next) => {
   try {
@@ -153,6 +154,18 @@ const deleteUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+const deleteProduct: RequestHandler = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await ProductService.getModel().findByIdAndDelete(
+      productId,
+    );
+    res.json({ id: productId });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   createAdmin,
   changeRequestStatus,
@@ -162,4 +175,5 @@ export default {
   createUser,
   updateUser,
   deleteUser,
+  deleteProduct,
 };

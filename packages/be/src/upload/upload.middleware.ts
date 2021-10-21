@@ -13,21 +13,21 @@ const storage = multer.diskStorage({
   },
 });
 
-export const uploadHandler = (bodyValidator?: (body: any) => string) =>
+export const uploadHandler = (bodyValidator?: (body: any) => string | null) =>
   multer({
     storage,
     limits: {
       fileSize: 5 * 1024 * 1024,
     },
     fileFilter: (req, file, cb) => {
-      console.log(req.files);
       if (!req.body.isValidated && bodyValidator) {
-        const isValid = bodyValidator(req.body);
-        if (isValid !== 'VALID') {
-          return cb(new BadRequest(isValid));
+        const error = bodyValidator(req.body);
+        if (error) {
+          return cb(new BadRequest(error));
         }
         req.body.isValidated = true;
       }
+
       if (file.mimetype === 'image/png') {
         return cb(null, true);
       }

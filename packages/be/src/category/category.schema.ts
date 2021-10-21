@@ -1,20 +1,24 @@
 import { Document, model, PopulatedDoc, Schema, Types } from 'mongoose';
 
-export type CategoryDoc = Category & Document;
+export const CategoryModelName = 'Category';
 
 export interface Category {
   name: string;
   parent: PopulatedDoc<CategoryDoc>;
   isDel: boolean;
 }
+export type CategoryDoc = Category & Document;
 
 export const CategorySchema = new Schema<CategoryDoc>(
   {
     name: { type: String, required: true, maxlength: 30, index: 'text' },
-    parent: { type: Schema.Types.ObjectId, ref: 'Category' },
+    parent: { type: Schema.Types.ObjectId, ref: CategoryModelName },
     isDel: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
 
-export const CategoryModel = model<CategoryDoc>('Category', CategorySchema);
+export const CategoryModel = model<CategoryDoc>(
+  CategoryModelName,
+  CategorySchema,
+);

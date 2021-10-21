@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register index.ts",
+    "ts": "ts-node -r tsconfig-paths/register",
+    "start": "npm run ts index.ts",
+    "seed": "npm run ts seed/index.ts",
+    "test": "npm run ts test/index.ts",
     "dev": "nodemon --watch src -e ts,js --exec ts-node -r tsconfig-paths/register index.ts",
-    "seed": "ts-node -r tsconfig-paths/register seed/index.ts",
     "start:build": "node  -r ./tsconfig-paths-bootstrap.js dist/index.js",
     "build": "tsc"
   },

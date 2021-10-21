@@ -1,6 +1,8 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { UserDoc } from '@/user/user.schema';
-import { CategoryDoc } from '@/category/category.schema';
+import { UserDoc, UserModelName } from '@/user/user.schema';
+import { CategoryDoc, CategoryModelName } from '@/category/category.schema';
+
+export const ProductModelName = 'Product';
 
 export interface Product {
   name: string;
@@ -34,7 +36,7 @@ export const ProductSchema = new Schema<ProductDoc>(
     category: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Category',
+      ref: CategoryModelName,
     },
     images: {
       type: [String],
@@ -43,13 +45,13 @@ export const ProductSchema = new Schema<ProductDoc>(
     seller: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: UserModelName,
     },
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
     currentPrice: { type: Number, require: true, index: 1 },
-    currentBidder: { type: Schema.Types.ObjectId, ref: 'User' },
+    currentBidder: { type: Schema.Types.ObjectId, ref: UserModelName },
     bidCount: { type: Number, default: 0, index: 1 },
     expiredAt: { type: Date, require: true, index: 1 },
     isAutoRenew: { type: Boolean, default: false },
@@ -57,4 +59,4 @@ export const ProductSchema = new Schema<ProductDoc>(
   },
   { timestamps: true },
 );
-export const ProductModel = model<ProductDoc>('Product', ProductSchema);
+export const ProductModel = model<ProductDoc>(ProductModelName, ProductSchema);

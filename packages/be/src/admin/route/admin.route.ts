@@ -9,6 +9,7 @@ import { upgradeRequestRoute } from './upgradeRequest.route';
 
 export const adminRoute = express.Router();
 
+adminRoute.use('/product', productRoute);
 adminRoute.use('/user', userRoute);
 adminRoute.use('/upgrade-request', upgradeRequestRoute);
 adminRoute.post(

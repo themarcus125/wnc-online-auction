@@ -37,8 +37,10 @@ GET {{baseUrl}}
 ### Search
 GET {{baseUrl}}
     ?mode=search
-    &productName=product1
-    &categoryId={{categoryId}}
+    &categoryId=6158503d5e8b152597624327
+    &price=asc
+### Get product detail
+GET {{baseUrl}}/61686d3d1ea8304dd7c44510
 
 ### Create product
 POST {{baseUrl}}/user
