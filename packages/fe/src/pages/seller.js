@@ -10,7 +10,7 @@ import { SELLER } from '../utils/constants/role';
 
 const Seller = () => {
   return (
-    <SellerLayout path="/seller">
+    <SellerLayout>
       <div className="uk-width-1-1">
         <Router>
           <PrivateWrapper
