@@ -6,9 +6,12 @@ import AdminController from '@/admin/admin.controller';
 
 import { userRoute } from './user.route';
 import { upgradeRequestRoute } from './upgradeRequest.route';
+import productRoute from '@/product/product.route';
+import categoryRoute from './category.route';
 
 export const adminRoute = express.Router();
 
+adminRoute.use('/category', categoryRoute);
 adminRoute.use('/product', productRoute);
 adminRoute.use('/user', userRoute);
 adminRoute.use('/upgrade-request', upgradeRequestRoute);
