@@ -285,7 +285,7 @@ const ProductDetailPage = ({ productId }) => {
               <p className="uk-text-bold uk-text-large">Mô tả sản phẩm</p>
               <div
                 dangerouslySetInnerHTML={{
-                  __html: product.descriptions?.[0] || '',
+                  __html: product.descriptions?.join('') || '',
                 }}
               />
             </div>

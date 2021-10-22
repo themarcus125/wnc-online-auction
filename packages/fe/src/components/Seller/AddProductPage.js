@@ -68,6 +68,7 @@ const AddProductPage = () => {
       buyPrice,
       description,
       autoRenew,
+      allowNoRatingBid,
       category,
       expiredDate,
       expiredTime,
@@ -95,6 +96,7 @@ const AddProductPage = () => {
     formData.append('stepPrice', stepPrice);
     formData.append('buyPrice', buyPrice);
     formData.append('autoRenew', autoRenew);
+    formData.append('allowNoRatingBid', allowNoRatingBid);
     formData.append('category', category);
     formData.append('expiredIn', expiredInHours);
     images.forEach((image) => {
@@ -141,6 +143,7 @@ const AddProductPage = () => {
             buyPrice: 0,
             description: '',
             autoRenew: false,
+            allowNoRatingBid: false,
             images: [],
             category: categories?.[0]?._id ?? '',
             expiredTime: dayjs().format('HH:mm'),
@@ -253,7 +256,11 @@ const AddProductPage = () => {
               <div className="uk-width-auto uk-flex uk-flex-left uk-flex-column">
                 <small>Cho phép người chưa được đánh giá đấu giá</small>
                 <div>
-                  <Field className="uk-checkbox" type="checkbox" />
+                  <Field
+                    className="uk-checkbox"
+                    type="checkbox"
+                    name="allowNoRatingBid"
+                  />
                 </div>
               </div>
               <div className="uk-width-1-1" style={{ zIndex: 0 }}>

@@ -5,10 +5,11 @@ import { navigate } from 'gatsby-link';
 import dayjs from 'dayjs';
 
 import PaginationButtonGroup from '../common/PaginationButtonGroup';
-import Modal, { showModal } from '../common/Modal';
+import Modal, { hideModal, showModal } from '../common/Modal';
 import RichTextEditor from '../common/RichTextEditor';
 
-import { getAPI } from '../../utils/api';
+import { getAPI, patchAPIWithToken } from '../../utils/api';
+import { getToken } from '../../utils/auth';
 
 import { PRODUCTS_PER_PAGE } from '../../utils/constants/product';
 
@@ -21,6 +22,7 @@ const AccountProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const numOfPage = useRef(0);
+  const selectedProduct = useRef('');
 
   useEffect(() => {
     loadCategories();
@@ -38,15 +40,32 @@ const AccountProductList = () => {
     navigate(`/product/${productId}`);
   };
 
-  const onUpdate = () => {
+  const onUpdate = (productId) => {
+    selectedProduct.current = productId;
     editorRef.current.setContent('');
     showModal(descriptionModalID);
   };
 
-  const onSave = () => {
-    // if (editorRef.current) {
-    //   console.log(typeof editorRef.current.getContent());
-    // }
+  const onSave = async () => {
+    if (editorRef.current) {
+      const token = await getToken();
+      const response = await patchAPIWithToken(
+        `/api/user/product/description`,
+        {
+          description: `<div><bt/>✏️ ${dayjs().format(
+            'DD/MM/YYYY - HH:mm',
+          )}<br/>${editorRef.current.getContent().trim()}</div>`,
+          productId: selectedProduct.current,
+        },
+        token,
+      );
+      if (!response.error) {
+        toast.success('Cập nhật mô tả thành công');
+        hideModal(descriptionModalID);
+      } else {
+        toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      }
+    }
   };
 
   const loadProducts = async () => {
@@ -144,7 +163,7 @@ const AccountProductList = () => {
                         </Button>
                         <Button
                           className="uk-button uk-button-secondary"
-                          onClick={onUpdate}
+                          onClick={() => onUpdate(product._id)}
                         >
                           Cập nhật
                         </Button>
