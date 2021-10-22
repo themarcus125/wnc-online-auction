@@ -25,5 +25,3 @@ categoryRoute.post(
   createCategoryValidator,
   CategoryController.createCategory,
 );
-
-export default categoryRoute;
