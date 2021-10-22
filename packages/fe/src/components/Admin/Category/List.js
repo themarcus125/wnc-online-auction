@@ -48,7 +48,7 @@ const CategoryList = () => {
       async () => {
         const token = await getToken();
         const response = await deleteAPIWithToken(
-          `/api/category/${categoryId}`,
+          `/api/admin/category/${categoryId}`,
           token,
         );
         if (response.error) {

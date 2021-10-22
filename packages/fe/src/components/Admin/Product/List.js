@@ -2,10 +2,13 @@ import dayjs from 'dayjs';
 import React, { useState, useEffect, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components';
+import { navigate } from 'gatsby-link';
+import UIKit from 'uikit/dist/js/uikit.min.js';
 
 import PaginationButtonGroup from '../../common/PaginationButtonGroup';
 
-import { getAPI } from '../../../utils/api';
+import { getAPI, deleteAPIWithToken } from '../../../utils/api';
+import { getToken } from '../../../utils/auth';
 
 import { PRODUCTS_PER_PAGE } from '../../../utils/constants/product';
 
@@ -68,6 +71,29 @@ const ProductList = () => {
     }
   };
 
+  const onDetails = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const onDelete = (productId) => {
+    UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
+    UIKit.modal.confirm('Bạn có chắc chắn muốn xóa sản phẩm?').then(
+      async () => {
+        const token = await getToken();
+        const response = await deleteAPIWithToken(
+          `/api/admin/product/${productId}`,
+          token,
+        );
+        if (response.error) {
+          toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+          return;
+        }
+        loadProducts();
+      },
+      () => {},
+    );
+  };
+
   return (
     <div>
       <h3 className="uk-text-primary uk-text-bold">Danh sách sản phẩm</h3>
@@ -111,10 +137,16 @@ const ProductList = () => {
                       {dayjs(product.expiredAt).format('HH:mm - DD/MM/YYYY')}
                     </TableCell>
                     <TableCell>
-                      <button className="uk-button uk-button-primary uk-margin-right">
+                      <button
+                        className="uk-button uk-button-primary uk-margin-right"
+                        onClick={() => onDetails(product._id)}
+                      >
                         Chi tiết
                       </button>
-                      <button className="uk-button uk-button-danger">
+                      <button
+                        className="uk-button uk-button-danger"
+                        onClick={() => onDelete(product._id)}
+                      >
                         Gỡ bỏ
                       </button>
                     </TableCell>

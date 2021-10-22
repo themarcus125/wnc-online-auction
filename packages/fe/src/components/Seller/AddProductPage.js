@@ -68,6 +68,7 @@ const AddProductPage = () => {
       buyPrice,
       description,
       autoRenew,
+      allowNoRatingBid,
       category,
       expiredDate,
       expiredTime,
@@ -95,6 +96,7 @@ const AddProductPage = () => {
     formData.append('stepPrice', stepPrice);
     formData.append('buyPrice', buyPrice);
     formData.append('autoRenew', autoRenew);
+    formData.append('allowNoRatingBid', allowNoRatingBid);
     formData.append('category', category);
     formData.append('expiredIn', expiredInHours);
     images.forEach((image) => {
@@ -141,6 +143,7 @@ const AddProductPage = () => {
             buyPrice: 0,
             description: '',
             autoRenew: false,
+            allowNoRatingBid: false,
             images: [],
             category: categories?.[0]?._id ?? '',
             expiredTime: dayjs().format('HH:mm'),
@@ -217,12 +220,12 @@ const AddProductPage = () => {
                 <Field className="uk-input" type="number" name="buyPrice" />
                 <ErrorMessage name="buyPrice" component={FormErrorMessage} />
               </div>
-              <div className="uk-width-1-3">
+              <div className="uk-width-1-4">
                 <small>Giờ kết thúc</small>
                 <Field className="uk-input" type="time" name="expiredTime" />
                 <ErrorMessage name="expiredTime" component={FormErrorMessage} />
               </div>
-              <div className="uk-width-1-3">
+              <div className="uk-width-1-4">
                 <small>Ngày kết thúc</small>
                 <DatePicker
                   className="uk-input uk-width-1-1"
@@ -240,13 +243,23 @@ const AddProductPage = () => {
                 />
                 <ErrorMessage name="expiredDate" component={FormErrorMessage} />
               </div>
-              <div className="uk-width-1-3 uk-flex uk-flex-left uk-flex-column">
+              <div className="uk-width-1-5 uk-flex uk-flex-left uk-flex-column">
                 <small>Tự động gia hạn</small>
                 <div>
                   <Field
                     className="uk-checkbox"
                     type="checkbox"
                     name="autoRenew"
+                  />
+                </div>
+              </div>
+              <div className="uk-width-auto uk-flex uk-flex-left uk-flex-column">
+                <small>Cho phép người chưa được đánh giá đấu giá</small>
+                <div>
+                  <Field
+                    className="uk-checkbox"
+                    type="checkbox"
+                    name="allowNoRatingBid"
                   />
                 </div>
               </div>
