@@ -32,7 +32,11 @@ const CategoryForm = ({ id }) => {
       toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
       return;
     }
-    setParentCategories(response);
+    let categories = response;
+    if (id) {
+      categories = categories.filter((category) => category._id !== id);
+    }
+    setParentCategories(categories);
   };
 
   const loadCategoryDetails = async () => {
@@ -64,7 +68,7 @@ const CategoryForm = ({ id }) => {
             parent: selectedParentCategory,
           }),
     };
-    const response = await postAPIWithToken('/api/category', data, token);
+    const response = await postAPIWithToken('/api/admin/category', data, token);
 
     if (response.error) {
       toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
@@ -89,7 +93,7 @@ const CategoryForm = ({ id }) => {
           }),
     };
     const response = await patchAPIWithToken(
-      `/api/category/${id}`,
+      `/api/admin/category/${id}`,
       data,
       token,
     );

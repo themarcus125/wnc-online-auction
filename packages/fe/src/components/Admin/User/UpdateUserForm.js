@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'gatsby';
 import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ const UpdateUserForm = ({ id }) => {
   const [isVerified, setIsVerified] = useState(false);
   const [address, setAddress] = useState('');
   const [role, setRole] = useState(BIDDER_VALUE);
+  const originalRole = useRef(BIDDER_VALUE);
 
   useEffect(() => {
     loadData();
@@ -35,6 +36,7 @@ const UpdateUserForm = ({ id }) => {
     setAddress(response.address);
     setIsVerified(response.isVerified);
     setRole(response.role);
+    originalRole.current = response.role;
     if (response.dob) {
       setDOB(response.dob);
     }
@@ -129,7 +131,7 @@ const UpdateUserForm = ({ id }) => {
                 />
               </td>
             </tr>
-            {role === SELLER_VALUE && (
+            {originalRole.current === SELLER_VALUE && (
               <tr>
                 <Title>Phân hệ</Title>
                 <td>

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import UIKit from 'uikit/dist/js/uikit.min.js';
 import { ToastContainer, toast } from 'react-toastify';
+import { navigate } from 'gatsby-link';
 
 import LoadingOverlay from './LoadingOverlay';
 import CarouselItems from './Carouseltems';
@@ -31,13 +32,15 @@ const ProductDetailPage = ({ productId }) => {
   const loadProduct = async () => {
     setLoading(true);
     const response = await getAPI(`/api/product/${productId}`);
-    if (!response.error) {
-      console.log(response);
+    if (response && !response.error) {
       setProduct(response);
       setIsOwner(userId === response.seller._id);
       loadOtherProduct(response.category._id);
     }
     setLoading(false);
+    if (!response) {
+      navigate('/');
+    }
   };
 
   const loadOtherProduct = async (categoryId) => {
@@ -157,6 +160,14 @@ const ProductDetailPage = ({ productId }) => {
                           <small>
                             Bước giá:{' '}
                             {Number(product.stepPrice || 0).toLocaleString()} đ
+                            - Giá đề nghị:{' '}
+                            <SuggestedPriceButton className="uk-text-primary">
+                              {Number(
+                                (product.currentPrice || 0) +
+                                  (product.stepPrice || 0),
+                              ).toLocaleString()}{' '}
+                              đ
+                            </SuggestedPriceButton>
                           </small>
                         </div>
                       </div>
@@ -354,5 +365,9 @@ const BidInput = styled.input`
 `;
 
 const HistoryButton = styled.span`
+  cursor: pointer;
+`;
+
+const SuggestedPriceButton = styled.span`
   cursor: pointer;
 `;
