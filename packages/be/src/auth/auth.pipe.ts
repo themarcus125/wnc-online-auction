@@ -1,3 +1,4 @@
+import { BadRequest } from '@/error';
 import {
   length,
   notEmpty,
@@ -10,24 +11,16 @@ import { LoginDTO, RegisterDTO } from './auth.dto';
 export const registerValidator: RequestHandler = (req, res, next) => {
   const { email, name, address, password }: RegisterDTO = req.body;
   if (!validateEmail(email)) {
-    return res.status(400).json({
-      error: 'INVALID_EMAIL',
-    });
+    return next(new BadRequest('INVALID_EMAIL'));
   }
   if (!length(name, 1, 30)) {
-    return res.status(400).json({
-      error: 'INVALID_NAME',
-    });
+    return next(new BadRequest('INVALID_NAME'));
   }
   if (!notEmpty(address)) {
-    return res.status(400).json({
-      error: 'INVALID_ADDRESS',
-    });
+    return next(new BadRequest('INVALID_ADDRESS'));
   }
   if (!validatePassword(password)) {
-    return res.status(400).json({
-      error: 'INVALID_PASSWORD',
-    });
+    return next(new BadRequest('INVALID_PASSWORD'));
   }
   next();
 };
@@ -35,14 +28,10 @@ export const registerValidator: RequestHandler = (req, res, next) => {
 export const loginValidator: RequestHandler = (req, res, next) => {
   const { email, password }: LoginDTO = req.body;
   if (!validateEmail(email)) {
-    return res.status(400).json({
-      error: 'INVALID_EMAIL',
-    });
+    return next(new BadRequest('INVALID_EMAIL'));
   }
   if (!notEmpty(password)) {
-    return res.status(400).json({
-      error: 'INVALID_PASSWORD',
-    });
+    return next(new BadRequest('INVALID_PASSWORD'));
   }
   next();
 };

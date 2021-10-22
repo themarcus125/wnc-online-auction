@@ -13,15 +13,14 @@ import {
 } from './user.message';
 import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
 import { excludeString, UserDoc } from './user.schema';
+import { BadRequest, Forbidden, NotFound } from '@/error';
 
 const getUser: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
     const user = await UserService.findById(id).select(excludeString);
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     res.json(user);
   } catch (e) {
@@ -42,9 +41,7 @@ const updateUser: RequestHandler = async (req, res, next) => {
       },
     ).select(excludeString);
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     res.json(user);
   } catch (e) {
@@ -57,16 +54,12 @@ const changeUserPassword: RequestHandler = async (req, res, next) => {
     const { id } = res.locals.jwtPayload;
     const user = await UserService.findById(id);
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     const { oldPassword, newPassword } = req.body;
     const isPass = comparePassword(oldPassword, user.password);
     if (!isPass) {
-      return res.status(400).json({
-        error: 'WRONG_OLD_PASS',
-      });
+      return next(new BadRequest('WRONG_OLD_PASS'));
     }
     const hashedPassword = getHashedPassword(newPassword);
     user.password = hashedPassword;
@@ -82,10 +75,7 @@ const checkUserEmail: RequestHandler = async (req, res, next) => {
     const { email } = req.body;
     const isEmailMessage = await UserService.checkEmail(email);
     if (isEmailMessage !== CheckEmailMessage.VALID) {
-      return res.status(400).json({
-        error: isEmailMessage,
-        isEmail: false,
-      });
+      return next(new BadRequest(isEmailMessage));
     }
     res.json({
       isEmail: true,
@@ -101,10 +91,7 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
     const { email } = req.body;
     const isEmailMessage = await UserService.checkEmail(email);
     if (isEmailMessage !== CheckEmailMessage.VALID) {
-      return res.status(400).json({
-        error: isEmailMessage,
-        isEmail: false,
-      });
+      return next(new BadRequest(isEmailMessage));
     }
     const newUser = await UserService.changeEmail(id, email).select(
       excludeString,
@@ -124,9 +111,7 @@ const sendResetPasswordOTP: RequestHandler = async (req, res, next) => {
       { passwordOtp: otp },
     );
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     const info = await sendMail(
       [email],
@@ -146,9 +131,7 @@ const resetPassword: RequestHandler = async (req, res, next) => {
     const { email, password, otp } = req.body;
     const user = await UserService.findOne({ email });
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     const resetPasswordMessage = await UserService.resetPassword(
       user,
@@ -156,9 +139,7 @@ const resetPassword: RequestHandler = async (req, res, next) => {
       password,
     );
     if (resetPasswordMessage !== ResetPasswordOtpMessage.SUCCESS) {
-      return res.status(400).json({
-        error: resetPasswordMessage,
-      });
+      return next(new BadRequest(resetPasswordMessage));
     }
     res.json({
       status: resetPasswordMessage,
@@ -177,9 +158,7 @@ const sendVerifyEmailOTP: RequestHandler = async (req, res, next) => {
       { verifyOtp: otp },
     );
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     const info = await sendMail(
       [email],
@@ -200,15 +179,11 @@ const verifyEmailOTP: RequestHandler = async (req, res, next) => {
     const { otp } = req.body;
     const user = await UserService.findById(id);
     if (!user) {
-      return res.status(404).json({
-        error: 'NOT_FOUND',
-      });
+      return next(new NotFound('USER'));
     }
     const emailOtpMessage = await UserService.verifyEmailOTP(user, otp);
     if (emailOtpMessage !== EmailOtpMessage.VERIFIED) {
-      return res.status(400).json({
-        error: emailOtpMessage,
-      });
+      return next(new BadRequest(emailOtpMessage));
     }
     res.json({
       status: emailOtpMessage,
@@ -223,15 +198,11 @@ export const createRequest: RequestHandler = async (req, res, next) => {
     const user: UserDoc = res.locals.user;
     const canRequest = await UpgradeRequestService.canRequest(user);
     if (!canRequest) {
-      return res.status(400).json({
-        error: 'FORBIDDEN',
-      });
+      return next(new Forbidden('CAN_NOT_REQUEST'));
     }
     const request = await UpgradeRequestService.create({ user: user._id });
     if (!request) {
-      return res.status(500).json({
-        error: 'SOMETHING_WENT_WRONG',
-      });
+      return next(new Error('SOMETHING_WENT_WRONG'));
     }
     res.json({
       status: 'OK',

@@ -28,18 +28,18 @@ const login = async ({ email, password }: LoginDTO) => {
   const user = await UserService.findOne({ email });
   if (!user) {
     return {
-      status: LoginMessage.NO_EMAIL,
+      message: LoginMessage.NO_EMAIL,
     };
   }
   const isPass = comparePassword(password, user.password);
   if (!isPass) {
     return {
-      status: LoginMessage.WRONG_PASS,
+      message: LoginMessage.WRONG_PASS,
     };
   }
   const jwtResponse = sign(user);
   return {
-    status: LoginMessage.SUCCESS,
+    message: LoginMessage.SUCCESS,
     jwtResponse,
   };
 };

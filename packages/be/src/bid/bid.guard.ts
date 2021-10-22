@@ -19,6 +19,9 @@ export const bidGuard: RequestHandler = async (req, res, next) => {
       return next(new Forbidden('PRODUCT_CAN_NOT_BID'));
     }
     const bidder: UserDoc = res.locals.users;
+    if (!bidder) {
+      return next(new NotFound('BIDDER_NOT_FOUND'));
+    }
   } catch (e) {
     next(e);
   }

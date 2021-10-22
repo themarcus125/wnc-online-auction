@@ -7,6 +7,7 @@ import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
 import { UserDoc, UserRole } from '@/user/user.schema';
 import { AdminUpdateUserDTO } from './admin.dto';
 import ProductService from '@/product/product.service';
+import { BadRequest, Forbidden } from '@/error';
 
 const createAdmin: RequestHandler = async (req, res, next) => {
   try {
@@ -50,14 +51,10 @@ const changeRequestStatus =
         'user',
       );
       if (!request) {
-        return res.status(404).json({
-          error: 'NOT_FOUND',
-        });
+        return next(new BadRequest('REQUEST_NOT_FOUND'));
       }
       if (request.status !== RequestStatus.PENDING) {
-        return res.status(400).json({
-          error: 'FORBIDDEN',
-        });
+        return next(new Forbidden('REQUEST_NOT_PENDING'));
       }
       const admin: UserDoc = res.locals.user;
       const status = mode ? RequestStatus.APPROVED : RequestStatus.REJECTED;

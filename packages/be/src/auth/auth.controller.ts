@@ -1,3 +1,4 @@
+import { Forbidden } from '@/error';
 import { RequestHandler } from 'express';
 
 import { JWTPayload, LoginDTO, RegisterDTO } from './auth.dto';
@@ -20,14 +21,15 @@ const register: RequestHandler = async (req, res, next) => {
 const login: RequestHandler = async (req, res, next) => {
   try {
     const { email, password }: LoginDTO = req.body;
-    const loginResponse = await AuthService.login({ email, password });
-    if (loginResponse.status !== LoginMessage.SUCCESS) {
-      return res.status(400).json({
-        error: loginResponse.status,
-      });
+    const { message, jwtResponse } = await AuthService.login({
+      email,
+      password,
+    });
+    if (message !== LoginMessage.SUCCESS) {
+      return next(new Forbidden(message));
     }
     return res.json({
-      ...loginResponse.jwtResponse,
+      ...jwtResponse,
     });
   } catch (e) {
     next(e);

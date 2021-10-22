@@ -1,3 +1,4 @@
+import { BadRequest } from '@/error';
 import { removeAll } from '@/utils/file';
 import { parseBoolean, safePositive } from '@/utils/parser';
 import { length, notEmpty, notNull, validateInt } from '@/utils/validator';
@@ -78,9 +79,7 @@ export const mapImagesToBody: RequestHandler = (req, res, next) => {
   const filePaths = files.map((file) => `${file.destination}/${file.filename}`);
   if (!length(files, 3)) {
     removeAll(filePaths);
-    return res.status(400).json({
-      error: 'INVALID_AVATAR_OR_SUBIMAGES',
-    });
+    return next(new BadRequest('INVALID_AVATAR_OR_SUBIMAGES'));
   }
   req.body.images = filePaths;
   next();
