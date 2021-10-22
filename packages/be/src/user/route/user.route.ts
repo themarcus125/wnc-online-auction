@@ -9,18 +9,18 @@ import { emailRoute } from './email.route';
 import { upgradeRequestRoute } from './upgradeRequest.route';
 import { productRoute } from './product.route';
 
-export const userRoute = express.Router();
+const userRoute = express.Router();
 
 userRoute.use('/product', productRoute);
 userRoute.use('/password', passwordRoute);
 userRoute.use('/email', emailRoute);
 userRoute.use('/upgrade-request', upgradeRequestRoute);
 
-userRoute.get('/', tokenGuard, UserController.getUser);
+userRoute.get('/', tokenGuard(false), UserController.getUser);
 userRoute.patch(
   '/',
-  tokenGuard,
   updateUserValidator,
+  tokenGuard(false),
   UserController.updateUser,
 );
 

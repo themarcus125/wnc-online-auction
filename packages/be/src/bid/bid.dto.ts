@@ -3,5 +3,4 @@ export interface CreateBidDTO {
   bidder: string;
   price: number;
   maxAutoPrice?: number;
-  status?: number;
 }

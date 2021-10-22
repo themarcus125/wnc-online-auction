@@ -4,11 +4,7 @@ import helmet from 'helmet';
 import path from 'path';
 
 import router from './routers';
-import {
-  badRequestHandler,
-  defaultErrorHandler,
-  notFoundHandler,
-} from './error';
+import errorHandler, { defaultErrorHandler } from './error';
 
 const app = express();
 app.use(cors());
@@ -20,11 +16,11 @@ app.use('/public', express.static(path.join(__dirname, '../public')));
 app.use(router);
 app.use('*', (req, res) => {
   res.status(404).json({
-    error: 'NotFound',
-    message: 'Not Found',
+    error: 'NotFoundRoute',
+    message: 'Not Found Route',
   });
 });
 
-app.use(notFoundHandler, badRequestHandler, defaultErrorHandler);
+app.use(errorHandler, defaultErrorHandler);
 
 export default app;

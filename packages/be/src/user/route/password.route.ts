@@ -21,7 +21,7 @@ passwordRoute.patch(
 );
 passwordRoute.patch(
   '/',
-  tokenGuard,
   changeUserPasswordValidator,
+  tokenGuard(false),
   UserController.changeUserPassword,
 );

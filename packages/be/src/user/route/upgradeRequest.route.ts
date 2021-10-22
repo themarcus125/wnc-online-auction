@@ -5,5 +5,5 @@ import UserController from '@/user/user.controller';
 
 export const upgradeRequestRoute = express.Router();
 
-upgradeRequestRoute.post('/', tokenGuard, UserController.createRequest);
-upgradeRequestRoute.get('/', tokenGuard, UserController.getUserRequest);
+upgradeRequestRoute.post('/', tokenGuard(false), UserController.createRequest);
+upgradeRequestRoute.get('/', tokenGuard(false), UserController.getUserRequest);

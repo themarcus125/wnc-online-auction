@@ -8,21 +8,21 @@ export const emailRoute = express.Router();
 
 emailRoute.get(
   '/verify/otp',
-  tokenGuard,
+  tokenGuard(false),
   emailGuard(false),
   UserController.sendVerifyEmailOTP,
 );
 emailRoute.patch(
   '/verify/otp',
-  tokenGuard,
-  emailGuard(false),
   verifyEmailOTPValidator,
+  tokenGuard(false),
+  emailGuard(false),
   UserController.verifyEmailOTP,
 );
 emailRoute.post(
   '/',
-  tokenGuard,
   emailBodyValidator,
+  tokenGuard(false),
   UserController.checkUserEmail,
 );
-emailRoute.patch('/', tokenGuard, UserController.changeUserEmail);
+emailRoute.patch('/', tokenGuard(false), UserController.changeUserEmail);

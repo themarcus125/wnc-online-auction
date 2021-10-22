@@ -1,7 +1,7 @@
 import express from 'express';
 import CategoryController from '@/category/category.controller';
 
-export const categoryRoute = express.Router();
+const categoryRoute = express.Router();
 
 categoryRoute.get('/:categoryId', CategoryController.getCategory);
 categoryRoute.get('/', CategoryController.getCategories);

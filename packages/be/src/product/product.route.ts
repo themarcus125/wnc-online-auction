@@ -6,11 +6,11 @@ import { uploadHandler } from '@/upload/upload.middleware';
 import { mapImagesToBody, transformCreateProductBody } from './product.pipe';
 import productController from '@/product/product.controller';
 
-export const productRoute = express.Router();
+const productRoute = express.Router();
 
 productRoute.post(
   '/user/',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.SELLER),
   uploadHandler(transformCreateProductBody).array('productImages'),
   mapImagesToBody,

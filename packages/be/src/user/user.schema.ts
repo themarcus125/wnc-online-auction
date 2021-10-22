@@ -1,5 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
-import { OtpDoc, OtpSchema } from '@/otp/otp.schema';
+import { OtpDoc, OtpSchema } from '@/user/otp/otp.schema';
 
 export const UserModelName = 'User';
 export enum UserRole {

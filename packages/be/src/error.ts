@@ -1,6 +1,12 @@
 import type { ErrorRequestHandler } from 'express';
 
-export class BadRequest extends Error {
+interface CustomError {
+  statusCode: number;
+  name: string;
+  message: string;
+}
+
+export class BadRequest extends Error implements CustomError {
   statusCode: number = 400;
   constructor(message: string) {
     super(message);
@@ -8,18 +14,7 @@ export class BadRequest extends Error {
   }
 }
 
-export const badRequestHandler: ErrorRequestHandler = (err, req, res, next) => {
-  if (err instanceof BadRequest) {
-    const { message, name } = err;
-    return res.status(err.statusCode).json({
-      error: name,
-      message: message || name,
-    });
-  }
-  next(err);
-};
-
-export class NotFound extends Error {
+export class NotFound extends Error implements CustomError {
   statusCode: number = 404;
   constructor(message: string) {
     super(message);
@@ -27,16 +22,20 @@ export class NotFound extends Error {
   }
 }
 
-export const notFoundHandler: ErrorRequestHandler = (err, req, res, next) => {
-  if (err instanceof NotFound) {
-    const { message, name } = err;
-    return res.status(err.statusCode).json({
-      error: name,
-      message: message || name,
-    });
+export class Forbidden extends Error implements CustomError {
+  statusCode: number = 403;
+  constructor(message: string) {
+    super(message);
+    this.name = 'Forbidden';
   }
-  next(err);
-};
+}
+export class Unauthorized extends Error implements CustomError {
+  statusCode: number = 401;
+  constructor(message: string) {
+    super(message);
+    this.name = 'Unauthorized';
+  }
+}
 
 export const defaultErrorHandler: ErrorRequestHandler = (
   err,
@@ -56,3 +55,21 @@ export const defaultErrorHandler: ErrorRequestHandler = (
     error: err.message,
   });
 };
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (
+    err instanceof BadRequest ||
+    err instanceof NotFound ||
+    err instanceof Forbidden ||
+    err instanceof Unauthorized
+  ) {
+    const { message, name, statusCode } = err;
+    return res.status(statusCode).json({
+      error: name,
+      message: message || name,
+    });
+  }
+  next(err);
+};
+
+export default errorHandler;

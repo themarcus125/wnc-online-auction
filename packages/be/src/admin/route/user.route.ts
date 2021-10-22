@@ -6,31 +6,31 @@ import AdminController from '@/admin/admin.controller';
 export const userRoute = express.Router();
 userRoute.delete(
   '/:userId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.deleteUser,
 );
 userRoute.patch(
   '/:userId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.updateUser,
 );
 userRoute.get(
   '/:userId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.getUser,
 );
 userRoute.get(
   '/',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.getUsers,
 );
 userRoute.post(
   '/',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.createUser,
 );

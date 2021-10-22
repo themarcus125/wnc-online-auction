@@ -7,19 +7,19 @@ export const upgradeRequestRoute = express.Router();
 
 upgradeRequestRoute.patch(
   '/:requestId/approve',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.changeRequestStatus(true),
 );
 upgradeRequestRoute.patch(
   '/:requestId/reject',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.changeRequestStatus(false),
 );
 upgradeRequestRoute.get(
   '/',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.getPendingRequest,
 );

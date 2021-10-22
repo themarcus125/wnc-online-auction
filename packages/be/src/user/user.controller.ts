@@ -1,6 +1,6 @@
 import { JWTPayload } from '@/auth/auth.dto';
 import { sendMail } from '@/mail/mail.service';
-import OtpService from '@/otp/otp.service';
+import OtpService from '@/user/otp/otp.service';
 import { tag } from '@/utils/html';
 import { comparePassword, getHashedPassword } from '@/utils/password';
 import { RequestHandler } from 'express';

@@ -6,7 +6,7 @@ import AdminController from '@/admin/admin.controller';
 export const productRoute = express.Router();
 productRoute.delete(
   '/:productId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   AdminController.deleteProduct,
 );

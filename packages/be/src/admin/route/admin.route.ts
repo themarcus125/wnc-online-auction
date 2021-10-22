@@ -9,7 +9,7 @@ import { upgradeRequestRoute } from './upgradeRequest.route';
 import { productRoute } from './product.route';
 import { categoryRoute } from './category.route';
 
-export const adminRoute = express.Router();
+const adminRoute = express.Router();
 
 adminRoute.use('/category', categoryRoute);
 adminRoute.use('/product', productRoute);
@@ -17,9 +17,9 @@ adminRoute.use('/user', userRoute);
 adminRoute.use('/upgrade-request', upgradeRequestRoute);
 adminRoute.post(
   '/',
-  tokenGuard,
-  roleGuard(UserRole.SUPPER_ADMIN),
   registerValidator,
+  tokenGuard(false),
+  roleGuard(UserRole.SUPPER_ADMIN),
   AdminController.createAdmin,
 );
 

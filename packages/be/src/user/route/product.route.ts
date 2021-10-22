@@ -7,6 +7,6 @@ export const productRoute = express.Router();
 
 productRoute.patch(
   '/description',
-  tokenGuard,
+  tokenGuard(false),
   ProductController.appendProductDescription,
 );

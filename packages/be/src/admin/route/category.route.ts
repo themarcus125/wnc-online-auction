@@ -8,20 +8,20 @@ export const categoryRoute = express.Router();
 
 categoryRoute.patch(
   '/:categoryId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   CategoryController.updateCategory,
 );
 categoryRoute.delete(
   '/:categoryId',
-  tokenGuard,
+  tokenGuard(false),
   roleGuard(UserRole.ADMIN),
   CategoryController.deleteCategory,
 );
 categoryRoute.post(
   '/',
-  tokenGuard,
-  roleGuard(UserRole.ADMIN),
   createCategoryValidator,
+  tokenGuard(false),
+  roleGuard(UserRole.ADMIN),
   CategoryController.createCategory,
 );
