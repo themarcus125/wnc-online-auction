@@ -37,8 +37,7 @@ GET {{baseUrl}}
 ### Search
 GET {{baseUrl}}
     ?mode=search
-    &categoryId=6158503d5e8b152597624327
-    &price=asc
+    &productName=product1
 ### Get product detail
 GET {{baseUrl}}/61686d3d1ea8304dd7c44510
 

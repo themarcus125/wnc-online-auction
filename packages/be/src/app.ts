@@ -4,7 +4,11 @@ import helmet from 'helmet';
 import path from 'path';
 
 import router from './routers';
-import { badRequestHandler, defaultErrorHandler } from './error';
+import {
+  badRequestHandler,
+  defaultErrorHandler,
+  notFoundHandler,
+} from './error';
 
 const app = express();
 app.use(cors());
@@ -21,7 +25,6 @@ app.use('*', (req, res) => {
   });
 });
 
-app.use(badRequestHandler);
-app.use(defaultErrorHandler);
+app.use(notFoundHandler, badRequestHandler, defaultErrorHandler);
 
 export default app;

@@ -40,3 +40,4 @@ export const UserSchema = new Schema<UserDoc>(
 );
 
 export const UserModel = model<UserDoc>(UserModelName, UserSchema);
+export const excludeString = '-password -verifyOtp -passwordOtp';

@@ -1,5 +1,5 @@
 import RepositoryService from '@/db/repository.service';
-import { ProductDoc } from '@/product/product.schema';
+import { ProductDoc, ProductStatus } from '@/product/product.schema';
 import { UserDoc } from '@/user/user.schema';
 import { CreateBidDTO } from './bid.dto';
 import { CheckBidMessage } from './bid.message';
@@ -8,6 +8,16 @@ import { BidDoc, BidModel } from './bid.schema';
 class BidService extends RepositoryService<BidDoc, CreateBidDTO> {
   constructor() {
     super(BidModel);
+  }
+
+  async productCanBid({ status, expiredAt }: ProductDoc) {
+    if (status !== ProductStatus.NORMAL) {
+      return false;
+    }
+    if (expiredAt.getTime() < Date.now()) {
+      return false;
+    }
+    return true;
   }
 
   async checkBid(

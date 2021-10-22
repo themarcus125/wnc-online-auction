@@ -62,6 +62,7 @@ export const ProductSchema = new Schema<ProductDoc>(
     expiredAt: { type: Date, require: true, index: 1 },
     isAutoRenew: { type: Boolean, default: false },
     allowNoRatingBid: { type: Boolean, default: true },
+    status: { type: Number, default: ProductStatus.NORMAL },
   },
   { timestamps: true },
 );

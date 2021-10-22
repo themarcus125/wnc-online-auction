@@ -19,6 +19,25 @@ export const badRequestHandler: ErrorRequestHandler = (err, req, res, next) => {
   next(err);
 };
 
+export class NotFound extends Error {
+  statusCode: number = 404;
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotFound';
+  }
+}
+
+export const notFoundHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (err instanceof NotFound) {
+    const { message, name } = err;
+    return res.status(err.statusCode).json({
+      error: name,
+      message: message || name,
+    });
+  }
+  next(err);
+};
+
 export const defaultErrorHandler: ErrorRequestHandler = (
   err,
   req,

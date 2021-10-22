@@ -1,10 +1,11 @@
 @baseurl = {{$dotenv baseUrl}}/user
 @token = {{login.response.body.$.accessToken}}
-@email = tthuykh99@gmail.com
+@email = seller1@sample.com
 @newEmail = huynonstop@gmail.com
-@password = 123456
+@password = uEqxtQNNOeKVP54h
 @newPassword = 654321
-###
+
+### Login
 # @name login
 POST {{$dotenv baseUrl}}/auth/login
 content-type: application/json
@@ -96,3 +97,14 @@ Content-Type: application/json
 POST  {{baseurl}}/upgrade-request
 authorization: Bearer {{token}}
 Content-Type: application/json
+
+# PRODUCT
+### Append description
+PATCH {{baseurl}}/product/description
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "61722b380bbfa4442ac09eee",
+    "description": "Appended Description"
+}

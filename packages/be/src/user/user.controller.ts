@@ -3,7 +3,7 @@ import { sendMail } from '@/mail/mail.service';
 import OtpService from '@/otp/otp.service';
 import { tag } from '@/utils/html';
 import { comparePassword, getHashedPassword } from '@/utils/password';
-import { request, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import { UpdateUserDTO } from './user.dto';
 import UserService from './user.service';
 import {
@@ -12,14 +12,12 @@ import {
   ResetPasswordOtpMessage,
 } from './user.message';
 import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
-import { UserDoc } from './user.schema';
+import { excludeString, UserDoc } from './user.schema';
 
 const getUser: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
-    const user = await UserService.findById(id).select(
-      '-password -verifyOtp -passwordOtp',
-    );
+    const user = await UserService.findById(id).select(excludeString);
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
@@ -42,7 +40,7 @@ const updateUser: RequestHandler = async (req, res, next) => {
         dob,
         address,
       },
-    ).select('-password -verifyOtp -passwordOtp');
+    ).select(excludeString);
     if (!user) {
       return res.status(404).json({
         error: 'NOT_FOUND',
@@ -109,7 +107,7 @@ const changeUserEmail: RequestHandler = async (req, res, next) => {
       });
     }
     const newUser = await UserService.changeEmail(id, email).select(
-      '-password -verifyOtp -passwordOtp',
+      excludeString,
     );
     res.json(newUser);
   } catch (e) {
