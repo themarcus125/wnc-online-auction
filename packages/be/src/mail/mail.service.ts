@@ -17,14 +17,18 @@ const transporter = mailer.createTransport({
   },
 });
 
-export const sendMail = (to: string[], subject: string, html: string) => {
+export const sendMail = async (to: string[], subject: string, html: string) => {
   const options: Mail.Options = {
     from: `"Biddly Team" <${address}>`,
     to,
     subject,
     html,
   };
-  return transporter.sendMail(options);
+  try {
+    return transporter.sendMail(options);
+  } catch (e) {
+    return null;
+  }
 };
 
 export const test = async (to: string) => {

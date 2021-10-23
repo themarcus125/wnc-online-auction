@@ -7,7 +7,7 @@ export const ProductModelName = 'Product';
 export enum ProductStatus {
   NORMAL,
   WAITING,
-  APPROVED,
+  CONFIRM,
   CANCELED,
 }
 
@@ -25,7 +25,7 @@ export interface Product {
   expiredAt: Date;
   createdAt: Date;
   isAutoRenew?: boolean;
-  allowNoRatingBid?: boolean;
+  onlyRatedBidder?: boolean;
   status: number;
 }
 
@@ -61,7 +61,7 @@ export const ProductSchema = new Schema<ProductDoc>(
     bidCount: { type: Number, default: 0, index: 1 },
     expiredAt: { type: Date, require: true, index: 1 },
     isAutoRenew: { type: Boolean, default: false },
-    allowNoRatingBid: { type: Boolean, default: true },
+    onlyRatedBidder: { type: Boolean, default: false },
     status: { type: Number, default: ProductStatus.NORMAL },
   },
   { timestamps: true },

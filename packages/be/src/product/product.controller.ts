@@ -18,7 +18,7 @@ const createProduct: RequestHandler = async (req, res, next) => {
     stepPrice,
     expiredIn,
     isAutoRenew,
-    allowNoRatingBid,
+    onlyRatedBidder,
     images,
     descriptions,
   }: TransformedCreateProductRequestDTO = req.body;
@@ -38,7 +38,7 @@ const createProduct: RequestHandler = async (req, res, next) => {
       expiredAt: new Date(now + expiredIn * 1000 * 3600),
       currentPrice: startPrice,
       isAutoRenew,
-      allowNoRatingBid,
+      onlyRatedBidder,
     });
     res.json(product);
   } catch (e) {

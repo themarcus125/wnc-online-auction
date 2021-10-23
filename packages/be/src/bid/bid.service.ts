@@ -1,16 +1,44 @@
-import RepositoryService from '@/db/repository.service';
+import RepositoryService, { ModeQuery } from '@/db/repository.service';
+import { sendMail } from '@/mail/mail.service';
 import { ProductDoc, ProductStatus } from '@/product/product.schema';
-import { UserDoc } from '@/user/user.schema';
-import { CreateBidDTO } from './bid.dto';
+import { excludeString, UserDoc } from '@/user/user.schema';
+import { tag } from '@/utils/html';
+import { ClientSession } from 'mongoose';
+import { CreateBidDTO, QueryBidDTO } from './bid.dto';
 import { CheckBidMessage } from './bid.message';
-import { BidDoc, BidModel } from './bid.schema';
+import { BidDoc, BidModel, BidStatus } from './bid.schema';
 
-class BidService extends RepositoryService<BidDoc, CreateBidDTO> {
+class BidService
+  extends RepositoryService<BidDoc, CreateBidDTO>
+  implements ModeQuery<BidDoc, QueryBidDTO>
+{
   constructor() {
     super(BidModel);
   }
 
-  async productCanBid({ status, expiredAt }: ProductDoc) {
+  findCurrentPriceBid(
+    price: number,
+    productId: string,
+    session: ClientSession,
+    skip = 0,
+  ) {
+    return this.findOne({
+      price,
+      product: productId,
+    })
+      .skip(skip)
+      .populate('bidder', excludeString)
+      .session(session);
+  }
+
+  async checkRating({ onlyRatedBidder }: ProductDoc, bidder: UserDoc) {
+    if (onlyRatedBidder) {
+    } else {
+    }
+    return true;
+  }
+
+  async productCanPlaceBid({ status, expiredAt }: ProductDoc) {
     if (status !== ProductStatus.NORMAL) {
       return false;
     }
@@ -20,21 +48,61 @@ class BidService extends RepositoryService<BidDoc, CreateBidDTO> {
     return true;
   }
 
-  async checkBid(
-    { seller, allowNoRatingBid, currentPrice, stepPrice }: ProductDoc,
+  async checkCanPlaceBid(
+    product: ProductDoc,
     bidder: UserDoc,
     { price, maxAutoPrice }: CreateBidDTO,
   ) {
-    if (seller === bidder._id) {
+    const { seller, currentPrice, stepPrice } = product;
+    if (seller._id === bidder._id) {
       return CheckBidMessage.BIDDER_IS_SELLER;
     }
-    if (!allowNoRatingBid) {
-      return CheckBidMessage.NO_RATING_BIDDER;
+    if (!this.checkRating(product, bidder)) {
+      return CheckBidMessage.RATING;
     }
     if (currentPrice + stepPrice > price) {
       return CheckBidMessage.PRICE;
     }
     return CheckBidMessage.VALID;
+  }
+
+  checkBidderRejected(bidder: string, product: string) {
+    return this.model.exists({
+      bidder,
+      product,
+      status: BidStatus.REJECTED,
+    });
+  }
+
+  async sendPlaceBidEmail(
+    bid: BidDoc,
+    bidProduct: ProductDoc,
+    seller: UserDoc,
+    bidder: UserDoc,
+    prevBidder?: UserDoc | null,
+  ) {
+    const subject = `${bidProduct.name} has just been placed a new bid`;
+    const content = tag(
+      'h2',
+      `${bidProduct.name} - ${bidProduct._id} - ${bid.price}`,
+    );
+    const emails = [seller.email, bidder.email];
+    if (prevBidder) {
+      emails.push(prevBidder.email);
+    }
+    return sendMail(emails, subject, content);
+  }
+
+  async modeFind(mode = '', { product }: QueryBidDTO = {}): Promise<any> {
+    if (mode === 'history') {
+      return this.find({
+        product,
+        status: {
+          $in: [BidStatus.NORMAL, BidStatus.WIN],
+        },
+      }).populate('bidder', excludeString);
+    }
+    return this.find({});
   }
 }
 

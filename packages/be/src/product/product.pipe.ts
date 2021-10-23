@@ -15,7 +15,7 @@ export const transformCreateProductBody = (body: any) => {
     buyPrice, // canEmpty, toPositive
     expiredIn,
     isAutoRenew, // canEmpty, toBoolean
-    allowNoRatingBid, // canEmpty, toBoolean
+    onlyRatedBidder, // canEmpty, toBoolean
   }: RawCreateProductRequestDTO = body;
 
   if (!notEmpty(description)) {
@@ -63,12 +63,12 @@ export const transformCreateProductBody = (body: any) => {
     body.isAutoRenew = parsedIsAutoRenew;
   }
 
-  if (notEmpty(allowNoRatingBid)) {
-    const parsedAllowNoRatingBid = parseBoolean(allowNoRatingBid);
-    if (!notNull(parsedAllowNoRatingBid)) {
+  if (notEmpty(onlyRatedBidder)) {
+    const parsedOnlyRatedBidder = parseBoolean(onlyRatedBidder);
+    if (!notNull(parsedOnlyRatedBidder)) {
       return 'ALLOW_RATING';
     }
-    body.allowNoRatingBid = parsedAllowNoRatingBid;
+    body.onlyRatedBidder = parsedOnlyRatedBidder;
   }
 
   return null;

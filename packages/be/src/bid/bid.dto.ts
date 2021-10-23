@@ -4,3 +4,7 @@ export interface CreateBidDTO {
   price: number;
   maxAutoPrice?: number;
 }
+
+export interface QueryBidDTO {
+  product?: string;
+}

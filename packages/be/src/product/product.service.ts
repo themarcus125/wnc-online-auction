@@ -1,7 +1,7 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { parseIntDefault, parseSort } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
-import { ProductDoc, ProductModel } from './product.schema';
+import { ProductDoc, ProductModel, ProductStatus } from './product.schema';
 
 class ProductService
   extends RepositoryService<ProductDoc, CreateProductDTO>
@@ -44,6 +44,7 @@ class ProductService
       price,
       end,
       notExpired,
+      status,
     }: QueryProductDTO = {},
   ): Promise<any> {
     if (mode === 'finishSoon') {
@@ -125,6 +126,9 @@ class ProductService
         query.expiredAt = {
           $gt: new Date(),
         };
+      }
+      if (status) {
+        query.status = parseIntDefault(status, ProductStatus.NORMAL);
       }
       const products = await this.find(query)
         .sort(sorter)

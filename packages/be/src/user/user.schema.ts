@@ -19,6 +19,7 @@ export interface User {
   isVerified: boolean;
   verifyOtp?: OtpDoc;
   passwordOtp?: OtpDoc;
+  rating: number;
   // validTokenTime: Date;
 }
 
