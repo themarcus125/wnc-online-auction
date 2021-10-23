@@ -6,6 +6,9 @@ import * as Yup from 'yup';
 import { patchAPIWithToken, postAPIWithToken } from '../utils/api';
 import { getToken } from '../utils/auth';
 
+import { DEFAULT_ERROR, EMAIL_NOT_EXIST } from '../utils/constants/error';
+import { OTP_SENT } from '../utils/constants/success';
+
 const isEmail = Yup.string().email('Email không hợp lệ');
 
 const ResetPasswordPage = () => {
@@ -36,11 +39,11 @@ const ResetPasswordPage = () => {
       token,
     );
     if (sendOtpResponse.error) {
-      toast.error('Không tồn tại email trong hệ thống');
+      toast.error(EMAIL_NOT_EXIST);
       return;
     }
     setSent(true);
-    toast.success(`Mã OTP đã được gửi đến email ${email}.`);
+    toast.success(`${OTP_SENT} ${email}.`);
   };
 
   const onUpdate = async () => {
@@ -55,7 +58,7 @@ const ResetPasswordPage = () => {
       token,
     );
     if (updatePasswordResponse.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       return;
     }
 

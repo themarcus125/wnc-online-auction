@@ -17,6 +17,21 @@ import {
   ADMIN_VALUE,
 } from '../../utils/constants/role';
 
+import {
+  DEFAULT_ERROR,
+  EMAIL_EXIST,
+  NO_EMPTY_FIELD,
+  INVALID_NEW_PASSWORD,
+  NOT_MATCHING_NEW_PASSWORD,
+  SEND_OTP_FAILED,
+  INVALID_OTP,
+} from '../../utils/constants/error';
+import {
+  PASSWORD_UPDATED,
+  EMAIL_VERIFIED,
+  UPGRADE_REQUEST_SENT,
+} from '../../utils/constants/success';
+
 const isEmail = Yup.string().email('Email không hợp lệ');
 const passwordModalID = 'passwordModal';
 const emailOtpModalID = 'emailOtpModal';
@@ -48,7 +63,7 @@ const AccountInfo = () => {
       getAPIWithToken('/api/user/upgrade-request', token),
     ]);
     if (userResponse.error || upgradeRequestResponse.error) {
-      toast.error('Đã có lỗi xảy ra!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
 
@@ -72,7 +87,7 @@ const AccountInfo = () => {
 
   const onSave = async () => {
     if (!email || !fullName || !address) {
-      toast.error('Không được để trống thông tin');
+      toast.error(NO_EMPTY_FIELD);
       return;
     }
     setIsSubmitting(true);
@@ -99,7 +114,7 @@ const AccountInfo = () => {
         token,
       );
       if (checkEmailResponse.error) {
-        toast.error('Email đã tồn tại. Xin vui lòng sử dụng email khác');
+        toast.error(EMAIL_EXIST);
         setIsSubmitting(false);
         return;
       }
@@ -135,7 +150,7 @@ const AccountInfo = () => {
     );
 
     if (updateEmailResponse.error || updateUserResponse.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       setIsSubmitting(false);
       return;
     }
@@ -146,17 +161,17 @@ const AccountInfo = () => {
 
   const onChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error('Không được để trống thông tin');
+      toast.error(NO_EMPTY_FIELD);
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error('Mật khẩu mới không hợp lệ');
+      toast.error(INVALID_NEW_PASSWORD);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Mật khẩu mới không giống nhau');
+      toast.error(NOT_MATCHING_NEW_PASSWORD);
       return;
     }
 
@@ -170,10 +185,10 @@ const AccountInfo = () => {
       token,
     );
     if (response.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       return;
     }
-    toast.success('Cập nhật mật khẩu thành công');
+    toast.success(PASSWORD_UPDATED);
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -184,11 +199,11 @@ const AccountInfo = () => {
     const token = await getToken();
     const response = await getAPIWithToken('/api/user/email/verify/otp', token);
     if (response.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     if (response.status === 'SEND_FAIL') {
-      toast.error('Gửi mã OTP thất bại');
+      toast.error(SEND_OTP_FAILED);
       return;
     }
     showModal(emailOtpModalID);
@@ -196,7 +211,7 @@ const AccountInfo = () => {
 
   const onVerifyEmailOtp = async () => {
     if (emailOtp.length > 7) {
-      toast.error('Mã OTP không hợp lệ');
+      toast.error(INVALID_OTP);
       return;
     }
 
@@ -209,12 +224,12 @@ const AccountInfo = () => {
       token,
     );
     if (response.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       return;
     }
 
     hideModal(emailOtpModalID);
-    toast.success('Email đã được xác nhận!');
+    toast.success(EMAIL_VERIFIED);
     loadData();
   };
 
@@ -240,11 +255,11 @@ const AccountInfo = () => {
       token,
     );
     if (response.error) {
-      toast.error('Đã có lỗi xảy ra. Xin vui lòng thử lại sau');
+      toast.error(DEFAULT_ERROR);
       setHasRequestedUpgrade(false);
       return;
     }
-    toast.success('Đã gửi yêu cầu!');
+    toast.success(UPGRADE_REQUEST_SENT);
     loadData();
   };
 

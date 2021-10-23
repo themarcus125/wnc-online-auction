@@ -13,6 +13,13 @@ import RichTextEditor from '../common/RichTextEditor';
 import { getAPI, postFileAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
+import {
+  DEFAULT_ERROR,
+  INVALID_BUY_NOW_PRICE,
+  INVALID_EXPIRED_TIME,
+} from '../../utils/constants/error';
+import { PRODUCT_CREATED } from '../../utils/constants/success';
+
 const CreateProductSchema = Yup.object().shape({
   name: Yup.string().required('*Bắt buộc'),
   startPrice: Yup.number().min(1, 'Hãy thêm giá khởi điểm'),
@@ -75,7 +82,7 @@ const AddProductPage = () => {
     } = values;
 
     if (buyPrice !== 0 && buyPrice < startPrice) {
-      toast.error('Giá mua ngay phải lớn hơn giá khởi điểm');
+      toast.error(INVALID_BUY_NOW_PRICE);
       setSubmitting(false);
       return;
     }
@@ -84,7 +91,7 @@ const AddProductPage = () => {
       `${expiredTime} ${dayjs(expiredDate).format('YYYY-MM-DD')}`,
     ).diff(dayjs().format('HH:mm YYYY-MM-DD'), 'hour');
     if (expiredInHours < 24) {
-      toast.error('Thời gian kết thúc đấu giá phải từ 24 tiếng trở lên!');
+      toast.error(INVALID_EXPIRED_TIME);
       setSubmitting(false);
       return;
     }
@@ -110,12 +117,12 @@ const AddProductPage = () => {
     );
 
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       setSubmitting(false);
       return;
     }
 
-    toast.success('Tạo sản phẩm thành công');
+    toast.success(PRODUCT_CREATED);
     resetForm();
     setSubmitting(false);
   };

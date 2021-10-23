@@ -13,7 +13,9 @@ import {
   patchAPIWithToken,
 } from '../../../utils/api';
 import { getToken } from '../../../utils/auth';
+
 import { BIDDER_VALUE } from '../../../utils/constants/role';
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
 
 const userDetailModalID = 'userDetailModal';
 
@@ -35,7 +37,7 @@ const UserList = () => {
       getAPIWithToken('/api/admin/upgrade-request', token),
     ]);
     if (userListResponse.error || requestListResponse.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     setUserList(userListResponse);
@@ -60,7 +62,7 @@ const UserList = () => {
           token,
         );
         if (response.error) {
-          toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+          toast.error(DEFAULT_ERROR);
           return;
         }
         loadData();
@@ -88,7 +90,7 @@ const UserList = () => {
     );
 
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     loadData();
@@ -103,7 +105,7 @@ const UserList = () => {
     );
 
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     loadData();

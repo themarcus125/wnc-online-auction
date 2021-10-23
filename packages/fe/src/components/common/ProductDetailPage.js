@@ -15,6 +15,8 @@ import { getAPI } from '../../utils/api';
 import { hoursToString } from '../../utils/time';
 import { getUser } from '../../utils/auth';
 
+import { LOGIN_REQUIRED } from '../../utils/constants/error';
+
 const API_URL = process.env.API_URL;
 const bidHistoryModalID = 'bidHistoryModal';
 
@@ -68,14 +70,14 @@ const ProductDetailPage = ({ productId }) => {
 
   const onBuyNow = () => {
     if (!userId) {
-      toast.error('Cần phải đăng nhập!');
+      toast.error(LOGIN_REQUIRED);
       return;
     }
   };
 
   const onPlaceBid = () => {
     if (!userId) {
-      toast.error('Cần phải đăng nhập!');
+      toast.error(LOGIN_REQUIRED);
       return;
     }
   };

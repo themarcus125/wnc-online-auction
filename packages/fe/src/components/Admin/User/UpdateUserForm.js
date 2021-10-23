@@ -7,7 +7,10 @@ import * as Yup from 'yup';
 
 import { getToken } from '../../../utils/auth';
 import { getAPIWithToken, patchAPIWithToken } from '../../../utils/api';
+
 import { SELLER_VALUE, BIDDER_VALUE } from '../../../utils/constants/role';
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
+import { USER_UPDATED } from '../../../utils/constants/success';
 
 const isEmail = Yup.string().email('Email không hợp lệ');
 
@@ -28,7 +31,7 @@ const UpdateUserForm = ({ id }) => {
     const token = await getToken();
     const response = await getAPIWithToken(`/api/admin/user/${id}`, token);
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     setName(response.name);
@@ -69,10 +72,10 @@ const UpdateUserForm = ({ id }) => {
       token,
     );
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
-    toast.success('Cập nhật thành công!');
+    toast.success(USER_UPDATED);
     loadData();
   };
 

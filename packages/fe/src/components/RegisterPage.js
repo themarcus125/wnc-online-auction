@@ -10,6 +10,8 @@ import FormErrorMessage from '../components/common/Form/ErrorMessage';
 
 import { postAPIForm } from '../utils/api';
 
+import { DEFAULT_ERROR } from '../utils/constants/error';
+
 const RegisterSchema = Yup.object().shape({
   fullName: Yup.string().required('*Bắt buộc'),
   email: Yup.string().required('*Bắt buộc').email('*Email không hợp lệ'),
@@ -34,7 +36,7 @@ const RegisterPage = () => {
     });
     setSubmitting(false);
     if (res.error) {
-      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');
+      toast.error(DEFAULT_ERROR);
     } else {
       navigate('/login', {
         state: {

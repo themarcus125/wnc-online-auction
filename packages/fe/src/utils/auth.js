@@ -36,7 +36,7 @@ export const refreshToken = async (token) => {
     return response.accessToken;
   }
 
-  if (response.error === 'EXPIRED_RESIGN_TOKEN') {
+  if (response.error && response.message === 'EXPIRED_RESIGN_TOKEN') {
     logout(() =>
       navigate('/login', {
         state: {

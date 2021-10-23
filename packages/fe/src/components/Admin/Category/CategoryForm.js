@@ -12,6 +12,9 @@ import {
 } from '../../../utils/api';
 import { getToken } from '../../../utils/auth';
 
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
+import { CATEGORY_ADDED } from '../../../utils/constants/success';
+
 const CategoryForm = ({ id }) => {
   const [category, setCategory] = useState('');
   const [selectedParentCategory, setSelectedParentCategory] = useState('');
@@ -29,7 +32,7 @@ const CategoryForm = ({ id }) => {
   const onLoadParentCategories = async () => {
     const response = await getAPI('/api/category?mode=parent');
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     let categories = response;
@@ -71,11 +74,11 @@ const CategoryForm = ({ id }) => {
     const response = await postAPIWithToken('/api/admin/category', data, token);
 
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
 
-    toast.success('Đã thêm danh mục thành công!');
+    toast.success(CATEGORY_ADDED);
     setCategory('');
     setSelectedParentCategory('');
   };
@@ -98,7 +101,7 @@ const CategoryForm = ({ id }) => {
       token,
     );
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
 
