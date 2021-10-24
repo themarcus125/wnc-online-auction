@@ -1,24 +1,46 @@
 import React from 'react'
-import logo from './assets/images/logo.svg';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
 import './assets/css/App.css';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/404';
+import Account from './pages/account';
+import Login from './pages/login';
+import Register from './pages/register';
+import ResetPassword from './pages/reset-password';
+import Search from './pages/search';
+import CategoryPage from './components/CategoryPage';
+import CategoryProductPage from './components/CategoryProductPage';
+import ProductDetailPage from './components/common/ProductDetailPage';
+import Seller from './pages/seller';
+import Admin from './pages/admin';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <HomePage />
+          </Route>
+          <Route path="/404">
+            <NotFoundPage />
+          </Route>
+          <Account path="/account" />
+          <Login path="/login" />
+          <Register path="/register" />
+          <ResetPassword path="/reset-password" />
+          <Search path="/search" />
+          <CategoryPage exact path="/category/:categoryId" />
+          <CategoryProductPage exact path="/category/:categoryId/:subCategoryId" />
+          <ProductDetailPage exact path="/product/:productId" />
+          <Seller exact path="/seller/:sellerPath" />
+          <Admin path="/admin" />
+        </Switch>
+      </Router>
     </div>
   );
 }
