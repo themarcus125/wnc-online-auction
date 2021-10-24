@@ -64,10 +64,8 @@ const ResetPasswordPage = () => {
     }
 
     navigate('/login', {
-      state: {
-        toastMsg: 'Hãy đăng nhập với thông tin tài khoản mới',
-        toastType: 'success',
-      },
+      toastMsg: 'Hãy đăng nhập với thông tin tài khoản mới',
+      toastType: 'success',
     });
   };
 

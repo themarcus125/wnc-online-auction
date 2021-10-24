@@ -4,12 +4,12 @@ export function useNavigate() {
   const history = useHistory();
   const location = useLocation();
 
-  function navigate(path) {
+  function navigate(path, state = {}) {
     if (path && !path.startsWith("/")) { 
-      history.push(`${location.pathname}/${path}`);
+      history.push(`${location.pathname}/${path}`, state);
       return;
     }
-    history.push(path);
+    history.push(path, state);
   }
 
   return { navigate };

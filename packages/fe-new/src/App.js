@@ -26,9 +26,7 @@ function App() {
           <Route exact path="/">
             <HomePage />
           </Route>
-          <Route path="/404">
-            <NotFoundPage />
-          </Route>
+          
           <Account path="/account" />
           <Login path="/login" />
           <Register path="/register" />
@@ -39,6 +37,13 @@ function App() {
           <ProductDetailPage exact path="/product/:productId" />
           <Seller exact path="/seller/:sellerPath" />
           <Admin path="/admin" />
+          
+          <Route path="/404">
+            <NotFoundPage />
+          </Route>
+          <Route path="*">
+            <NotFoundPage />
+          </Route>
         </Switch>
       </Router>
     </div>

@@ -39,10 +39,8 @@ export const refreshToken = async (token) => {
   if (response.error && response.message === 'EXPIRED_RESIGN_TOKEN') {
     logout(() =>
       navigate('/login', {
-        state: {
-          toastMsg: 'Hãy đăng nhập lại để tiếp tục',
-          toastType: 'error',
-        },
+        toastMsg: 'Hãy đăng nhập lại để tiếp tục',
+        toastType: 'error',
       }),
     );
     return;
