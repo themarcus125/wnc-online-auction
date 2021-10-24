@@ -44,7 +44,7 @@ const HomePage = () => {
 
   return (
     <CommonLayout>
-      <Helmet title="Trang chủ | Biddy" />
+      <Helmet title="Trang chủ | Biddly" />
 
       <div className="uk-padding-small">
         <div className="page uk-margin-auto">
