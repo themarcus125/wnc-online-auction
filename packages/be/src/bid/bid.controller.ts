@@ -1,14 +1,14 @@
-import { ClientSession } from 'mongoose';
+import mongoose, { ClientSession } from 'mongoose';
 import { RequestHandler } from 'express';
 
-import { ProductDoc } from '@/product/product.schema';
+import { ProductDoc, ProductStatus } from '@/product/product.schema';
 import { UserDoc } from '@/user/user.schema';
 import { CreateBidDTO } from './bid.dto';
 import BidService from './bid.service';
 import ProductService from '@/product/product.service';
 import ScheduleService from '@/schedule/schedule.service';
 import { JWTPayload } from '@/auth/auth.dto';
-import { Forbidden } from '@/error';
+import { Forbidden, NotFound } from '@/error';
 import { BidDoc, BidStatus } from './bid.schema';
 
 const getBidHistory: RequestHandler = async (req, res, next) => {
@@ -133,6 +133,61 @@ const placeBid: RequestHandler = async (req, res, next) => {
   }
 };
 
+const buyNow: RequestHandler = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  try {
+    const { id }: JWTPayload = res.locals.jwtPayload;
+    const bidder: UserDoc = res.locals.user;
+    const { productId } = req.body;
+    const product = await ProductService.findById(productId).session(session);
+    if (!product) {
+      return next(new NotFound('PRODUCT_NOT_FOUND'));
+    }
+    const productCanBuy = BidService.productCanBuyNow(product);
+    if (!productCanBuy) {
+      return next(new Forbidden('PRODUCT_CAN_NOT_BUY'));
+    }
+    if (id === product.seller) {
+      return next(new Forbidden('SELLER'));
+    }
+    if (!(await BidService.checkRating(product, bidder))) {
+      return next(new Forbidden('RATING'));
+    }
+    await BidService.model.create(
+      [
+        {
+          price: product.buyPrice,
+          product: product._id,
+          bidder: id,
+        },
+      ],
+      {
+        session,
+      },
+    );
+    const buyProduct = await ProductService.model
+      .findByIdAndUpdate(product._id, {
+        $inc: {
+          bidCount: 1,
+        },
+        currentPrice: product.buyPrice,
+        currentBidder: id,
+        $addToSet: {
+          bidder: id,
+        },
+        status: ProductStatus.SOLD,
+      })
+      .session(session);
+    await session.commitTransaction();
+    await session.endSession();
+    res.json(buyProduct);
+  } catch (e) {
+    await session.abortTransaction();
+    await session.endSession();
+    next(e);
+  }
+};
+
 const rejectBid: RequestHandler = async (req, res, next) => {
   const session: ClientSession = res.locals.session;
   try {
@@ -166,6 +221,7 @@ const rejectBid: RequestHandler = async (req, res, next) => {
 
 export default {
   placeBid,
+  buyNow,
   getBid,
   getBidHistory,
   getBidderBidHistory,

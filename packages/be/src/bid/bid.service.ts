@@ -22,11 +22,24 @@ class BidService
     return pos / score >= 0.8;
   }
 
-  async productCanPlaceBid({ status, expiredAt }: ProductDoc) {
+  productCanPlaceBid({ status, expiredAt }: ProductDoc) {
     if (status !== ProductStatus.NORMAL) {
       return false;
     }
     if (expiredAt.getTime() < Date.now()) {
+      return false;
+    }
+    return true;
+  }
+
+  productCanBuyNow({ status, expiredAt, currentPrice, buyPrice }: ProductDoc) {
+    if (status !== ProductStatus.NORMAL) {
+      return false;
+    }
+    if (expiredAt.getTime() < Date.now()) {
+      return false;
+    }
+    if (buyPrice && currentPrice >= buyPrice) {
       return false;
     }
     return true;
@@ -39,15 +52,15 @@ class BidService
   ) {
     const { seller, currentPrice, stepPrice } = product;
     if (seller._id === bidder._id) {
-      return CheckBidMessage.BIDDER_IS_SELLER;
+      return false;
     }
     if (!(await this.checkRating(product, bidder))) {
-      return CheckBidMessage.RATING;
+      return false;
     }
     if (currentPrice + stepPrice > price) {
-      return CheckBidMessage.PRICE;
+      return false;
     }
-    return CheckBidMessage.VALID;
+    return true;
   }
 
   checkBidderRejected(bidder: string, product: string) {

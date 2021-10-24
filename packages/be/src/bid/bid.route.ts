@@ -17,6 +17,11 @@ bidRoute.get(
   tokenGuard(false),
   BidController.getBidderBidHistory,
 );
+bidRoute.patch(
+  '/product/:productId/buynow',
+  tokenGuard(false),
+  BidController.buyNow,
+);
 bidRoute.get('/product/:productId', BidController.getBidHistory);
 bidRoute.patch(
   '/:bidId/reject',
