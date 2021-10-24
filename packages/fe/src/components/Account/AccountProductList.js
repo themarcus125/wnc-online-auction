@@ -12,6 +12,8 @@ import { getAPI, patchAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
 import { PRODUCTS_PER_PAGE } from '../../utils/constants/product';
+import { DEFAULT_ERROR } from '../../utils/constants/error';
+import { PRODUCT_DESCRIPTION_UPDATED } from '../../utils/constants/success';
 
 const descriptionModalID = 'descriptionModal';
 
@@ -52,7 +54,7 @@ const AccountProductList = () => {
       const response = await patchAPIWithToken(
         `/api/user/product/description`,
         {
-          description: `<div><bt/>✏️ ${dayjs().format(
+          description: `<div><br/>✏️ ${dayjs().format(
             'DD/MM/YYYY - HH:mm',
           )}<br/>${editorRef.current.getContent().trim()}</div>`,
           productId: selectedProduct.current,
@@ -60,10 +62,10 @@ const AccountProductList = () => {
         token,
       );
       if (!response.error) {
-        toast.success('Cập nhật mô tả thành công');
+        toast.success(PRODUCT_DESCRIPTION_UPDATED);
         hideModal(descriptionModalID);
       } else {
-        toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+        toast.error(DEFAULT_ERROR);
       }
     }
   };

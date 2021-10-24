@@ -10,6 +10,8 @@ import FormErrorMessage from '../components/common/Form/ErrorMessage';
 import { postAPIForm, getAPIWithToken } from '../utils/api';
 import { setUser } from '../utils/auth';
 
+import { LOGIN_INFO_INCORRECT, DEFAULT_ERROR } from '../utils/constants/error';
+
 const LoginSchema = Yup.object().shape({
   email: Yup.string().required('*Bắt buộc').email('*Email không hợp lệ'),
   password: Yup.string().required('*Bắt buộc'),
@@ -27,11 +29,11 @@ const LoginPage = ({ location }) => {
   const onSubmit = async (values, { setSubmitting }) => {
     const res = await postAPIForm('/api/auth/login', values);
     if (res.error) {
-      toast.error('Thông tin đăng nhập không hợp lệ. Vui lòng thử lại!');
+      toast.error(LOGIN_INFO_INCORRECT);
     } else {
       const user = await getAPIWithToken('/api/user', res.accessToken);
       if (user.error) {
-        toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+        toast.error(DEFAULT_ERROR);
       } else {
         setUser({ ...user, token: res.accessToken });
         navigate('/');

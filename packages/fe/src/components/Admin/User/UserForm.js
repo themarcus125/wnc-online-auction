@@ -9,6 +9,9 @@ import { postAPIFormWithToken } from '../../../utils/api';
 import FormErrorMessage from '../../common/Form/ErrorMessage';
 import { getToken } from '../../../utils/auth';
 
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
+import { USER_CREATED } from '../../../utils/constants/success';
+
 const RegisterSchema = Yup.object().shape({
   fullName: Yup.string().required('*Bắt buộc'),
   email: Yup.string().required('*Bắt buộc').email('*Email không hợp lệ'),
@@ -35,11 +38,11 @@ const UserForm = () => {
     );
     setSubmitting(false);
     if (res.error) {
-      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     resetForm();
-    toast.success('Tạo người dùng thành công!');
+    toast.success(USER_CREATED);
   };
 
   return (

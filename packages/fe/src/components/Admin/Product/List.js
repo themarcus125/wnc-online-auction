@@ -11,6 +11,7 @@ import { getAPI, deleteAPIWithToken } from '../../../utils/api';
 import { getToken } from '../../../utils/auth';
 
 import { PRODUCTS_PER_PAGE } from '../../../utils/constants/product';
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
 
 const ProductList = () => {
   const [productList, setProductList] = useState([]);
@@ -85,7 +86,7 @@ const ProductList = () => {
           token,
         );
         if (response.error) {
-          toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+          toast.error(DEFAULT_ERROR);
           return;
         }
         loadProducts();

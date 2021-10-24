@@ -9,6 +9,8 @@ import Modal, { showModal, hideModal } from '../../common/Modal';
 import { getAPI, deleteAPIWithToken } from '../../../utils/api';
 import { getToken } from '../../../utils/auth';
 
+import { DEFAULT_ERROR } from '../../../utils/constants/error';
+
 const categoryDetailModalID = 'categoryDetailModal';
 
 const CategoryList = () => {
@@ -19,7 +21,7 @@ const CategoryList = () => {
   const loadCategories = async () => {
     const response = await getAPI('/api/category?mode=parent');
     if (response.error) {
-      toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+      toast.error(DEFAULT_ERROR);
       return;
     }
     setCategories(response);
@@ -52,7 +54,7 @@ const CategoryList = () => {
           token,
         );
         if (response.error) {
-          toast.error('Đã có lỗi xày ra, xin vui lòng thử lại sau!');
+          toast.error(DEFAULT_ERROR);
           return;
         }
         loadCategories();
