@@ -35,6 +35,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     if (productId) {
       loadProduct();
+      window.scrollTo(0, 0);
     }
   }, [productId]);
 

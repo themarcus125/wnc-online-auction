@@ -101,7 +101,7 @@ const CategoryList = () => {
                       style={{ cursor: 'pointer' }}
                       onClick={() => onDetails(category._id, category.name)}
                     ></span>
-                    <Link to={`edit/${category._id}`}>
+                    <Link to={`/admin/category/edit/${category._id}`}>
                       <span className="uk-margin-left" uk-icon="pencil"></span>
                     </Link>
                     <span
@@ -137,7 +137,7 @@ const CategoryList = () => {
                       <td>{index + 1}</td>
                       <td>{category.name}</td>
                       <td>
-                        <Link to={`category/edit/${category._id}`}>
+                        <Link to={`/admin/category/edit/${category._id}`}>
                           <span
                             className="uk-margin-left"
                             uk-icon="pencil"

@@ -40,11 +40,9 @@ const RegisterPage = () => {
       toast.error(DEFAULT_ERROR);
     } else {
       navigate('/login', {
-        state: {
-          toastMsg:
-            'Tạo tài khoản thành công. Hãy đăng nhập với tài khoản vừa tạo',
-          toastType: 'success',
-        },
+        toastMsg:
+          'Tạo tài khoản thành công. Hãy đăng nhập với tài khoản vừa tạo',
+        toastType: 'success',
       });
     }
   };
