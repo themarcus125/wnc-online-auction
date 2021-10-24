@@ -41,7 +41,7 @@ const CategoryPage = () => {
   };
 
   const onLoadSubCategory = (subCategoryId) => {
-    navigate(`${categoryId}/${subCategoryId}`);
+    navigate(`${subCategoryId}`);
   };
 
   return (
