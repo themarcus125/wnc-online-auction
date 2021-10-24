@@ -17,6 +17,7 @@ class ProductService
       expiredAt: {
         $gt: new Date(),
       },
+      status: ProductStatus.NORMAL,
     }).populate('seller', excludeString);
   }
 
