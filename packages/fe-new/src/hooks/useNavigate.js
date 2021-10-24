@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom';
 
 export function useNavigate() {
   const history = useHistory();
@@ -16,7 +16,7 @@ export function useNavigate() {
 }
 
 export function navigate(path) {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     window.location.href = path;
   }
 }

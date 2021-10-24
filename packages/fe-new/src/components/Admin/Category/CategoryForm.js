@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { useNavigate } from '../../../hooks/useNavigate';
-import { useAdminCategory } from '../../../hooks/useAdminCategory'
+import { useAdminCategory } from '../../../hooks/useAdminCategory';
 
 import LoadingOverlay from '../../common/LoadingOverlay';
 
@@ -22,7 +22,9 @@ const CategoryForm = () => {
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasSubCategory, setHasSubCategory] = useState(false);
+  const [hasProduct, setHasProduct] = useState(false);
   const { categoryId: id } = useAdminCategory();
+  console.log(id);
 
   const { navigate } = useNavigate();
 
@@ -31,7 +33,7 @@ const CategoryForm = () => {
       loadCategoryDetails();
     }
     onLoadParentCategories();
-  }, []);
+  }, [id]);
 
   const onLoadParentCategories = async () => {
     const response = await getAPI('/api/category?mode=parent');
@@ -48,16 +50,21 @@ const CategoryForm = () => {
 
   const loadCategoryDetails = async () => {
     setLoading(true);
-    const [categoryDetailsResponse, subCategoryResponse] = await Promise.all([
-      getAPI(`/api/category/${id}`),
-      getAPI(`/api/category?mode=child&&parent=${id}`),
-    ]);
+    const [categoryDetailsResponse, subCategoryResponse, productResponse] =
+      await Promise.all([
+        getAPI(`/api/category/${id}`),
+        getAPI(`/api/category?mode=child&&parent=${id}`),
+        getAPI(`/api/product?mode=category&&category=${id}`),
+      ]);
     if (categoryDetailsResponse.error || categoryDetailsResponse.isDel) {
       navigate('/admin/category');
       return;
     }
     if (!subCategoryResponse.error) {
       setHasSubCategory(!!subCategoryResponse.length);
+    }
+    if (!productResponse.error) {
+      setHasProduct(!!productResponse.products.length);
     }
     setCategory(categoryDetailsResponse.name);
     setSelectedParentCategory(categoryDetailsResponse.parent || '');
@@ -145,7 +152,7 @@ const CategoryForm = () => {
                 className="uk-select"
                 value={selectedParentCategory}
                 onChange={(e) => setSelectedParentCategory(e.target.value)}
-                disabled={id && hasSubCategory}
+                disabled={id && (hasSubCategory || hasProduct)}
               >
                 <option value="">Không có danh mục cha</option>
                 {parentCategories.map((parentCategory) => {
