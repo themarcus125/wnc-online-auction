@@ -1,8 +1,6 @@
 import { Job, scheduleJob, rescheduleJob } from 'node-schedule';
-import BidService from '@/bid/bid.service';
 import { sendMail } from '@/mail/mail.service';
 import ProductService from '@/product/product.service';
-import { UserDoc } from '@/user/user.schema';
 import { tag } from '@/utils/html';
 import { ProductDoc } from '@/product/product.schema';
 import UserService from '@/user/user.service';
