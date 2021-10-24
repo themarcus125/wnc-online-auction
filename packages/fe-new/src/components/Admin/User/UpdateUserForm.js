@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
 
-import { useAdminUser } from '../../../hooks/useAdminUser'
+import { useAdminUser } from '../../../hooks/useAdminUser';
 import { getToken } from '../../../utils/auth';
 import { getAPIWithToken, patchAPIWithToken } from '../../../utils/api';
 
@@ -42,8 +42,8 @@ const UpdateUserForm = () => {
     setEmail(response.email);
     setAddress(response.address);
     setIsVerified(response.isVerified);
-    setRole(response.role);
     originalRole.current = response.role;
+    setRole(response.role);
     if (response.dob) {
       setDOB(response.dob);
     }
