@@ -1,24 +1,84 @@
-import mongoose from 'mongoose';
+import { ClientSession } from 'mongoose';
 import { RequestHandler } from 'express';
 
 import { ProductDoc } from '@/product/product.schema';
 import { UserDoc } from '@/user/user.schema';
 import { CreateBidDTO } from './bid.dto';
 import BidService from './bid.service';
+import ProductService from '@/product/product.service';
+import ScheduleService from '@/schedule/schedule.service';
+import { JWTPayload } from '@/auth/auth.dto';
+import { Forbidden } from '@/error';
+import { BidDoc, BidStatus } from './bid.schema';
 
-const bid: RequestHandler = async (req, res, next) => {
-  const session = await mongoose.startSession();
+const getBidHistory: RequestHandler = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const bids = await BidService.modeFind('history', { product: productId });
+    res.json(bids);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getSellerBidHistory: RequestHandler = async (req, res, next) => {
+  try {
+    const { id }: JWTPayload = res.locals.jwtPayload;
+    const { productId } = req.params;
+    const isProductOfSeller = await ProductService.model.exists({
+      _id: productId,
+      seller: id,
+    });
+    if (!isProductOfSeller) {
+      return next(new Forbidden('PRODUCT_SELLER'));
+    }
+    const bids = await BidService.modeFind('sellerHistory', {
+      product: productId,
+    });
+    res.json(bids);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getBidderBidHistory: RequestHandler = async (req, res, next) => {
+  try {
+    const { id }: JWTPayload = res.locals.jwtPayload;
+    const { productId } = req.params;
+    const bids = await BidService.modeFind('sellerHistory', {
+      product: productId,
+      bidder: id,
+    });
+    res.json(bids);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getBid: RequestHandler = async (req, res, next) => {
+  try {
+    const { id }: JWTPayload = res.locals.jwtPayload;
+    const { bidId } = req.params;
+    const bid = await BidService.findOne({
+      _id: bidId,
+      $or: [{ seller: id }, { bidder: id }],
+    });
+    if (!bid) {
+      return next(new Forbidden('BID'));
+    }
+    res.json(bid);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const placeBid: RequestHandler = async (req, res, next) => {
+  const session: ClientSession = res.locals.session;
   try {
     const bidProduct: ProductDoc = res.locals.product;
     const bidder: UserDoc = res.locals.user;
     const seller: UserDoc = bidProduct.seller;
     const { price, maxAutoPrice }: CreateBidDTO = req.body;
-
-    const currentBid = await BidService.findCurrentPriceBid(
-      price,
-      bidProduct._id,
-      session,
-    );
 
     const bid = (
       await BidService.model.create(
@@ -37,19 +97,33 @@ const bid: RequestHandler = async (req, res, next) => {
       throw new Error('CAN_NOT_CREATE_BID');
     }
 
-    bidProduct.bidCount += 1;
-    bidProduct.currentPrice = bid.price;
-    await bidProduct.save({ session });
-
+    const newExpiredAt = ProductService.getAutoRenewDate(bidProduct);
+    const updatedProduct = await ProductService.model
+      .findByIdAndUpdate(bidProduct._id, {
+        $inc: {
+          bidCount: 1,
+        },
+        currentPrice: bid.price,
+        currentBidder: bidder._id,
+        expiredAt: newExpiredAt,
+        $addToSet: {
+          bidder: bidder._id,
+        },
+      })
+      .session(session);
+    if (!updatedProduct) {
+      throw new Error('UPDATE_PRODUCT');
+    }
     await session.commitTransaction();
     await session.endSession();
 
+    ScheduleService.reschedule(bidProduct._id, newExpiredAt);
     await BidService.sendPlaceBidEmail(
       bid,
-      bidProduct,
+      updatedProduct,
       seller,
       bidder,
-      currentBid?.bidder,
+      bidProduct.currentBidder,
     );
     res.json({ bid, product: bidProduct });
   } catch (e) {
@@ -59,6 +133,42 @@ const bid: RequestHandler = async (req, res, next) => {
   }
 };
 
+const rejectBid: RequestHandler = async (req, res, next) => {
+  const session: ClientSession = res.locals.session;
+  try {
+    const bid: BidDoc = res.locals.bid;
+    const product: ProductDoc = res.locals.product;
+    await BidService.model.findByIdAndUpdate(bid._id, {
+      status: BidStatus.REJECTED,
+    });
+    if (bid.bidder === product.currentBidder) {
+      const prevBid = await BidService.findOne({
+        product: product._id,
+        status: BidStatus.NORMAL,
+      })
+        .sort({ price: -1 })
+        .session(session);
+      const bidder = prevBid?.bidder || null;
+      const price = prevBid?.price || product.startPrice;
+      await ProductService.model
+        .findByIdAndUpdate(product._id, {
+          currentBidder: bidder,
+          currentPrice: price,
+        })
+        .session(session);
+    }
+  } catch (e) {
+    await session.abortTransaction();
+    await session.endSession();
+    next(e);
+  }
+};
+
 export default {
-  bid,
+  placeBid,
+  getBid,
+  getBidHistory,
+  getBidderBidHistory,
+  getSellerBidHistory,
+  rejectBid,
 };

@@ -7,4 +7,5 @@ export interface CreateBidDTO {
 
 export interface QueryBidDTO {
   product?: string;
+  bidder?: string;
 }

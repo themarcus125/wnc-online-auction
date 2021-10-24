@@ -1,9 +1,9 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { sendMail } from '@/mail/mail.service';
 import { ProductDoc, ProductStatus } from '@/product/product.schema';
+import RatingService from '@/rating/rating.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
 import { tag } from '@/utils/html';
-import { ClientSession } from 'mongoose';
 import { CreateBidDTO, QueryBidDTO } from './bid.dto';
 import { CheckBidMessage } from './bid.message';
 import { BidDoc, BidModel, BidStatus } from './bid.schema';
@@ -16,26 +16,10 @@ class BidService
     super(BidModel);
   }
 
-  findCurrentPriceBid(
-    price: number,
-    productId: string,
-    session: ClientSession,
-    skip = 0,
-  ) {
-    return this.findOne({
-      price,
-      product: productId,
-    })
-      .skip(skip)
-      .populate('bidder', excludeString)
-      .session(session);
-  }
-
   async checkRating({ onlyRatedBidder }: ProductDoc, bidder: UserDoc) {
-    if (onlyRatedBidder) {
-    } else {
-    }
-    return true;
+    const [score, pos] = await RatingService.countScore(bidder._id);
+    if (!onlyRatedBidder && score === 0) return true;
+    return pos / score >= 0.8;
   }
 
   async productCanPlaceBid({ status, expiredAt }: ProductDoc) {
@@ -57,7 +41,7 @@ class BidService
     if (seller._id === bidder._id) {
       return CheckBidMessage.BIDDER_IS_SELLER;
     }
-    if (!this.checkRating(product, bidder)) {
+    if (!(await this.checkRating(product, bidder))) {
       return CheckBidMessage.RATING;
     }
     if (currentPrice + stepPrice > price) {
@@ -93,13 +77,25 @@ class BidService
     return sendMail(emails, subject, content);
   }
 
-  async modeFind(mode = '', { product }: QueryBidDTO = {}): Promise<any> {
+  async modeFind(
+    mode = '',
+    { product, bidder }: QueryBidDTO = {},
+  ): Promise<any> {
     if (mode === 'history') {
       return this.find({
         product,
-        status: {
-          $in: [BidStatus.NORMAL, BidStatus.WIN],
-        },
+        status: BidStatus.NORMAL,
+      }).populate('bidder', excludeString);
+    }
+    if (mode === 'sellerHistory') {
+      return this.find({
+        product,
+      }).populate('bidder', excludeString);
+    }
+    if (mode === 'bidderHistory') {
+      return this.find({
+        product,
+        bidder,
       }).populate('bidder', excludeString);
     }
     return this.find({});

@@ -3,7 +3,7 @@ import { RequestHandler } from 'express';
 import { JWTPayload } from './auth.dto';
 import AuthService, { getExpirationTime } from './auth.service';
 import UserService from '@/user/user.service';
-import { BadRequest, NotFound, Unauthorized } from '@/error';
+import { BadRequest, Forbidden, NotFound, Unauthorized } from '@/error';
 
 export const tokenGuard =
   (isExpiredTokenGuard = false): RequestHandler =>
@@ -65,10 +65,10 @@ export const roleGuard =
     }
     if (exact) {
       if (jwtPayload.role !== role) {
-        return next(new Unauthorized('INVALID_TOKEN_ROLE'));
+        return next(new Forbidden('INVALID_TOKEN_ROLE'));
       }
     } else if (jwtPayload.role < role) {
-      return next(new Unauthorized('INVALID_TOKEN_ROLE'));
+      return next(new Forbidden('INVALID_TOKEN_ROLE'));
     }
     next();
   };
@@ -82,7 +82,7 @@ export const emailGuard =
     }
     if (jwtPayload.isVerified !== isVerified) {
       return next(
-        new Unauthorized(`${isVerified ? 'UNVERIFIED' : 'VERIFIED'}_EMAIL`),
+        new Forbidden(`${isVerified ? 'UNVERIFIED' : 'VERIFIED'}_EMAIL`),
       );
     }
     next();

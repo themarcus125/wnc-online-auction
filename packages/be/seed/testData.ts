@@ -39,6 +39,14 @@ export const userSeeds: UserSeed[] = [
     role: UserRole.SELLER,
     isVerified: true,
   },
+  {
+    email: 'bidder1@sample.com',
+    name: 'bidder1',
+    address: 'bidder1',
+    password: hashedPassword,
+    role: UserRole.BIDDER,
+    isVerified: true,
+  },
 ];
 
 export const parentCategorySeeds: CategorySeed[] = [
@@ -205,6 +213,24 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 30000,
     currentPrice: 30000,
     stepPrice: 1000,
+    onlyRatedBidder: true,
     expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+  },
+  {
+    name: 'product4',
+    descriptions: ['product4 - seller2 - expired soon'],
+    category: 1,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
+    seller: 1,
+    startPrice: 30000,
+    currentPrice: 30000,
+    stepPrice: 1000,
+    isAutoRenew: true,
+    expiredAt: new Date(Date.now() + 5 * 60 * 1000),
   },
 ];

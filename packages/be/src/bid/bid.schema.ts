@@ -5,7 +5,6 @@ import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 export enum BidStatus {
   NORMAL,
   REJECTED,
-  WIN,
 }
 
 export const BidModelName = 'Bid';

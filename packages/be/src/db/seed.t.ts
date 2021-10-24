@@ -24,4 +24,6 @@ export interface ProductSeed {
   stepPrice: number;
   currentPrice: number;
   expiredAt: Date;
+  isAutoRenew?: boolean;
+  onlyRatedBidder?: boolean;
 }

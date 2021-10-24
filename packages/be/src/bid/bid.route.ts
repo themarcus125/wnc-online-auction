@@ -1,17 +1,37 @@
 import express from 'express';
 import BidController from '@/bid/bid.controller';
-import { tokenGuard } from '@/auth/auth.guard';
+import { roleGuard, tokenGuard } from '@/auth/auth.guard';
 import { bidValidator } from './bid.pipe';
-import { placeBidGuard } from './bid.guard';
+import { placeBidGuard, rejectBidGuard } from './bid.guard';
+import { UserRole } from '@/user/user.schema';
 
 const bidRoute = express.Router();
 
+bidRoute.get(
+  '/product/:productId/seller',
+  tokenGuard(false),
+  BidController.getSellerBidHistory,
+);
+bidRoute.get(
+  '/product/:productId/bidder',
+  tokenGuard(false),
+  BidController.getBidderBidHistory,
+);
+bidRoute.get('/product/:productId', BidController.getBidHistory);
+bidRoute.patch(
+  '/:bidId/reject',
+  tokenGuard(false),
+  roleGuard(UserRole.SELLER),
+  rejectBidGuard,
+  BidController.rejectBid,
+);
+bidRoute.get('/:bidId', tokenGuard(false), BidController.getBid);
 bidRoute.post(
   '/',
   bidValidator,
   tokenGuard(false),
   placeBidGuard,
-  BidController.bid,
+  BidController.placeBid,
 );
 
 export default bidRoute;

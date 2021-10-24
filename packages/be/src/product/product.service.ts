@@ -1,4 +1,5 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
+import { excludeString } from '@/user/user.schema';
 import { parseIntDefault, parseSort } from '@/utils/parser';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel, ProductStatus } from './product.schema';
@@ -11,25 +12,24 @@ class ProductService
     super(ProductModel);
   }
 
-  async findAndAutoRenew(produdctId: string) {
-    const product = await this.findOne({
-      _id: produdctId,
-      isAutoRenew: true,
-    });
-    if (!product) return null;
-    return this.autoRenew(product);
+  async findNotExpired() {
+    return this.find({
+      expiredAt: {
+        $gt: new Date(),
+      },
+    }).populate('seller', excludeString);
   }
 
-  async autoRenew(product: ProductDoc) {
+  getAutoRenewDate(product: ProductDoc) {
+    if (!product.isAutoRenew) return product.expiredAt;
     const now = Date.now();
     const oldExpiredAt = new Date(product.expiredAt).getTime();
     const beforeMls = 5 * 60 * 1000;
     const addMls = 10 * 60 * 1000;
     if (now >= oldExpiredAt - beforeMls) {
-      product.expiredAt = new Date(oldExpiredAt + addMls);
-      await product.save();
+      return new Date(oldExpiredAt + addMls);
     }
-    return product;
+    return product.expiredAt;
   }
 
   async modeFind(

@@ -1,13 +1,13 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 import { UserDoc, UserModelName } from '@/user/user.schema';
 import { CategoryDoc, CategoryModelName } from '@/category/category.schema';
+import { BidDoc, BidModelName } from '@/bid/bid.schema';
 
 export const ProductModelName = 'Product';
 
 export enum ProductStatus {
   NORMAL,
-  WAITING,
-  CONFIRM,
+  SOLD,
   CANCELED,
 }
 
@@ -17,10 +17,12 @@ export interface Product {
   category: PopulatedDoc<CategoryDoc>;
   images: string[];
   seller: PopulatedDoc<UserDoc>;
+  bidder: string[];
   startPrice: number;
   stepPrice: number;
   buyPrice?: number;
   currentPrice: number;
+  currentBidder?: PopulatedDoc<UserDoc>;
   bidCount: number;
   expiredAt: Date;
   createdAt: Date;
@@ -54,10 +56,12 @@ export const ProductSchema = new Schema<ProductDoc>(
       required: true,
       ref: UserModelName,
     },
+    bidder: [String],
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
     currentPrice: { type: Number, require: true, index: 1 },
+    currentBidder: { type: Schema.Types.ObjectId, ref: UserModelName },
     bidCount: { type: Number, default: 0, index: 1 },
     expiredAt: { type: Date, require: true, index: 1 },
     isAutoRenew: { type: Boolean, default: false },

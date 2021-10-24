@@ -8,9 +8,11 @@ import { passwordRoute } from './password.route';
 import { emailRoute } from './email.route';
 import { upgradeRequestRoute } from './upgradeRequest.route';
 import { productRoute } from './product.route';
+import { wlRoute } from './watchlist.route';
 
 const userRoute = express.Router();
 
+userRoute.use('/watchlist', wlRoute);
 userRoute.use('/product', productRoute);
 userRoute.use('/password', passwordRoute);
 userRoute.use('/email', emailRoute);

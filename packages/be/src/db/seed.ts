@@ -70,6 +70,8 @@ const productSeed = async (
         expiredAt,
         category,
         seller,
+        isAutoRenew,
+        onlyRatedBidder,
       }) => ({
         name,
         descriptions,
@@ -80,6 +82,8 @@ const productSeed = async (
         expiredAt,
         category: categoryA[category]?._id,
         seller: userA[seller]?._id,
+        isAutoRenew,
+        onlyRatedBidder,
       }),
     ),
   );
@@ -95,6 +99,8 @@ const productSeed = async (
         expiredAt,
         category,
         seller,
+        isAutoRenew,
+        onlyRatedBidder,
       }) => ({
         name,
         descriptions,
@@ -105,6 +111,8 @@ const productSeed = async (
         expiredAt,
         category: categoryA[category]?._id,
         seller: userA[seller]?._id,
+        isAutoRenew,
+        onlyRatedBidder,
       }),
     ),
   );
