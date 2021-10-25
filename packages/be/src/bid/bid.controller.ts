@@ -79,6 +79,17 @@ const placeBid: RequestHandler = async (req, res, next) => {
     const bidder: UserDoc = res.locals.user;
     const seller: UserDoc = bidProduct.seller;
     const { price, maxAutoPrice }: CreateBidDTO = req.body;
+    const currentBid = await BidService.currentBid(bidProduct).session(session);
+
+    if (currentBid) {
+      await BidService.autoBidHandler(
+        bidProduct,
+        currentBid,
+        session,
+        price,
+        maxAutoPrice,
+      );
+    }
 
     const bid = (
       await BidService.model.create(
@@ -114,6 +125,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
     if (!updatedProduct) {
       throw new Error('UPDATE_PRODUCT');
     }
+
     await session.commitTransaction();
     await session.endSession();
 
@@ -143,7 +155,11 @@ const buyNow: RequestHandler = async (req, res, next) => {
     if (!product) {
       return next(new NotFound('PRODUCT_NOT_FOUND'));
     }
-    const productCanBuy = await BidService.productCanBuyNow(product);
+    const currentBid = await BidService.currentBid(product).session(session);
+    const productCanBuy = await BidService.productCanBuyNow(
+      product,
+      currentBid,
+    );
     if (!productCanBuy) {
       return next(new Forbidden('PRODUCT_CAN_NOT_BUY'));
     }
@@ -203,7 +219,7 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         product: product._id,
         status: BidStatus.NORMAL,
       })
-        .sort({ price: -1 })
+        .sort({ price: -1, _id: -1 })
         .session(session);
       const bidder = prevBid?.bidder || null;
       const price = prevBid?.price || product.startPrice;

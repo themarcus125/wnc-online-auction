@@ -21,7 +21,7 @@ class BidService
       product: product._id,
       bidder: product.currentBidder,
       price: product.currentPrice,
-    });
+    }).sort({ _id: -1 });
   }
 
   async checkRating({ onlyRatedBidder }: ProductDoc, bidder: UserDoc) {
@@ -40,7 +40,7 @@ class BidService
     return true;
   }
 
-  async productCanBuyNow(product: ProductDoc) {
+  async productCanBuyNow(product: ProductDoc, currentBid: BidDoc | null) {
     const { status, expiredAt, currentPrice, buyPrice } = product;
     if (status !== ProductStatus.NORMAL) {
       return false;
@@ -54,7 +54,6 @@ class BidService
     if (currentPrice >= buyPrice) {
       return false;
     }
-    const currentBid = await this.currentBid(product);
     if (!currentBid) return true;
     if (currentBid.maxAutoPrice && currentBid.maxAutoPrice >= buyPrice)
       return false;
@@ -66,14 +65,14 @@ class BidService
     bidder: UserDoc,
     { price }: CreateBidDTO,
   ) {
-    const { seller, currentPrice, stepPrice } = product;
+    const { seller, currentPrice } = product;
     if (seller._id === bidder._id) {
       return false;
     }
     if (!(await this.checkRating(product, bidder))) {
       return false;
     }
-    if (currentPrice + stepPrice > price) {
+    if (currentPrice > price) {
       return false;
     }
     return true;
@@ -81,10 +80,29 @@ class BidService
 
   async autoBidHandler(
     product: ProductDoc,
-    newBidder: UserDoc,
-    createBidDTO: CreateBidDTO,
+    currentBid: BidDoc,
     session: ClientSession,
-  ) {}
+    newPrice: number,
+    newMaxAutoPrice?: number,
+  ) {
+    // (
+    //    (
+    if (!currentBid.maxAutoPrice) return null;
+    // ()
+    //    (
+    if (currentBid.maxAutoPrice < newPrice) return null;
+    if (newMaxAutoPrice) {
+      // (     )
+      //    ( -->(  )
+      if (newMaxAutoPrice > currentBid.maxAutoPrice) return null;
+      // ( ---->( )
+      //    ( )
+      return null;
+    }
+    // ( -->(   )
+    //   (
+    return null;
+  }
 
   checkBidderRejected(bidder: string, product: string) {
     return this.model.exists({
