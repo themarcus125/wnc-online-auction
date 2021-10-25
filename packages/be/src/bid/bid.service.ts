@@ -4,6 +4,7 @@ import { ProductDoc, ProductStatus } from '@/product/product.schema';
 import RatingService from '@/rating/rating.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
 import { tag } from '@/utils/html';
+import { ClientSession } from 'mongoose';
 import { CreateBidDTO, QueryBidDTO } from './bid.dto';
 import { CheckBidMessage } from './bid.message';
 import { BidDoc, BidModel, BidStatus } from './bid.schema';
@@ -14,6 +15,14 @@ class BidService
 {
   constructor() {
     super(BidModel);
+  }
+
+  currentBid(product: ProductDoc) {
+    return this.findOne({
+      product: product._id,
+      bidder: product.currentBidder,
+      price: product.currentPrice,
+    });
   }
 
   async checkRating({ onlyRatedBidder }: ProductDoc, bidder: UserDoc) {

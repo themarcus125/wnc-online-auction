@@ -39,7 +39,7 @@ export const placeBidGuard: RequestHandler = async (req, res, next) => {
     if (bidderRejected) {
       return next(new Forbidden('REJECTED_BIDDER'));
     }
-    const checkCanBid = BidService.checkCanPlaceBid(bidProduct, bidder, {
+    const checkCanBid = await BidService.checkCanPlaceBid(bidProduct, bidder, {
       bidder: id,
       product,
       price,
