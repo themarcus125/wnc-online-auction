@@ -143,7 +143,7 @@ const buyNow: RequestHandler = async (req, res, next) => {
     if (!product) {
       return next(new NotFound('PRODUCT_NOT_FOUND'));
     }
-    const productCanBuy = BidService.productCanBuyNow(product);
+    const productCanBuy = await BidService.productCanBuyNow(product);
     if (!productCanBuy) {
       return next(new Forbidden('PRODUCT_CAN_NOT_BUY'));
     }

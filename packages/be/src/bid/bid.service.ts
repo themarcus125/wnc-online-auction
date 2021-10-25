@@ -6,7 +6,6 @@ import { excludeString, UserDoc } from '@/user/user.schema';
 import { tag } from '@/utils/html';
 import { ClientSession } from 'mongoose';
 import { CreateBidDTO, QueryBidDTO } from './bid.dto';
-import { CheckBidMessage } from './bid.message';
 import { BidDoc, BidModel, BidStatus } from './bid.schema';
 
 class BidService
@@ -41,23 +40,31 @@ class BidService
     return true;
   }
 
-  productCanBuyNow({ status, expiredAt, currentPrice, buyPrice }: ProductDoc) {
+  async productCanBuyNow(product: ProductDoc) {
+    const { status, expiredAt, currentPrice, buyPrice } = product;
     if (status !== ProductStatus.NORMAL) {
       return false;
     }
     if (expiredAt.getTime() < Date.now()) {
       return false;
     }
-    if (buyPrice && currentPrice >= buyPrice) {
+    if (!buyPrice) {
       return false;
     }
+    if (currentPrice >= buyPrice) {
+      return false;
+    }
+    const currentBid = await this.currentBid(product);
+    if (!currentBid) return true;
+    if (currentBid.maxAutoPrice && currentBid.maxAutoPrice >= buyPrice)
+      return false;
     return true;
   }
 
   async checkCanPlaceBid(
     product: ProductDoc,
     bidder: UserDoc,
-    { price, maxAutoPrice }: CreateBidDTO,
+    { price }: CreateBidDTO,
   ) {
     const { seller, currentPrice, stepPrice } = product;
     if (seller._id === bidder._id) {
@@ -71,6 +78,13 @@ class BidService
     }
     return true;
   }
+
+  async autoBidHandler(
+    product: ProductDoc,
+    newBidder: UserDoc,
+    createBidDTO: CreateBidDTO,
+    session: ClientSession,
+  ) {}
 
   checkBidderRejected(bidder: string, product: string) {
     return this.model.exists({
