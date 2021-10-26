@@ -7,10 +7,19 @@ import { appConfig } from '~/config';
 import { UserDoc } from '@/user/user.schema';
 import { CategoryDoc } from '@/category/category.schema';
 import { connectDB } from './connect';
+import BidService from '@/bid/bid.service';
 
 const { mode } = appConfig;
 let userA: UserDoc[];
 let categoryA: CategoryDoc[];
+
+const bidSeed = async () => {
+  if (mode !== 'development') return false;
+  const model = BidService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  return true;
+};
 
 const upgradeRequestSeed = async () => {
   if (mode !== 'development') return false;
@@ -129,6 +138,7 @@ export const seedDB = async (
     await Promise.allSettled([
       userSeed(userSeeds),
       upgradeRequestSeed(),
+      bidSeed(),
       categorySeed(cateSeeds[0], cateSeeds[1]),
     ]);
     await productSeed(productSeeds[0], productSeeds[1]);
