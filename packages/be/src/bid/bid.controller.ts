@@ -105,13 +105,14 @@ const placeBid: RequestHandler = async (req, res, next) => {
           bidCount: 1,
         },
         currentPrice: bid.price,
-        currentBidder: bidder._id,
+        currentBidder: bid.bidder,
         expiredAt: newExpiredAt,
         $addToSet: {
-          bidder: bidder._id,
+          bidder: bid.bidder,
         },
       })
       .session(session);
+
     if (!updatedProduct) {
       throw new Error('UPDATE_PRODUCT');
     }

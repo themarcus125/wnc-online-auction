@@ -1,6 +1,7 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { sendMail } from '@/mail/mail.service';
 import { ProductDoc, ProductStatus } from '@/product/product.schema';
+import ProductService from '@/product/product.service';
 import RatingService from '@/rating/rating.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
 import { tag } from '@/utils/html';
@@ -134,14 +135,92 @@ class BidService
       // C (     )
       // N   ( -->(  )
       if (newBid.maxAutoPrice > currentBid.maxAutoPrice) {
+        const autoPrice = currentBid.maxAutoPrice + product.stepPrice;
+        const autoBid = (
+          await this.model.create(
+            [
+              {
+                product: product._id,
+                bidder: newBid._id,
+                price: autoPrice,
+                maxAutoPrice: newBid.maxAutoPrice,
+              },
+            ],
+            { session },
+          )
+        )[0];
+        if (!autoBid) throw new Error('AUTO_BID_N');
+        const updatedProduct = await ProductService.model.findByIdAndUpdate(
+          product._id,
+          {
+            $inc: {
+              bidCount: 1,
+            },
+            currentPrice: autoBid.price,
+            currentBidder: autoBid.bidder,
+          },
+        );
+        if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_N');
         return true;
       }
       // C ( ---->( )
       // N   ( )
+      const autoPrice = newBid.maxAutoPrice + product.stepPrice;
+      const autoBid = (
+        await this.model.create(
+          [
+            {
+              product: product._id,
+              bidder: currentBid._id,
+              price: autoPrice,
+              maxAutoPrice: currentBid.maxAutoPrice,
+            },
+          ],
+          { session },
+        )
+      )[0];
+      if (!autoBid) throw new Error('AUTO_BID_C_1');
+      const updatedProduct = await ProductService.model.findByIdAndUpdate(
+        product._id,
+        {
+          $inc: {
+            bidCount: 1,
+          },
+          currentPrice: autoBid.price,
+          currentBidder: autoBid.bidder,
+        },
+      );
+      if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_1');
       return false;
     }
     // C ( -->(   )
     // N   (
+    const autoPrice = newBid.price + product.stepPrice;
+    const autoBid = (
+      await this.model.create(
+        [
+          {
+            product: product._id,
+            bidder: currentBid._id,
+            price: autoPrice,
+            maxAutoPrice: currentBid.maxAutoPrice,
+          },
+        ],
+        { session },
+      )
+    )[0];
+    if (!autoBid) throw new Error('AUTO_BID_C_2');
+    const updatedProduct = await ProductService.model.findByIdAndUpdate(
+      product._id,
+      {
+        $inc: {
+          bidCount: 1,
+        },
+        currentPrice: autoBid.price,
+        currentBidder: autoBid.bidder,
+      },
+    );
+    if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_2');
     return false;
   }
 
