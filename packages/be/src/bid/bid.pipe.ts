@@ -8,19 +8,22 @@ export const bidValidator: RequestHandler = (req, res, next) => {
   const {
     product,
     price, // toPositve
-    maxAutoPrice, // toPositive
+    maxAutoPrice, // canEmpty, toPositive
   }: CreateBidDTO = req.body;
   if (!notEmpty(product)) {
     return next(new BadRequest('PRODUCT'));
   }
 
+  if (!notEmpty(price)) return next(new BadRequest('PRICE'));
   const [safePrice, priceValue] = safePositive(price);
   if (!safePrice) {
     return next(new BadRequest('PRICE'));
   }
   req.body.price = priceValue;
 
-  if (!maxAutoPrice) {
+  if (!notEmpty(maxAutoPrice)) {
+    req.body.maxAutoPrice = undefined;
+  } else {
     const [safeAutoPrice, autoPriceValue] = safePositive(maxAutoPrice);
     if (!safeAutoPrice && numberBetWeenRange(autoPriceValue, priceValue)) {
       return next(new BadRequest('AUTO_PRICE'));
