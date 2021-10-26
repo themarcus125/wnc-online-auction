@@ -20,11 +20,13 @@ export const bidValidator: RequestHandler = (req, res, next) => {
   }
   req.body.price = priceValue;
 
-  const [safeAutoPrice, autoPriceValue] = safePositive(maxAutoPrice);
-  if (!safeAutoPrice && numberBetWeenRange(autoPriceValue, priceValue)) {
-    return next(new BadRequest('AUTO_PRICE'));
+  if (!maxAutoPrice) {
+    const [safeAutoPrice, autoPriceValue] = safePositive(maxAutoPrice);
+    if (!safeAutoPrice && numberBetWeenRange(autoPriceValue, priceValue)) {
+      return next(new BadRequest('AUTO_PRICE'));
+    }
+    req.body.maxAutoPrice = autoPriceValue;
   }
-  req.body.maxAutoPrice = autoPriceValue;
 
   next();
 };
