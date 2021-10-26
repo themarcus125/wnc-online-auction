@@ -34,6 +34,14 @@ export const BidSchema = new Schema<BidDoc>(
   },
   { timestamps: true },
 );
-BidSchema.index({ product: 1, price: 1 }, { unique: true });
+BidSchema.index(
+  { product: 1, price: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: BidStatus.NORMAL,
+    },
+  },
+);
 
 export const BidModel = model<BidDoc>(BidModelName, BidSchema);
