@@ -81,16 +81,6 @@ const placeBid: RequestHandler = async (req, res, next) => {
     const { price, maxAutoPrice }: CreateBidDTO = req.body;
     const currentBid = await BidService.currentBid(bidProduct).session(session);
 
-    if (currentBid) {
-      await BidService.autoBidHandler(
-        bidProduct,
-        currentBid,
-        session,
-        price,
-        maxAutoPrice,
-      );
-    }
-
     const bid = (
       await BidService.model.create(
         [
@@ -124,6 +114,16 @@ const placeBid: RequestHandler = async (req, res, next) => {
       .session(session);
     if (!updatedProduct) {
       throw new Error('UPDATE_PRODUCT');
+    }
+
+    if (currentBid) {
+      await BidService.autoBidHandler(
+        bidProduct,
+        currentBid,
+        session,
+        price,
+        maxAutoPrice,
+      );
     }
 
     await session.commitTransaction();

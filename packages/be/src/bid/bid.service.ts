@@ -21,7 +21,16 @@ class BidService
       product: product._id,
       bidder: product.currentBidder,
       price: product.currentPrice,
+      status: BidStatus.NORMAL,
     }).sort({ _id: -1 });
+  }
+
+  checkPriceExists(price: number, product: ProductDoc) {
+    return this.model.exists({
+      product: product._id,
+      price,
+      status: BidStatus.NORMAL,
+    });
   }
 
   async checkRating({ onlyRatedBidder }: ProductDoc, bidder: UserDoc) {
@@ -70,6 +79,9 @@ class BidService
       return false;
     }
     if (!(await this.checkRating(product, bidder))) {
+      return false;
+    }
+    if (await this.checkPriceExists(price, product)) {
       return false;
     }
     if (currentPrice > price) {
