@@ -41,6 +41,8 @@
   https://stackoverflow.com/questions/51228059/mongo-db-4-0-transactions-with-mongoose-nodejs-express
   https://stackoverflow.com/questions/41071617/atomically-update-multiple-documents-and-return-them
 - Socket + express
+  https://www.freecodecamp.org/news/create-a-professional-node-express/
+  https://medium.com/daily-programmer/build-a-chat-application-with-express-and-socket-io-e8c335d27386
   https://towardsdatascience.com/building-a-real-time-web-app-in-nodejs-express-with-socket-io-library-d9b50aded6e6
   https://socket.io/get-started/chat#introduction
   https://stackoverflow.com/questions/17696801/express-js-app-listen-vs-server-listen
