@@ -210,9 +210,15 @@ const rejectBid: RequestHandler = async (req, res, next) => {
     const bid: BidDoc = res.locals.bid;
     const product: ProductDoc = res.locals.product;
     await BidService.model
-      .findByIdAndUpdate(bid._id, {
-        status: BidStatus.REJECTED,
-      })
+      .updateMany(
+        {
+          product: product._id,
+          bidder: bid._id,
+        },
+        {
+          status: BidStatus.REJECTED,
+        },
+      )
       .session(session);
     if (bid.bidder === product.currentBidder) {
       const prevBid = await BidService.findOne({
