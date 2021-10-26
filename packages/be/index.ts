@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import app from '@/app';
-import initSocketIO from '@/web-socket';
+import initSocketIO from '@/web-socket/socket.io';
 import { setupSchedule } from '@/schedule/schedule.service';
 import { appConfig } from '~/config';
 import { serverStart } from '@/utils/logs';
