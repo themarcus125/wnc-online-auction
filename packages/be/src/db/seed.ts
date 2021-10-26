@@ -1,7 +1,7 @@
 import CategoryService from '@/category/category.service';
 import UserService from '@/user/user.service';
 import ProductService from '@/product/product.service';
-import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
+import UpgradeRequestService from '@/upgrade-request/upgradeRequest.service';
 import { CategorySeed, ProductSeed, UserSeed } from './seed.t';
 import { appConfig } from '~/config';
 import { UserDoc } from '@/user/user.schema';

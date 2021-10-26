@@ -11,7 +11,7 @@ import {
   EmailOtpMessage,
   ResetPasswordOtpMessage,
 } from './user.message';
-import UpgradeRequestService from '@/upgradeRequest/upgradeRequest.service';
+import UpgradeRequestService from '@/upgrade-request/upgradeRequest.service';
 import { excludeString, UserDoc } from './user.schema';
 import { BadRequest, Forbidden, NotFound } from '@/error';
 

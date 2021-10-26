@@ -40,3 +40,11 @@
   https://mongoosejs.com/docs/transactions.html
   https://stackoverflow.com/questions/51228059/mongo-db-4-0-transactions-with-mongoose-nodejs-express
   https://stackoverflow.com/questions/41071617/atomically-update-multiple-documents-and-return-them
+- Socket + express
+  https://towardsdatascience.com/building-a-real-time-web-app-in-nodejs-express-with-socket-io-library-d9b50aded6e6
+  https://socket.io/get-started/chat#introduction
+  https://stackoverflow.com/questions/17696801/express-js-app-listen-vs-server-listen
+  https://stackoverflow.com/questions/55086261/how-to-use-app-listen-with-socket-io-in-node
+  https://stackoverflow.com/questions/38062689/how-do-i-get-the-http-server-from-the-express-app
+  https://github.com/huynonstop/chat-app-ws/tree/master/packages/server/src
+  https://medium.com/@raj_36650/integrate-socket-io-with-node-js-express-2292ca13d891
