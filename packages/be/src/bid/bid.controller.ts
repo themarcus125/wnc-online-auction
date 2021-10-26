@@ -116,15 +116,12 @@ const placeBid: RequestHandler = async (req, res, next) => {
       throw new Error('UPDATE_PRODUCT');
     }
 
-    if (currentBid) {
-      await BidService.autoBidHandler(
-        bidProduct,
-        currentBid,
-        session,
-        price,
-        maxAutoPrice,
-      );
-    }
+    const holdThePrice = await BidService.autoBidHandler(
+      bidProduct,
+      currentBid,
+      bid,
+      session,
+    );
 
     await session.commitTransaction();
     await session.endSession();
@@ -137,7 +134,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
       bidder,
       bidProduct.currentBidder,
     );
-    res.json({ bid, product: bidProduct });
+    res.json({ bid, product: bidProduct, holdThePrice });
   } catch (e) {
     await session.abortTransaction();
     await session.endSession();

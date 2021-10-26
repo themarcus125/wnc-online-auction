@@ -49,6 +49,21 @@ class BidService
     return true;
   }
 
+  checkStepPrice(
+    stepPrice: number,
+    currentPrice: number,
+    price: number,
+    maxAutoPrice?: number,
+  ) {
+    if ((price - currentPrice) % stepPrice !== 0) {
+      return false;
+    }
+    if (maxAutoPrice && (maxAutoPrice - currentPrice) % stepPrice !== 0) {
+      return false;
+    }
+    return true;
+  }
+
   async productCanBuyNow(product: ProductDoc, currentBid: BidDoc | null) {
     const { status, expiredAt, currentPrice, buyPrice } = product;
     if (status !== ProductStatus.NORMAL) {
@@ -72,10 +87,23 @@ class BidService
   async checkCanPlaceBid(
     product: ProductDoc,
     bidder: UserDoc,
-    { price }: CreateBidDTO,
+    { price, maxAutoPrice }: CreateBidDTO,
   ) {
     const { seller, currentPrice } = product;
     if (seller._id === bidder._id) {
+      return false;
+    }
+    if (currentPrice > price) {
+      return false;
+    }
+    if (
+      !this.checkStepPrice(
+        product.stepPrice,
+        product.currentPrice,
+        price,
+        maxAutoPrice,
+      )
+    ) {
       return false;
     }
     if (!(await this.checkRating(product, bidder))) {
@@ -84,36 +112,37 @@ class BidService
     if (await this.checkPriceExists(price, product)) {
       return false;
     }
-    if (currentPrice > price) {
-      return false;
-    }
     return true;
   }
 
   async autoBidHandler(
     product: ProductDoc,
-    currentBid: BidDoc,
+    currentBid: BidDoc | null,
+    newBid: BidDoc,
     session: ClientSession,
-    newPrice: number,
-    newMaxAutoPrice?: number,
   ) {
-    // (
-    //    (
-    if (!currentBid.maxAutoPrice) return null;
-    // ()
-    //    (
-    if (currentBid.maxAutoPrice < newPrice) return null;
-    if (newMaxAutoPrice) {
-      // (     )
-      //    ( -->(  )
-      if (newMaxAutoPrice > currentBid.maxAutoPrice) return null;
-      // ( ---->( )
-      //    ( )
-      return null;
+    // C
+    // N  (
+    if (!currentBid) return true;
+    // C (
+    // N   (
+    if (!currentBid.maxAutoPrice) return true;
+    // C ()
+    // N   (
+    if (currentBid.maxAutoPrice < newBid.price) return true;
+    if (newBid.maxAutoPrice) {
+      // C (     )
+      // N   ( -->(  )
+      if (newBid.maxAutoPrice > currentBid.maxAutoPrice) {
+        return true;
+      }
+      // C ( ---->( )
+      // N   ( )
+      return false;
     }
-    // ( -->(   )
-    //   (
-    return null;
+    // C ( -->(   )
+    // N   (
+    return false;
   }
 
   checkBidderRejected(bidder: string, product: string) {
