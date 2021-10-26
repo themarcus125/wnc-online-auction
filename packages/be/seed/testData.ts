@@ -1,9 +1,8 @@
 import { CategorySeed, ProductSeed, UserSeed } from '@/db/seed.t';
 import { UserRole } from '@/user/user.schema';
 import { getHashedPassword } from '@/utils/password';
-import { appConfig } from '~/config';
 
-const password = appConfig.jwtSecret;
+const password = '123456';
 const hashedPassword = getHashedPassword(password);
 
 export const userSeeds: UserSeed[] = [

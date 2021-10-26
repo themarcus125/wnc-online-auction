@@ -8,23 +8,23 @@ import { mapImagesToBody, transformCreateProductBody } from './product.pipe';
 const productRoute = express.Router();
 
 productRoute.get(
-  '/seller/placing',
+  '/bidder/placing',
   tokenGuard(false),
   ProductController.getProductPlacing,
 );
 productRoute.get(
-  '/seller/won',
+  '/bidder/won',
   tokenGuard(false),
   ProductController.getProductWon,
 );
 productRoute.get(
-  '/bidder/selling',
+  '/seller/selling',
   tokenGuard(false),
   roleGuard(UserRole.SELLER),
   ProductController.getProductSelling,
 );
 productRoute.get(
-  '/bidder/sold',
+  '/seller/sold',
   tokenGuard(false),
   roleGuard(UserRole.SELLER),
   ProductController.getProductSold,

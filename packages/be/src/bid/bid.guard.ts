@@ -12,6 +12,7 @@ import { BidStatus } from './bid.schema';
 
 export const placeBidGuard: RequestHandler = async (req, res, next) => {
   const session = await mongoose.startSession();
+  session.startTransaction();
   const { id }: JWTPayload = res.locals.jwtPayload;
   const { product, price, maxAutoPrice }: CreateBidDTO = req.body;
   try {
@@ -61,6 +62,7 @@ export const placeBidGuard: RequestHandler = async (req, res, next) => {
 
 export const rejectBidGuard: RequestHandler = async (req, res, next) => {
   const session = await mongoose.startSession();
+  session.startTransaction();
   const { id }: JWTPayload = res.locals.jwtPayload;
   const { bidId } = req.params;
   try {

@@ -145,6 +145,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
 
 const buyNow: RequestHandler = async (req, res, next) => {
   const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const bidder: UserDoc = res.locals.user;

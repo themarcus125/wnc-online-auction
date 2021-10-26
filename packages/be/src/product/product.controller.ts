@@ -172,6 +172,7 @@ const appendProductDescription: RequestHandler = async (req, res, next) => {
 
 const cancelProduct: RequestHandler = async (req, res, next) => {
   const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const { productId } = req.params;

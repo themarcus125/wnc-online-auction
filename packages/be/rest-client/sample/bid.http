@@ -1,0 +1,37 @@
+# SETUP
+### Bidder login
+# @name bidderLogin
+@bidderToken = {{bidderLogin.response.body.$.accessToken}}
+POST {{$dotenv baseUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "bidder1@sample.com",
+  "password": "123456"
+}
+### Seller Login
+# @name sellerLogin
+@sellerToken = {{sellerLogin.response.body.$.accessToken}}
+POST {{$dotenv baseUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "seller1@sample.com",
+  "password": "123456"
+}
+### Product selling
+# @name productSelling
+@productId = {{productSelling.response.body.$[0]._id}}
+GET {{$dotenv baseUrl}}/product/seller/selling
+content-type: application/json
+authorization: Bearer {{sellerToken}}
+
+### Bid
+POST {{$dotenv baseUrl}}/bid
+content-type: application/json
+authorization: Bearer {{bidderToken}}
+
+{
+    "product": "{{productId}}",
+    "price": 11000
+}

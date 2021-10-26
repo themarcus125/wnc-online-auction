@@ -17,7 +17,7 @@
                 "-r",
                 "./tsconfig-paths-bootstrap.js"
             ],
-            "program": "${workspaceFolder}\\src\\index.ts",
+            "program": "${workspaceFolder}\\index.ts",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
             ],

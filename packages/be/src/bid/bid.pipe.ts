@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { BadRequest } from '@/error';
-import { parseBoolean, safePositive } from '@/utils/parser';
-import { notEmpty, notNull, numberBetWeenRange } from '@/utils/validator';
+import { safePositive } from '@/utils/parser';
+import { notEmpty, numberBetWeenRange } from '@/utils/validator';
 import { CreateBidDTO } from './bid.dto';
 
 export const bidValidator: RequestHandler = (req, res, next) => {
