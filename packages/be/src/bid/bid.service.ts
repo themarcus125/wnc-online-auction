@@ -121,16 +121,16 @@ class BidService
     currentBid: BidDoc | null,
     newBid: BidDoc,
     session: ClientSession,
-  ) {
+  ): Promise<[ProductDoc | null, boolean]> {
     // C
     // N  (
-    if (!currentBid) return true;
+    if (!currentBid) return [null, true];
     // C (
     // N   (
-    if (!currentBid.maxAutoPrice) return true;
+    if (!currentBid.maxAutoPrice) return [null, true];
     // C ()
     // N   (
-    if (currentBid.maxAutoPrice < newBid.price) return true;
+    if (currentBid.maxAutoPrice < newBid.price) return [null, true];
     if (newBid.maxAutoPrice) {
       // C (     )
       // N   ( -->(  )
@@ -159,9 +159,10 @@ class BidService
             currentPrice: autoBid.price,
             currentBidder: autoBid.bidder,
           },
+          { returnOriginal: false },
         );
         if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_N');
-        return true;
+        return [updatedProduct, true];
       }
       // C ( ---->( )
       // N   ( )
@@ -189,9 +190,12 @@ class BidService
           currentPrice: autoBid.price,
           currentBidder: autoBid.bidder,
         },
+        {
+          returnOriginal: false,
+        },
       );
       if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_1');
-      return false;
+      return [updatedProduct, false];
     }
     // C ( -->(   )
     // N   (
@@ -219,9 +223,10 @@ class BidService
         currentPrice: autoBid.price,
         currentBidder: autoBid.bidder,
       },
+      { returnOriginal: false },
     );
     if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_2');
-    return false;
+    return [updatedProduct, false];
   }
 
   checkBidderRejected(bidder: string, product: string) {

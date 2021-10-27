@@ -100,24 +100,28 @@ const placeBid: RequestHandler = async (req, res, next) => {
 
     const newExpiredAt = ProductService.getAutoRenewDate(bidProduct);
     const updatedProduct = await ProductService.model
-      .findByIdAndUpdate(bidProduct._id, {
-        $inc: {
-          bidCount: 1,
+      .findByIdAndUpdate(
+        bidProduct._id,
+        {
+          $inc: {
+            bidCount: 1,
+          },
+          currentPrice: bid.price,
+          currentBidder: bid.bidder,
+          expiredAt: newExpiredAt,
+          $addToSet: {
+            bidder: bid.bidder,
+          },
         },
-        currentPrice: bid.price,
-        currentBidder: bid.bidder,
-        expiredAt: newExpiredAt,
-        $addToSet: {
-          bidder: bid.bidder,
-        },
-      })
+        { returnOriginal: false },
+      )
       .session(session);
 
     if (!updatedProduct) {
       throw new Error('UPDATE_PRODUCT');
     }
 
-    const holdThePrice = await BidService.autoBidHandler(
+    const [afterAutoProduct, holdThePrice] = await BidService.autoBidHandler(
       bidProduct,
       currentBid,
       bid,
@@ -135,7 +139,11 @@ const placeBid: RequestHandler = async (req, res, next) => {
       bidder,
       bidProduct.currentBidder,
     );
-    res.json({ bid, product: bidProduct, holdThePrice });
+    res.json({
+      bid,
+      product: afterAutoProduct || updatedProduct,
+      holdThePrice,
+    });
   } catch (e) {
     await session.abortTransaction();
     await session.endSession();
