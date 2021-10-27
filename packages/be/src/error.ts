@@ -6,11 +6,18 @@ interface CustomError {
   message: string;
 }
 
+enum CustomErrorName {
+  BadRequest = 'BadRequest',
+  NotFound = 'NotFound',
+  Forbidden = 'Forbidden',
+  Unauthorized = 'Unauthorized',
+}
+
 export class BadRequest extends Error implements CustomError {
   statusCode: number = 400;
   constructor(message: string) {
     super(message);
-    this.name = 'BadRequest';
+    this.name = CustomErrorName.BadRequest;
   }
 }
 
@@ -18,7 +25,7 @@ export class NotFound extends Error implements CustomError {
   statusCode: number = 404;
   constructor(message: string) {
     super(message);
-    this.name = 'NotFound';
+    this.name = CustomErrorName.NotFound;
   }
 }
 
@@ -26,14 +33,14 @@ export class Forbidden extends Error implements CustomError {
   statusCode: number = 403;
   constructor(message: string) {
     super(message);
-    this.name = 'Forbidden';
+    this.name = CustomErrorName.Forbidden;
   }
 }
 export class Unauthorized extends Error implements CustomError {
   statusCode: number = 401;
   constructor(message: string) {
     super(message);
-    this.name = 'Unauthorized';
+    this.name = CustomErrorName.Unauthorized;
   }
 }
 
@@ -43,7 +50,7 @@ export const defaultErrorHandler: ErrorRequestHandler = (
   res,
   next,
 ) => {
-  res.status(err.status || 500);
+  res.status(+err.statusCode || +err.status || 500);
   if (err.name) {
     return res.json({
       message: err.message,
@@ -56,12 +63,23 @@ export const defaultErrorHandler: ErrorRequestHandler = (
   });
 };
 
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (
+  err: CustomError,
+  req,
+  res,
+  next,
+) => {
   if (
+    // ES2016
     err instanceof BadRequest ||
     err instanceof NotFound ||
     err instanceof Forbidden ||
     err instanceof Unauthorized
+    // ES2015
+    // err.name === CustomErrorName.BadRequest ||
+    // err.name === CustomErrorName.NotFound ||
+    // err.name === CustomErrorName.Forbidden ||
+    // err.name === CustomErrorName.Unauthorized
   ) {
     const { message, name, statusCode } = err;
     return res.status(statusCode).json({
