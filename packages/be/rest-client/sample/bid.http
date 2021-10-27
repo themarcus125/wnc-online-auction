@@ -26,6 +26,14 @@ GET {{$dotenv baseUrl}}/product/seller/selling
 content-type: application/json
 authorization: Bearer {{sellerToken}}
 
+### Get product bid history
+GET  {{$dotenv baseUrl}}/bid/product/{{productId}}
+content-type: application/json
+### Get seller bid history
+GET  {{$dotenv baseUrl}}/bid/product/{{productId}}/seller
+content-type: application/json
+authorization: Bearer {{sellerToken}}
+
 ### Bid
 POST {{$dotenv baseUrl}}/bid
 content-type: application/json
@@ -33,5 +41,5 @@ authorization: Bearer {{bidderToken}}
 
 {
     "product": "{{productId}}",
-    "price": 11000
+    "price": 31000
 }

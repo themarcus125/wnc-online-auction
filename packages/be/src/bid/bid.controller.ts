@@ -45,7 +45,7 @@ const getBidderBidHistory: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const { productId } = req.params;
-    const bids = await BidService.modeFind('sellerHistory', {
+    const bids = await BidService.modeFind('bidderHistory', {
       product: productId,
       bidder: id,
     });
