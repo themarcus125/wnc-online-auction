@@ -150,17 +150,21 @@ class BidService
           )
         )[0];
         if (!autoBid) throw new Error('AUTO_BID_N');
-        const updatedProduct = await ProductService.model.findByIdAndUpdate(
-          product._id,
-          {
-            $inc: {
-              bidCount: 1,
+        const updatedProduct = await ProductService.model
+          .findByIdAndUpdate(
+            product._id,
+            {
+              $inc: {
+                bidCount: 1,
+              },
+              currentPrice: autoBid.price,
+              currentBidder: autoBid.bidder,
             },
-            currentPrice: autoBid.price,
-            currentBidder: autoBid.bidder,
-          },
-          { returnOriginal: false },
-        );
+            { returnOriginal: false },
+          )
+          .populate('currentBidder', excludeString)
+          .populate('seller', excludeString)
+          .session(session);
         if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_N');
         return [updatedProduct, true];
       }
@@ -181,19 +185,23 @@ class BidService
         )
       )[0];
       if (!autoBid) throw new Error('AUTO_BID_C_1');
-      const updatedProduct = await ProductService.model.findByIdAndUpdate(
-        product._id,
-        {
-          $inc: {
-            bidCount: 1,
+      const updatedProduct = await ProductService.model
+        .findByIdAndUpdate(
+          product._id,
+          {
+            $inc: {
+              bidCount: 1,
+            },
+            currentPrice: autoBid.price,
+            currentBidder: autoBid.bidder,
           },
-          currentPrice: autoBid.price,
-          currentBidder: autoBid.bidder,
-        },
-        {
-          returnOriginal: false,
-        },
-      );
+          {
+            returnOriginal: false,
+          },
+        )
+        .populate('currentBidder', excludeString)
+        .populate('seller', excludeString)
+        .session(session);
       if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_1');
       return [updatedProduct, false];
     }
@@ -214,17 +222,21 @@ class BidService
       )
     )[0];
     if (!autoBid) throw new Error('AUTO_BID_C_2');
-    const updatedProduct = await ProductService.model.findByIdAndUpdate(
-      product._id,
-      {
-        $inc: {
-          bidCount: 1,
+    const updatedProduct = await ProductService.model
+      .findByIdAndUpdate(
+        product._id,
+        {
+          $inc: {
+            bidCount: 1,
+          },
+          currentPrice: autoBid.price,
+          currentBidder: autoBid.bidder,
         },
-        currentPrice: autoBid.price,
-        currentBidder: autoBid.bidder,
-      },
-      { returnOriginal: false },
-    );
+        { returnOriginal: false },
+      )
+      .populate('currentBidder', excludeString)
+      .populate('seller', excludeString)
+      .session(session);
     if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_2');
     return [updatedProduct, false];
   }

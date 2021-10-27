@@ -2,7 +2,7 @@ import mongoose, { ClientSession } from 'mongoose';
 import { RequestHandler } from 'express';
 
 import { ProductDoc, ProductStatus } from '@/product/product.schema';
-import { UserDoc } from '@/user/user.schema';
+import { excludeString, UserDoc } from '@/user/user.schema';
 import { CreateBidDTO } from './bid.dto';
 import BidService from './bid.service';
 import ProductService from '@/product/product.service';
@@ -115,6 +115,8 @@ const placeBid: RequestHandler = async (req, res, next) => {
         },
         { returnOriginal: false },
       )
+      .populate('currentBidder', excludeString)
+      .populate('seller', excludeString)
       .session(session);
 
     if (!updatedProduct) {
