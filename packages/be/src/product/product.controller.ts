@@ -69,6 +69,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
     const { productId } = req.params;
     const product = await ProductService.findById(productId)
       .populate('seller', excludeString)
+      .populate('currentBidder', excludeString)
       .populate('category');
     res.json(product);
   } catch (e) {
