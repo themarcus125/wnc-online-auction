@@ -25,6 +25,9 @@ content-type: application/json
 GET {{$dotenv baseUrl}}/product/seller/selling
 content-type: application/json
 authorization: Bearer {{sellerToken}}
+### Product
+GET {{$dotenv baseUrl}}/product/6178371c7b5ecfed5e52bfce
+Content-Length: application/json
 
 ### Get product bid history
 GET  {{$dotenv baseUrl}}/bid/product/{{productId}}
