@@ -1,6 +1,7 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { excludeString } from '@/user/user.schema';
 import { parseIntDefault, parseSort } from '@/utils/parser';
+import { FilterQuery, QueryOptions } from 'mongoose';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel, ProductStatus } from './product.schema';
 
@@ -10,6 +11,13 @@ class ProductService
 {
   constructor() {
     super(ProductModel);
+  }
+
+  async findPopulate(query: FilterQuery<ProductDoc>, options?: QueryOptions) {
+    return this.find(query, options)
+      .populate('seller', excludeString)
+      .populate('currentBidder', excludeString)
+      .populate('category');
   }
 
   async findNotExpired() {
