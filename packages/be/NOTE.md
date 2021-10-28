@@ -1,4 +1,8 @@
 - Try cookie for auth
+- Error Handler
+  https://expressjs.com/en/guide/error-handling.html
+  https://stackoverflow.com/questions/49417580/express-middleware-cannot-trap-errors-thrown-by-async-await-but-why
+  https://stackoverflow.com/questions/51391080/handling-errors-in-express-async-middleware
 - Mongo
   https://docs.mongodb.com/manual/reference/operator/query/
   https://stackoverflow.com/questions/51533234/mongodb-find-with-calculated-field

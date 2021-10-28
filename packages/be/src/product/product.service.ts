@@ -102,7 +102,7 @@ class ProductService
       };
     }
     if (mode === 'category') {
-      const query: any = { 
+      const query: any = {
         category,
         expiredAt: {
           $gt: new Date(),
