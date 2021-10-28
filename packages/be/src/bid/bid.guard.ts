@@ -7,7 +7,7 @@ import ProductService from '@/product/product.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
 import { CreateBidDTO } from './bid.dto';
 import BidService from './bid.service';
-import { ProductDoc } from '@/product/product.schema';
+import { ProductDoc, ProductStatus } from '@/product/product.schema';
 import { BidStatus } from './bid.schema';
 
 export const placeBidGuard: RequestHandler = async (req, res, next) => {
@@ -75,6 +75,10 @@ export const rejectBidGuard: RequestHandler = async (req, res, next) => {
     if (!bid) return next(new NotFound('BID'));
     const product: ProductDoc = bid.product;
     if (!product) return next(new NotFound('PRODUCT'));
+    if (product.status !== ProductStatus.NORMAL)
+      return next(new Forbidden('PRODUCT_NOT_NORMAL'));
+    if (new Date(product.expiredAt).getTime() <= Date.now())
+      return next(new Forbidden('PRODUCT_EXPIRED'));
     if (product.seller !== id) return next(new Forbidden('SELLER'));
 
     res.locals.bid = bid;

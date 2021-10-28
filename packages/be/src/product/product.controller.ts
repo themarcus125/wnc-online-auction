@@ -85,6 +85,7 @@ const getProductPlacing: RequestHandler = async (req, res, next) => {
         $gt: new Date(),
       },
       bidder: id,
+      status: ProductStatus.NORMAL,
     });
     res.json(products);
   } catch (e) {
@@ -96,9 +97,16 @@ const getProductWon: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const products = await ProductService.find({
-      expiredAt: {
-        $lt: new Date(),
-      },
+      $or: [
+        {
+          expiredAt: {
+            $lt: new Date(),
+          },
+        },
+        {
+          status: ProductStatus.SOLD,
+        },
+      ],
       currentBidder: id,
     });
     res.json(products);
