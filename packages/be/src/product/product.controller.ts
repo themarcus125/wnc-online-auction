@@ -108,7 +108,7 @@ const getProductWon: RequestHandler = async (req, res, next) => {
         },
       ],
       currentBidder: id,
-    });
+    }).populate('seller', excludeString);
     res.json(products);
   } catch (e) {
     next(e);
@@ -146,7 +146,7 @@ const getProductSold: RequestHandler = async (req, res, next) => {
           status: ProductStatus.SOLD,
         },
       ],
-    });
+    }).populate('currentBidder', excludeString);
     res.json(products);
   } catch (e) {
     next(e);
