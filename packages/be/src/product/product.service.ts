@@ -129,6 +129,11 @@ class ProductService
           $gt: new Date(),
         };
       }
+      if (notExpired === 'false') {
+        query.expiredAt = {
+          $lt: new Date(),
+        };
+      }
       if (status) {
         query.status = parseIntDefault(status, ProductStatus.NORMAL);
       }
