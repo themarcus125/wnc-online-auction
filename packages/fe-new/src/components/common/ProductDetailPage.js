@@ -12,11 +12,13 @@ import CarouselItems from './Carouseltems';
 import MostPopularProduct from '../common/Carousel/MostPopularProduct';
 import Modal, { showModal } from './Modal';
 
-import { getAPI } from '../../utils/api';
+import { getAPI, postAPIWithToken, patchAPIWithToken } from '../../utils/api';
 import { hoursToString } from '../../utils/time';
-import { getUser } from '../../utils/auth';
+import { getToken, getUser } from '../../utils/auth';
+import { checkIfValidBid, maskedString } from '../../utils/bid';
 
-import { LOGIN_REQUIRED } from '../../utils/constants/error';
+import { DEFAULT_ERROR, LOGIN_REQUIRED } from '../../utils/constants/error';
+import { PRODUCT_STATUS } from '../../utils/constants/product';
 import CommonLayout from './Layout/CommonLayout';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -27,7 +29,10 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
   const [otherProducts, setOtherProducts] = useState([]);
+  const [bidHistory, setBidHistory] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [bidAmount, setBidAmount] = useState('');
+  const [status, setStatus] = useState(PRODUCT_STATUS.NORMAL);
 
   const { navigate } = useNavigate();
   const { productId } = useProduct();
@@ -46,11 +51,31 @@ const ProductDetailPage = () => {
       setProduct(response);
       setIsOwner(userId === response.seller._id);
       loadOtherProduct(response.category._id);
+
+      let productStatus = PRODUCT_STATUS.NORMAL;
+      if (
+        dayjs().diff(dayjs(response.expiredAt), 'millisecond') > 0 &&
+        response.status === PRODUCT_STATUS.NORMAL
+      ) {
+        productStatus = PRODUCT_STATUS.EXPIRED;
+      } else {
+        productStatus = response.status;
+      }
+      setStatus(productStatus);
     }
     setLoading(false);
     if (!response) {
       navigate('/');
     }
+  };
+
+  const loadBidHistory = async () => {
+    setLoading(true);
+    const response = await getAPI(`/api/bid/product/${productId}`);
+    if (response && !response.error) {
+      setBidHistory(response.reverse());
+    }
+    setLoading(false);
   };
 
   const loadOtherProduct = async (categoryId) => {
@@ -63,7 +88,13 @@ const ProductDetailPage = () => {
   };
 
   const openBidHistory = () => {
+    if (!userId) {
+      toast.error(LOGIN_REQUIRED);
+      return;
+    }
+
     showModal(bidHistoryModalID);
+    loadBidHistory();
   };
 
   const onTerminateBid = () => {
@@ -76,17 +107,107 @@ const ProductDetailPage = () => {
     );
   };
 
-  const onBuyNow = () => {
+  const onBuyNow = async () => {
     if (!userId) {
       toast.error(LOGIN_REQUIRED);
       return;
     }
+
+    if (product.onlyRatedBidder) {
+      toast.error('Bạn cần có điểm đánh giá mới có thểm gia đấu giá!');
+      return;
+    }
+
+    const token = await getToken();
+    const response = await patchAPIWithToken(
+      `/api/bid/product/${productId}/buynow`,
+      {
+        productId,
+      },
+      token,
+    );
+
+    if (response.error) {
+      toast.error(DEFAULT_ERROR);
+      return;
+    }
+
+    if (!response.error) {
+      toast.success('Mua thành công!');
+      loadProduct();
+    }
   };
 
-  const onPlaceBid = () => {
+  const onPlaceBid = async () => {
     if (!userId) {
       toast.error(LOGIN_REQUIRED);
       return;
+    }
+
+    if (product.onlyRatedBidder) {
+      toast.error('Bạn cần có điểm đánh giá mới có thểm gia đấu giá!');
+      return;
+    }
+
+    const bidPrice = bidAmount.split(',').join('');
+    if (
+      typeof Number(bidPrice) !== 'number' ||
+      bidAmount < product.currentPrice + product.stepPrice ||
+      !checkIfValidBid(Number(bidPrice), product.stepPrice, product.startPrice)
+    ) {
+      toast.error('Giá bid không hợp lệ');
+      return;
+    }
+
+    setLoading(true);
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      '/api/bid',
+      {
+        product: productId,
+        price: Number(bidPrice),
+      },
+      token,
+    );
+
+    if (!response.error) {
+      toast.success('Đặt bid thành công!');
+      setBidAmount('');
+      setProduct(response.product);
+    }
+    setLoading(false);
+  };
+
+  const onAmountBidChange = (e) => {
+    const number = e.target.value.split(',').join('');
+    setBidAmount(Number(number).toLocaleString());
+  };
+
+  const renderStatus = () => {
+    switch (status) {
+      case PRODUCT_STATUS.EXPIRED:
+        return (
+          <p className="uk-text-bold uk-text-large uk-text-danger">
+            Đã hết hạn
+          </p>
+        );
+      case PRODUCT_STATUS.SOLD:
+        return (
+          <p className="uk-text-bold uk-text-large uk-text-success">Đã bán</p>
+        );
+      case PRODUCT_STATUS.CANCELED:
+        return (
+          <p className="uk-text-bold uk-text-large uk-text-success">
+            Đã bị hủy
+          </p>
+        );
+      default:
+        return (
+          <p className="uk-text-small">
+            Thời hạn còn lại: {timeLeft} |{' '}
+            <b>{dayjs(product.expiredAt || '').format('HH:mm - DD/MM/YYYY')}</b>
+          </p>
+        );
     }
   };
 
@@ -127,14 +248,7 @@ const ProductDetailPage = () => {
                       'HH:mm - DD/MM/YYYY',
                     )}
                   </p>
-                  <p className="uk-text-small">
-                    Thời hạn còn lại: {timeLeft} |{' '}
-                    <b>
-                      {dayjs(product.expiredAt || '').format(
-                        'HH:mm - DD/MM/YYYY',
-                      )}
-                    </b>
-                  </p>
+                  {renderStatus()}
                   <p className="uk-text-small uk-flex uk-flex-between">
                     <span>Lượt bid: {product.bidCount}</span>
                     <HistoryButton
@@ -152,17 +266,20 @@ const ProductDetailPage = () => {
                       Giá hiện tại:{' '}
                       {Number(product.currentPrice || 0).toLocaleString()} đ
                     </span>
-                    {!isOwner && (
+                    {!isOwner && status === PRODUCT_STATUS.NORMAL && (
                       <div className="uk-flex uk-flex-bottom uk-flex-column uk-margin-top">
                         <div>
                           <div>
                             <BidInput
                               className="uk-input"
                               placeholder="Nhập bid"
+                              value={bidAmount}
+                              onChange={onAmountBidChange}
                             />
                             <Button
                               className="uk-button uk-button-primary"
                               onClick={onPlaceBid}
+                              disabled={loading}
                             >
                               Đặt bid
                             </Button>
@@ -192,7 +309,7 @@ const ProductDetailPage = () => {
                         Giá mua ngay:{' '}
                         {Number(product.buyPrice || 0).toLocaleString()} đ
                       </span>
-                      {!isOwner && (
+                      {!isOwner && status === PRODUCT_STATUS.NORMAL && (
                         <Button
                           className="uk-button uk-button-primary"
                           onClick={onBuyNow}
@@ -205,7 +322,10 @@ const ProductDetailPage = () => {
                 )}
                 {!isOwner && (
                   <div className="uk-flex uk-flex-right">
-                    <Button className="uk-button uk-flex uk-flex-middle uk-flex-center uk-text-right uk-button-danger">
+                    <Button
+                      className="uk-button uk-flex uk-flex-middle uk-flex-center uk-text-right uk-button-danger"
+                      disabled={status !== PRODUCT_STATUS.NORMAL}
+                    >
                       Yêu thích{' '}
                       <span
                         className="uk-margin-small-left"
@@ -287,7 +407,7 @@ const ProductDetailPage = () => {
                 <p className="uk-text-bold uk-text-large">
                   Thông tin bidder cao nhất
                 </p>
-                <p>Họ tên: ???</p>
+                <p>Họ tên: {product.currentBidder?.name || ''}</p>
                 <p>Điểm đánh giá: ???</p>
               </div>
             </div>
@@ -299,7 +419,7 @@ const ProductDetailPage = () => {
                 }}
               />
             </div>
-            <div>
+            <div className="uk-margin-top">
               <p className="uk-text-bold uk-text-large">Sản phẩm khác</p>
               <CarouselItems
                 data={otherProducts}
@@ -321,18 +441,23 @@ const ProductDetailPage = () => {
                     <th>Số tiền</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>19:40 - 20/10/2021</td>
-                    <td>***Khoa</td>
-                    <td>7.000.000đ</td>
-                  </tr>
-                  <tr>
-                    <td>18:40 - 20/10/2021</td>
-                    <td>***Minh</td>
-                    <td>6.000.000đ</td>
-                  </tr>
-                </tbody>
+                {loading ? (
+                  <div uk-spinner="" />
+                ) : (
+                  <tbody>
+                    {bidHistory.map((row) => {
+                      return (
+                        <tr key={row._id}>
+                          <td>
+                            {dayjs(row.createdAt).format('HH:mm - DD/MM/YYYY')}
+                          </td>
+                          <td>{maskedString(row.bidder.name)}</td>
+                          <td>{Number(row.price).toLocaleString()} đ</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                )}
               </table>
             </div>
           </Modal>

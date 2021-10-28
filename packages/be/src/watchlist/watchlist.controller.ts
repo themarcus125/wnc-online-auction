@@ -1,6 +1,7 @@
 import { JWTPayload } from '@/auth/auth.dto';
 import { BadRequest } from '@/error';
 import { ProductStatus } from '@/product/product.schema';
+import {  UserModelName } from '@/user/user.schema';
 import { RequestHandler } from 'express';
 import { WLModel } from './watchlist.schema';
 
@@ -26,6 +27,7 @@ export const getWatchListProduct: RequestHandler = async (req, res, next) => {
       user: id,
     }).populate({
       path: 'product',
+      populate :{ path: 'currentBidder', model: UserModelName }
     });
     res.json(wl);
   } catch (e) {

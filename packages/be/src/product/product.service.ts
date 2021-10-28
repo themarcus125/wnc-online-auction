@@ -72,7 +72,12 @@ class ProductService
       };
     }
     if (mode === 'bidCount') {
-      const products = await this.find({})
+      const products = await this.find({
+        expiredAt: {
+          $gt: new Date(),
+        },
+        status: ProductStatus.NORMAL,
+      })
         .sort({
           bidCount: -1,
         })
@@ -82,7 +87,12 @@ class ProductService
       };
     }
     if (mode === 'price') {
-      const products = await this.find({})
+      const products = await this.find({
+        expiredAt: {
+          $gt: new Date(),
+        },
+        status: ProductStatus.NORMAL,
+      })
         .sort({
           currentPrice: -1,
         })
@@ -92,13 +102,20 @@ class ProductService
       };
     }
     if (mode === 'category') {
-      const query: any = { category };
+      const query: any = { 
+        category,
+        expiredAt: {
+          $gt: new Date(),
+        },
+        status: ProductStatus.NORMAL,
+      };
       if (productId) {
         query._id = {
           $ne: productId,
         };
       }
       const products = await this.find(query)
+        .populate('currentBidder', excludeString)
         .sort({
           _id: -1,
         })
@@ -146,6 +163,7 @@ class ProductService
         query.status = parseIntDefault(status, ProductStatus.NORMAL);
       }
       const products = await this.find(query)
+        .populate('currentBidder', excludeString)
         .sort(sorter)
         .skip(parseIntDefault(skip, 0))
         .limit(parseIntDefault(limit, 10));

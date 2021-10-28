@@ -86,7 +86,7 @@ const getProductPlacing: RequestHandler = async (req, res, next) => {
       },
       bidder: id,
       status: ProductStatus.NORMAL,
-    });
+    }).populate('currentBidder', excludeString);
     res.json(products);
   } catch (e) {
     next(e);
