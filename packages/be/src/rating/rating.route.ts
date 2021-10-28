@@ -6,13 +6,13 @@ import { sellerRateGuard, winnerRateGuard } from './rating.guard';
 const ratingRoute = express.Router();
 
 ratingRoute.post(
-  '/seller',
+  '/product/:productId/seller',
   tokenGuard(false),
   sellerRateGuard,
   RatingController.createRating,
 );
 ratingRoute.post(
-  '/winner',
+  '/product/:productId/winner',
   tokenGuard(false),
   winnerRateGuard,
   RatingController.createRating,

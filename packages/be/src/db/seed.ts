@@ -8,10 +8,19 @@ import { UserDoc } from '@/user/user.schema';
 import { CategoryDoc } from '@/category/category.schema';
 import { connectDB } from './connect';
 import BidService from '@/bid/bid.service';
+import RatingService from '@/rating/rating.service';
 
 const { mode } = appConfig;
 let userA: UserDoc[];
 let categoryA: CategoryDoc[];
+
+const ratingSeed = async () => {
+  if (mode !== 'development') return false;
+  const model = RatingService.getModel();
+  await model.collection.drop();
+  await model.syncIndexes();
+  return true;
+};
 
 const bidSeed = async () => {
   if (mode !== 'development') return false;
@@ -139,6 +148,7 @@ export const seedDB = async (
       userSeed(userSeeds),
       upgradeRequestSeed(),
       bidSeed(),
+      ratingSeed(),
       categorySeed(cateSeeds[0], cateSeeds[1]),
     ]);
     await productSeed(productSeeds[0], productSeeds[1]);

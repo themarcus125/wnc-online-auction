@@ -1,7 +1,7 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 import { UserDoc, UserModelName } from '@/user/user.schema';
 import { CategoryDoc, CategoryModelName } from '@/category/category.schema';
-import { BidDoc, BidModelName } from '@/bid/bid.schema';
+import { RatingDoc, RatingModelName } from '@/rating/rating.schema';
 
 export const ProductModelName = 'Product';
 
@@ -28,6 +28,8 @@ export interface Product {
   createdAt: Date;
   isAutoRenew?: boolean;
   onlyRatedBidder?: boolean;
+  winnerRating?: PopulatedDoc<RatingDoc>;
+  sellerRating?: PopulatedDoc<RatingDoc>;
   status: number;
 }
 
@@ -67,6 +69,8 @@ export const ProductSchema = new Schema<ProductDoc>(
     isAutoRenew: { type: Boolean, default: false },
     onlyRatedBidder: { type: Boolean, default: false },
     status: { type: Number, default: ProductStatus.NORMAL },
+    winnerRating: { type: Schema.Types.ObjectId, ref: RatingModelName },
+    sellerRating: { type: Schema.Types.ObjectId, ref: RatingModelName },
   },
   { timestamps: true },
 );

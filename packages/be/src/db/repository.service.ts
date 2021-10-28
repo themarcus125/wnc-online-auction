@@ -1,7 +1,7 @@
 import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
 
 export default abstract class RepositoryService<DocT, CreateDtoT> {
-  model: Model<DocT>;
+  protected model: Model<DocT>;
   constructor(model: Model<DocT>) {
     this.model = model;
   }

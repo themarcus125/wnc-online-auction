@@ -206,22 +206,25 @@ const cancelProduct: RequestHandler = async (req, res, next) => {
     if (!product.currentBidder) {
       return next(new NotFound('BIDDER'));
     }
-    const canceledProduct = await ProductService.model
+    const rating = (
+      await RatingService.getModel().create(
+        [
+          {
+            targetUser: product.currentBidder,
+            createUser: id,
+            feedback: 'Người thắng không thanh toán',
+            score: false,
+          },
+        ],
+        { session },
+      )
+    )[0];
+    const canceledProduct = await ProductService.getModel()
       .findByIdAndUpdate(productId, {
         status: ProductStatus.CANCELED,
+        sellerRating: rating._id,
       })
       .session(session);
-    await RatingService.model.create(
-      [
-        {
-          targetUser: product.currentBidder,
-          createUser: id,
-          feedback: 'Người thắng không thanh toán',
-          score: false,
-        },
-      ],
-      { session },
-    );
     await session.commitTransaction();
     await session.endSession();
     res.json(canceledProduct);

@@ -1,3 +1,4 @@
+import ProductService from '@/product/product.service';
 import { RequestHandler } from 'express';
 import { CreateRatingDTO } from './rating.dto';
 import RatingService from './rating.service';
@@ -17,6 +18,7 @@ export const getRatings: RequestHandler = async (req, res, next) => {
 export const createRating: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
+    const { productId } = req.params;
     const { targetUser, feedback, score }: CreateRatingDTO = req.body;
     const rating = await RatingService.create({
       createUser: id,
@@ -24,8 +26,14 @@ export const createRating: RequestHandler = async (req, res, next) => {
       feedback,
       score,
     });
+    const updatedProduct = await ProductService.getModel().findByIdAndUpdate(
+      productId,
+      { winnerRating: rating._id },
+      { returnOriginal: false },
+    );
     res.json({
       rating,
+      updatedProduct,
     });
   } catch (e) {
     next(e);

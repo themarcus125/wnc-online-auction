@@ -30,6 +30,4 @@ export const RatingSchema = new Schema<RatingDoc>(
   { timestamps: true },
 );
 
-RatingSchema.index({ createUser: 1, targetUser: 1 }, { unique: true });
-
 export const RatingModel = model<RatingDoc>(RatingModelName, RatingSchema);
