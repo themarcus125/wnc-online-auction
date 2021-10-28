@@ -53,6 +53,7 @@ class ProductService
         expiredAt: {
           $gt: new Date(),
         },
+        status: ProductStatus.NORMAL,
       })
         .sort({
           expiredAt: 1,
