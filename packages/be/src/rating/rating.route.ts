@@ -9,13 +9,13 @@ ratingRoute.post(
   '/product/:productId/seller',
   tokenGuard(false),
   sellerRateGuard,
-  RatingController.createRating,
+  RatingController.createRating(true),
 );
 ratingRoute.post(
   '/product/:productId/winner',
   tokenGuard(false),
   winnerRateGuard,
-  RatingController.createRating,
+  RatingController.createRating(false),
 );
 ratingRoute.get('/', tokenGuard(false), RatingController.getRatings);
 

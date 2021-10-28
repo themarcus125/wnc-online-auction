@@ -96,7 +96,7 @@ class ProductService
         })
         .skip(parseIntDefault(skip, 0))
         .limit(parseIntDefault(limit, 10));
-      const totalCount = await this.model.countDocuments({
+      const totalCount = await this.getModel().countDocuments({
         category,
       });
       return {
@@ -141,7 +141,7 @@ class ProductService
         .sort(sorter)
         .skip(parseIntDefault(skip, 0))
         .limit(parseIntDefault(limit, 10));
-      const totalCount = await this.model.countDocuments(query);
+      const totalCount = await this.getModel().countDocuments(query);
       return {
         products,
         page: {
@@ -155,7 +155,7 @@ class ProductService
       })
       .skip(parseIntDefault(skip, 0))
       .limit(parseIntDefault(limit, 10));
-    const totalCount = await this.model.countDocuments({});
+    const totalCount = await this.getModel().countDocuments({});
     return {
       products,
       page: {

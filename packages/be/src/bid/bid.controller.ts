@@ -25,7 +25,7 @@ const getSellerBidHistory: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const { productId } = req.params;
-    const isProductOfSeller = await ProductService.model.exists({
+    const isProductOfSeller = await ProductService.getModel().exists({
       _id: productId,
       seller: id,
     });
@@ -82,7 +82,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
     const currentBid = await BidService.currentBid(bidProduct).session(session);
 
     const bid = (
-      await BidService.model.create(
+      await BidService.getModel().create(
         [
           {
             product: bidProduct._id,
@@ -99,7 +99,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
     }
 
     const newExpiredAt = ProductService.getAutoRenewDate(bidProduct);
-    const updatedProduct = await ProductService.model
+    const updatedProduct = await ProductService.getModel()
       .findByIdAndUpdate(
         bidProduct._id,
         {
@@ -178,7 +178,7 @@ const buyNow: RequestHandler = async (req, res, next) => {
     if (!(await BidService.checkRating(product, bidder))) {
       return next(new Forbidden('RATING'));
     }
-    await BidService.model.create(
+    await BidService.getModel().create(
       [
         {
           price: product.buyPrice,
@@ -190,7 +190,7 @@ const buyNow: RequestHandler = async (req, res, next) => {
         session,
       },
     );
-    const buyProduct = await ProductService.model
+    const buyProduct = await ProductService.getModel()
       .findByIdAndUpdate(product._id, {
         $inc: {
           bidCount: 1,
@@ -218,7 +218,7 @@ const rejectBid: RequestHandler = async (req, res, next) => {
   try {
     const bid: BidDoc = res.locals.bid;
     const product: ProductDoc = res.locals.product;
-    await BidService.model
+    await BidService.getModel()
       .updateMany(
         {
           product: product._id,
@@ -238,7 +238,7 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         .session(session);
       const bidder = prevBid?.bidder || null;
       const price = prevBid?.price || product.startPrice;
-      await ProductService.model
+      await ProductService.getModel()
         .findByIdAndUpdate(product._id, {
           currentBidder: bidder,
           currentPrice: price,

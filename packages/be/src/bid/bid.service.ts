@@ -27,7 +27,7 @@ class BidService
   }
 
   checkPriceExists(price: number, product: ProductDoc) {
-    return this.model.exists({
+    return this.getModel().exists({
       product: product._id,
       price,
       status: BidStatus.NORMAL,
@@ -137,7 +137,7 @@ class BidService
       if (newBid.maxAutoPrice > currentBid.maxAutoPrice) {
         const autoPrice = currentBid.maxAutoPrice + product.stepPrice;
         const autoBid = (
-          await this.model.create(
+          await this.getModel().create(
             [
               {
                 product: product._id,
@@ -150,7 +150,7 @@ class BidService
           )
         )[0];
         if (!autoBid) throw new Error('AUTO_BID_N');
-        const updatedProduct = await ProductService.model
+        const updatedProduct = await ProductService.getModel()
           .findByIdAndUpdate(
             product._id,
             {
@@ -172,7 +172,7 @@ class BidService
       // N   ( )
       const autoPrice = newBid.maxAutoPrice + product.stepPrice;
       const autoBid = (
-        await this.model.create(
+        await this.getModel().create(
           [
             {
               product: product._id,
@@ -185,7 +185,7 @@ class BidService
         )
       )[0];
       if (!autoBid) throw new Error('AUTO_BID_C_1');
-      const updatedProduct = await ProductService.model
+      const updatedProduct = await ProductService.getModel()
         .findByIdAndUpdate(
           product._id,
           {
@@ -209,7 +209,7 @@ class BidService
     // N   (
     const autoPrice = newBid.price + product.stepPrice;
     const autoBid = (
-      await this.model.create(
+      await this.getModel().create(
         [
           {
             product: product._id,
@@ -222,7 +222,7 @@ class BidService
       )
     )[0];
     if (!autoBid) throw new Error('AUTO_BID_C_2');
-    const updatedProduct = await ProductService.model
+    const updatedProduct = await ProductService.getModel()
       .findByIdAndUpdate(
         product._id,
         {
@@ -242,7 +242,7 @@ class BidService
   }
 
   checkBidderRejected(bidder: string, product: string) {
-    return this.model.exists({
+    return this.getModel().exists({
       bidder,
       product,
       status: BidStatus.REJECTED,
