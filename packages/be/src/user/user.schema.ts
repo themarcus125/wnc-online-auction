@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { OtpDoc, OtpSchema } from '@/user/otp/otp.schema';
+import { UserModelName } from '@/db/modelName';
 
-export const UserModelName = 'User';
 export enum UserRole {
   BIDDER,
   SELLER,

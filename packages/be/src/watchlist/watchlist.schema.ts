@@ -1,8 +1,11 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { ProductDoc, ProductModelName } from '@/product/product.schema';
-import { UserDoc, UserModelName } from '@/user/user.schema';
-
-export const WatchListModelName = 'WatchList';
+import { ProductDoc } from '@/product/product.schema';
+import { UserDoc } from '@/user/user.schema';
+import {
+  ProductModelName,
+  WatchListModelName,
+  UserModelName,
+} from '@/db/modelName';
 
 export interface WatchList {
   user: PopulatedDoc<UserDoc>;

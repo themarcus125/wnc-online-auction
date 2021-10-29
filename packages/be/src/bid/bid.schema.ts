@@ -1,13 +1,12 @@
-import { ProductDoc, ProductModelName } from '@/product/product.schema';
-import { UserDoc, UserModelName } from '@/user/user.schema';
+import { ProductModelName, UserModelName, BidModelName } from '@/db/modelName';
+import { ProductDoc } from '@/product/product.schema';
+import { UserDoc } from '@/user/user.schema';
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 
 export enum BidStatus {
   NORMAL,
   REJECTED,
 }
-
-export const BidModelName = 'Bid';
 
 export interface Bid {
   product: PopulatedDoc<ProductDoc>;

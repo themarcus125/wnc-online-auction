@@ -1,8 +1,11 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { UserDoc, UserModelName } from '@/user/user.schema';
-import { ProductDoc, ProductModelName } from '@/product/product.schema';
-
-export const RatingModelName = 'Rating';
+import { UserDoc } from '@/user/user.schema';
+import { ProductDoc } from '@/product/product.schema';
+import {
+  ProductModelName,
+  UserModelName,
+  RatingModelName,
+} from '@/db/modelName';
 
 export interface Rating {
   createUser: PopulatedDoc<UserDoc>;

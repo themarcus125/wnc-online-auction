@@ -1,9 +1,13 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { UserDoc, UserModelName } from '@/user/user.schema';
-import { CategoryDoc, CategoryModelName } from '@/category/category.schema';
-import { RatingDoc, RatingModelName } from '@/rating/rating.schema';
-
-export const ProductModelName = 'Product';
+import { UserDoc } from '@/user/user.schema';
+import { CategoryDoc } from '@/category/category.schema';
+import { RatingDoc } from '@/rating/rating.schema';
+import {
+  ProductModelName,
+  UserModelName,
+  RatingModelName,
+  CategoryModelName,
+} from '@/db/modelName';
 
 export enum ProductStatus {
   NORMAL,

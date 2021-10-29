@@ -1,6 +1,6 @@
 import { JWTPayload } from '@/auth/auth.dto';
+import { UserModelName } from '@/db/modelName';
 import { BadRequest } from '@/error';
-import { UserModelName } from '@/user/user.schema';
 import { RequestHandler } from 'express';
 import { WLModel } from './watchlist.schema';
 
