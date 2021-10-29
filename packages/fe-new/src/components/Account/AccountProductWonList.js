@@ -5,9 +5,9 @@ import { FaThumbsUp } from '@react-icons/all-files/fa/FaThumbsUp';
 import { FaThumbsDown } from '@react-icons/all-files/fa/FaThumbsDown';
 import { useNavigate } from '../../hooks/useNavigate';
 
-import Modal, { showModal } from '../common/Modal';
+import Modal, { hideModal, showModal } from '../common/Modal';
 
-import { getAPIWithToken } from '../../utils/api';
+import { getAPIWithToken, postAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
 const reviewModalID = 'reviewSellerModal';
@@ -18,6 +18,7 @@ const AccountProductWonList = () => {
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState(1);
   const currentUserId = useRef('');
+  const currentProductId = useRef('');
 
   const { navigate } = useNavigate();
 
@@ -30,7 +31,7 @@ const AccountProductWonList = () => {
     const token = await getToken();
     const response = await getAPIWithToken(`/api/product/bidder/won`, token);
     if (!response.error) {
-      setProductList(response);
+      setProductList(response.reverse());
     }
     setLoading(false);
   };
@@ -39,25 +40,40 @@ const AccountProductWonList = () => {
     navigate(`/product/${productId}`);
   };
 
-  const onReview = (userId) => {
+  const onReview = (userId, productId) => {
     currentUserId.current = userId;
+    currentProductId.current = productId;
     setFeedback('');
     setScore(1);
     showModal(reviewModalID);
   };
 
   const onSendReview = async () => {
-    // const token = await getToken();
-    // const response = await postAPIWithToken(
-    //   `/api/rating/seller`,
-    //   {
-    //     targetUser: currentUserId.current,
-    //     feedback,
-    //     score: score === 1,
-    //   },
-    //   token,
-    // );
-    // console.log('resp', response);
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      `/api/rating/product/${currentProductId.current}/winner`,
+      {
+        targetUser: currentUserId.current,
+        feedback,
+        score: score === 1,
+      },
+      token,
+    );
+    if (!response.error) {
+      hideModal(reviewModalID);
+      toast.success('Gửi đánh giá thành công');
+      const index = productList.findIndex(
+        (product) => product._id === currentProductId.current,
+      );
+
+      if (index !== -1) {
+        setProductList([
+          ...productList.slice(0, index),
+          response.updatedProduct,
+          ...productList.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   return (
@@ -97,17 +113,21 @@ const AccountProductWonList = () => {
                     <TableCell>
                       <p className="uk-flex uk-flex-column">
                         <Button
-                          className="uk-button uk-button-primary uk-margin-bottom"
+                          className="uk-button uk-button-primary"
                           onClick={() => onDetails(product._id)}
                         >
                           Chi tiết
                         </Button>
-                        <Button
-                          className="uk-button uk-button-secondary"
-                          onClick={() => onReview(product.seller._id)}
-                        >
-                          Đánh giá
-                        </Button>
+                        {!product?.winnerRating && (
+                          <Button
+                            className="uk-button uk-button-secondary uk-margin-top"
+                            onClick={() =>
+                              onReview(product.seller._id, product._id)
+                            }
+                          >
+                            Đánh giá
+                          </Button>
+                        )}
                       </p>
                     </TableCell>
                   </tr>

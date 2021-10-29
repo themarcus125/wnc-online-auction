@@ -2,6 +2,7 @@ import ProductService from '@/product/product.service';
 import { RequestHandler } from 'express';
 import { CreateRatingDTO } from './rating.dto';
 import RatingService from './rating.service';
+import { excludeString } from '@/user/user.schema';
 
 export const getRatings: RequestHandler = async (req, res, next) => {
   try {
@@ -35,7 +36,7 @@ export const createRating =
         productId,
         isSeller ? { sellerRating: rating._id } : { winnerRating: rating._id },
         { returnOriginal: false },
-      );
+      ).populate('currentBidder', excludeString).populate('seller', excludeString);
       res.json({
         rating,
         updatedProduct,

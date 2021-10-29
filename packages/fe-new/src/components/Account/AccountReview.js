@@ -5,6 +5,7 @@ import LoadingOverlay from '../common/LoadingOverlay';
 
 import { getToken } from '../../utils/auth';
 import { getAPIWithToken } from '../../utils/api';
+import dayjs from 'dayjs';
 
 const AccountReview = () => {
   const [reviews, setReviews] = useState([]);
@@ -20,7 +21,7 @@ const AccountReview = () => {
     const response = await getAPIWithToken(`/api/rating`, token);
 
     if (!response.error) {
-      setReviews(response);
+      setReviews(response.reverse());
     }
     setLoading(false);
   };
@@ -33,17 +34,34 @@ const AccountReview = () => {
           return (
             <ReviewContainer key={review._id}>
               <p className="uk-margin-small-bottom uk-flex uk-flex-between">
-                <span className="uk-text-bold">Nguyễn Văn A</span>
-                <span>
-                  Điểm <b>8</b> /10
+                <span className="uk-text-bold">{review.createUser.name}</span>
+                <span
+                  className={
+                    review.score ? 'uk-text-primary' : 'uk-text-danger'
+                  }
+                >
+                  <b>{review.score ? '+1' : '-1'}</b>
                 </span>
               </p>
-              <span>17:00 - 29/09/2021</span>
+              <p className="uk-margin-small-bottom uk-flex uk-flex-between">
+                <span className="uk-flex" style={{ flex: 3 }}>
+                  {review.product.name}
+                </span>
+                <span
+                  className="uk-flex"
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {dayjs(review.createdAt).format('HH:mm - DD/MM/YYYY')}
+                </span>
+              </p>
               <textarea
                 className="uk-textarea uk-margin-small-top"
                 readOnly
                 rows="5"
-                value={'Đánh giá của bạn'}
+                value={review.feedback}
                 style={{ resize: 'none' }}
               />
             </ReviewContainer>

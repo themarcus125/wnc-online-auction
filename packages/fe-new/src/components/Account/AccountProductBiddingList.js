@@ -22,7 +22,7 @@ const AccountProductBiddingList = () => {
       token,
     );
     if (!response.error) {
-      setProductList(response);
+      setProductList(response.reverse());
     }
     setLoading(false);
   };
