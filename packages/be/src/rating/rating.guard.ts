@@ -3,12 +3,21 @@ import { ProductStatus } from '@/product/product.schema';
 import ProductService from '@/product/product.service';
 import { RequestHandler } from 'express';
 import { CreateRatingDTO } from './rating.dto';
+import RatingService from './rating.service';
 
 export const winnerRateGuard: RequestHandler = async (req, res, next) => {
   try {
     const { id } = res.locals.jwtPayload;
     const { targetUser }: CreateRatingDTO = req.body;
     const { productId } = req.params;
+    const rated = await RatingService.getModel().exists({
+      createUser: id,
+      targetUser,
+      product: productId,
+    });
+    if (rated) {
+      throw new Forbidden('RATED');
+    }
     const isValidWinProduct = await ProductService.getModel().exists({
       _id: productId,
       seller: targetUser,
@@ -41,6 +50,14 @@ export const sellerRateGuard: RequestHandler = async (req, res, next) => {
     const { id } = res.locals.jwtPayload;
     const { targetUser }: CreateRatingDTO = req.body;
     const { productId } = req.params;
+    const rated = await RatingService.getModel().exists({
+      createUser: id,
+      targetUser,
+      product: productId,
+    });
+    if (rated) {
+      throw new Forbidden('RATED');
+    }
     const isValidWinProduct = await ProductService.getModel().exists({
       _id: productId,
       seller: id,

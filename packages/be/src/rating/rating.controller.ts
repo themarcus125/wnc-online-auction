@@ -8,7 +8,9 @@ export const getRatings: RequestHandler = async (req, res, next) => {
     const { id } = res.locals.jwtPayload;
     const ratings = await RatingService.find({
       targetUser: id,
-    }).populate('createUser', 'name');
+    })
+      .populate('createUser', 'name')
+      .populate('product', 'name');
     res.json(ratings);
   } catch (e) {
     next(e);
@@ -25,6 +27,7 @@ export const createRating =
       const rating = await RatingService.create({
         createUser: id,
         targetUser,
+        product: productId,
         feedback,
         score,
       });

@@ -212,6 +212,7 @@ const cancelProduct: RequestHandler = async (req, res, next) => {
           {
             targetUser: product.currentBidder,
             createUser: id,
+            product: product._id,
             feedback: 'Người thắng không thanh toán',
             score: false,
           },
