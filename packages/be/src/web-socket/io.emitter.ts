@@ -27,7 +27,7 @@ export const placedBidEmitter = (
   return ioEmitter(CustomEvent.PLACED_BID, { ...payload, isBuyNow });
 };
 
-export const rejectedBidEmiiter = (payload: {
+export const rejectedBidEmitter = (payload: {
   bid: BidDoc;
   product: ProductDoc;
 }) => {
