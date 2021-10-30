@@ -1,11 +1,6 @@
 import { UserDoc } from '@/user/user.schema';
 import { Socket } from 'socket.io';
-
-enum CustomEvent {
-  PING = 'ping',
-  PONG = ' pong',
-  CONNECTED = 'connected',
-}
+import { CustomEvent } from './socket.io';
 
 export const connectionHandler = (socket: Socket) => {
   const { user }: { user: UserDoc } = socket.data;
