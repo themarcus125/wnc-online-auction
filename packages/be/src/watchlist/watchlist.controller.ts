@@ -4,7 +4,7 @@ import { BadRequest } from '@/error';
 import { RequestHandler } from 'express';
 import { WLModel } from './watchlist.schema';
 
-export const addToWatchList: RequestHandler = async (req, res, next) => {
+const addToWatchList: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const { product } = req.body;
@@ -19,7 +19,21 @@ export const addToWatchList: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getWatchListProduct: RequestHandler = async (req, res, next) => {
+const removeWatchList: RequestHandler = async (req, res, next) => {
+  try {
+    const { id }: JWTPayload = res.locals.jwtPayload;
+    const { wlId } = req.params;
+    const wl = await WLModel.findOneAndDelete({
+      _id: wlId,
+      user: id,
+    });
+    res.json(wl);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getWatchListProduct: RequestHandler = async (req, res, next) => {
   try {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const wl = await WLModel.find({
@@ -34,4 +48,4 @@ export const getWatchListProduct: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { addToWatchList, getWatchListProduct };
+export default { addToWatchList, getWatchListProduct, removeWatchList };

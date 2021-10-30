@@ -5,5 +5,6 @@ import WLController from '@/watchlist/watchlist.controller';
 
 export const wlRoute = express.Router();
 
-wlRoute.post('/', tokenGuard(false), WLController.addToWatchList);
 wlRoute.get('/product', tokenGuard(false), WLController.getWatchListProduct);
+wlRoute.delete('/:wlId', tokenGuard(false), WLController.removeWatchList);
+wlRoute.post('/', tokenGuard(false), WLController.addToWatchList);
