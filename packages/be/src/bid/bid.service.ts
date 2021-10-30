@@ -4,6 +4,7 @@ import { ProductDoc, ProductStatus } from '@/product/product.schema';
 import ProductService from '@/product/product.service';
 import RatingService from '@/rating/rating.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
+import UserService from '@/user/user.service';
 import { tag } from '@/utils/html';
 import { ClientSession } from 'mongoose';
 import { CreateBidDTO, QueryBidDTO } from './bid.dto';
@@ -67,13 +68,13 @@ class BidService
 
   async productCanBuyNow(product: ProductDoc, currentBid: BidDoc | null) {
     const { status, expiredAt, currentPrice, buyPrice } = product;
+    if (!buyPrice) {
+      return false;
+    }
     if (status !== ProductStatus.NORMAL) {
       return false;
     }
     if (expiredAt.getTime() < Date.now()) {
-      return false;
-    }
-    if (!buyPrice) {
       return false;
     }
     if (currentPrice >= buyPrice) {
@@ -259,12 +260,43 @@ class BidService
     const subject = `${bidProduct.name} has just been placed a new bid`;
     const content = tag(
       'h2',
-      `${bidProduct.name} - ${bidProduct._id} - ${bid.price}`,
+      `${bidProduct.name} - ${bidProduct._id} has a new bid`,
     );
     const emails = [seller.email, bidder.email];
     if (prevBidder) {
       emails.push(prevBidder.email);
     }
+    return sendMail(emails, subject, content);
+  }
+
+  async sendRejectMail(bidderId: string, product: ProductDoc) {
+    const bidder = await UserService.findById(bidderId);
+    if (!bidder) return null;
+    const subject = `Your bid has been rejected`;
+    const content = tag(
+      `h2`,
+      `Your bids in ${product.name} - ${product._id} has beed rejected by the seller`,
+    );
+    const emails = [bidder.email];
+    return sendMail(emails, subject, content);
+  }
+
+  async sendBuyNowMail(
+    bidder: UserDoc,
+    product: ProductDoc,
+    currentBid: BidDoc | null,
+  ) {
+    const seller = await UserService.findById(product.seller);
+    if (!seller) return null;
+    const emails = [bidder.email, seller.email];
+    if (currentBid) {
+      const currentBidder = await UserService.findById(currentBid.bidder);
+      if (currentBidder) {
+        emails.push(currentBidder.email);
+      }
+    }
+    const subject = `Your product has been sold`;
+    const content = tag('h2', `${product.name} - ${product._id} has been sold`);
     return sendMail(emails, subject, content);
   }
 

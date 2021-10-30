@@ -71,6 +71,7 @@ export const rejectBidGuard: RequestHandler = async (req, res, next) => {
       status: BidStatus.NORMAL,
     })
       .populate('product')
+      .populate('bidder', excludeString)
       .session(session);
     if (!bid) return next(new NotFound('BID'));
     const product: ProductDoc = bid.product;

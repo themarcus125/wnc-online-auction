@@ -136,7 +136,7 @@ const placeBid: RequestHandler = async (req, res, next) => {
     ScheduleService.reschedule(bidProduct._id, newExpiredAt);
     await BidService.sendPlaceBidEmail(
       bid,
-      updatedProduct,
+      bidProduct,
       seller,
       bidder,
       bidProduct.currentBidder,
@@ -203,6 +203,8 @@ const buyNow: RequestHandler = async (req, res, next) => {
         status: ProductStatus.SOLD,
       })
       .session(session);
+
+    await BidService.sendBuyNowMail(bidder, product, currentBid);
     await session.commitTransaction();
     await session.endSession();
     res.json(buyProduct);
@@ -222,14 +224,14 @@ const rejectBid: RequestHandler = async (req, res, next) => {
       .updateMany(
         {
           product: product._id,
-          bidder: bid._id,
+          bidder: bid.bidder,
         },
         {
           status: BidStatus.REJECTED,
         },
       )
       .session(session);
-    if (bid.bidder === product.currentBidder) {
+    if (bid.bidder.toString() === product.currentBidder.toString()) {
       const prevBid = await BidService.findOne({
         product: product._id,
         status: BidStatus.NORMAL,
@@ -245,11 +247,14 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         })
         .session(session);
     }
+
+    const mail = await BidService.sendRejectMail(bid.bidder, product);
     await session.commitTransaction();
     await session.endSession();
     res.json({
       bid,
       product,
+      mail,
     });
   } catch (e) {
     await session.abortTransaction();
