@@ -20,7 +20,6 @@ const ProductItem = ({ productData }) => {
     _id,
     seller,
   } = productData;
-  console.log(productData);
   const { _id: userId } = getUser();
   const isOwner = userId === seller;
   const hourDiff = dayjs(expiredAt).diff(dayjs(), 'hour');

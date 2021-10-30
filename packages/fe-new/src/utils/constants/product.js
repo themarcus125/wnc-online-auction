@@ -6,3 +6,5 @@ export const PRODUCT_STATUS = {
   CANCELED: 2,
   EXPIRED: 3,
 };
+
+export const VALID_RATING_SCORE = 0.8;

@@ -24,7 +24,6 @@ const CategoryForm = () => {
   const [hasSubCategory, setHasSubCategory] = useState(false);
   const [hasProduct, setHasProduct] = useState(false);
   const { categoryId: id } = useAdminCategory();
-  console.log(id);
 
   const { navigate } = useNavigate();
 
