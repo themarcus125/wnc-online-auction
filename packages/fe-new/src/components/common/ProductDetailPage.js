@@ -42,6 +42,7 @@ const ProductDetailPage = () => {
   const [biddersBid, setBiddersBid] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
   const [bidAmount, setBidAmount] = useState('');
+  const [autoBidAmount, setAutoBidAmount] = useState('');
   const [status, setStatus] = useState(PRODUCT_STATUS.NORMAL);
   const watchList = useStore((state) => state.watchList);
   const addItemToWatchList = useStore((state) => state.addItemToWatchList);
@@ -232,23 +233,19 @@ const ProductDetailPage = () => {
       return;
     }
 
+    const bidPrice = bidAmount.split(',').join('');
+    if (
+      typeof Number(bidPrice) !== 'number' ||
+      bidPrice < product.currentPrice + product.stepPrice ||
+      !checkIfValidBid(Number(bidPrice), product.stepPrice, product.startPrice)
+    ) {
+      toast.error('Giá bid không hợp lệ');
+      return;
+    }
+
     UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
     UIKit.modal.confirm('Bạn có chắc chắn muốn bid với giá này?').then(
       async () => {
-        const bidPrice = bidAmount.split(',').join('');
-        if (
-          typeof Number(bidPrice) !== 'number' ||
-          bidAmount < product.currentPrice + product.stepPrice ||
-          !checkIfValidBid(
-            Number(bidPrice),
-            product.stepPrice,
-            product.startPrice,
-          )
-        ) {
-          toast.error('Giá bid không hợp lệ');
-          return;
-        }
-
         setLoading(true);
         const token = await getToken();
         const response = await postAPIWithToken(
@@ -263,6 +260,9 @@ const ProductDetailPage = () => {
         if (response.error && response.message === 'REJECTED_BIDDER') {
           toast.error('Bạn đã bị cấm đấu giá sản phẩm này');
         }
+        if (response.error && response.message === 'CURRENT_BIDDER') {
+          toast.error('Bạn đang là người đấu giá cao nhất!');
+        }
         if (!response.error) {
           toast.success('Đặt bid thành công!');
           setBidAmount('');
@@ -274,9 +274,77 @@ const ProductDetailPage = () => {
     );
   };
 
+  const onPlaceAutoBid = () => {
+    if (!userId) {
+      toast.error(LOGIN_REQUIRED);
+      return;
+    }
+
+    if (
+      product.onlyRatedBidder &&
+      (userScore.total === 0 ||
+        userScore.pos / userScore.total >= VALID_RATING_SCORE)
+    ) {
+      toast.error('Bạn cần có điểm đánh giá cao mới có thểm gia đấu giá!');
+      return;
+    }
+
+    const autoBidPrice = autoBidAmount.split(',').join('');
+    if (
+      typeof Number(autoBidPrice) !== 'number' ||
+      autoBidPrice < product.currentPrice + product.stepPrice ||
+      !checkIfValidBid(
+        Number(autoBidPrice),
+        product.stepPrice,
+        product.startPrice,
+      )
+    ) {
+      toast.error('Giá bid không hợp lệ');
+      return;
+    }
+
+    UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
+    UIKit.modal
+      .confirm('Bạn có chắc chắn muốn bid tự động với số tiền này?')
+      .then(
+        async () => {
+          setLoading(true);
+          const token = await getToken();
+          const response = await postAPIWithToken(
+            '/api/bid',
+            {
+              product: productId,
+              price: product.currentPrice + product.stepPrice,
+              maxAutoPrice: Number(autoBidPrice),
+            },
+            token,
+          );
+
+          if (response.error && response.message === 'REJECTED_BIDDER') {
+            toast.error('Bạn đã bị cấm đấu giá sản phẩm này');
+          }
+          if (response.error && response.message === 'CURRENT_BIDDER') {
+            toast.error('Bạn đang là người đấu giá cao nhất!');
+          }
+          if (!response.error) {
+            toast.success('Đặt bid tự động thành công!');
+            setAutoBidAmount('');
+            setProduct(response.product);
+          }
+          setLoading(false);
+        },
+        () => {},
+      );
+  };
+
   const onAmountBidChange = (e) => {
     const number = e.target.value.split(',').join('');
     setBidAmount(Number(number).toLocaleString());
+  };
+
+  const onAutoBidAmountChange = (e) => {
+    const number = e.target.value.split(',').join('');
+    setAutoBidAmount(Number(number).toLocaleString());
   };
 
   const renderStatus = () => {
@@ -448,6 +516,38 @@ const ProductDetailPage = () => {
                     )}
                   </div>
                 </div>
+                {!isOwner && status === PRODUCT_STATUS.NORMAL && (
+                  <>
+                    <Divider />
+                    <div className="uk-flex uk-flex-row uk-margin-top uk-margin-bottom">
+                      <div className="uk-width-expand">
+                        <span className="uk-margin-right uk-margin-bottom uk-text-bold uk-text-large uk-width-expand">
+                          Đấu giá tự động
+                        </span>
+                        <div className="uk-flex uk-flex-bottom uk-flex-column uk-margin-top">
+                          <div>
+                            <div>
+                              <BidInput
+                                className="uk-input"
+                                placeholder="Nhập giá cao nhất"
+                                value={autoBidAmount}
+                                onChange={onAutoBidAmountChange}
+                              />
+                              <Button
+                                className="uk-button uk-button-primary"
+                                onClick={onPlaceAutoBid}
+                                disabled={loading}
+                              >
+                                Xác nhận
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+                <div className="uk-flex uk-flex-right uk-margin-top"></div>
                 {product.buyPrice > 0 && (
                   <>
                     <Divider />
