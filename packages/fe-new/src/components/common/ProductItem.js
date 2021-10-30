@@ -4,9 +4,11 @@ import * as dayjs from 'dayjs';
 import { useNavigate } from '../../hooks/useNavigate';
 import { ToastContainer, toast } from 'react-toastify';
 
+import useStore from '../../store/useStore';
+
 import { hoursToString } from '../../utils/time';
 import { getUser, getToken } from '../../utils/auth';
-import { postAPIWithToken } from '../../utils/api';
+import { postAPIWithToken, deleteAPIWithToken } from '../../utils/api';
 
 import { LOGIN_REQUIRED } from '../../utils/constants/error';
 
@@ -24,7 +26,16 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
     _id,
     currentBidder,
   } = productData;
+  const watchList = useStore((state) => state.watchList);
+  const addItemToWatchList = useStore((state) => state.addItemToWatchList);
+  const removeItemFromWatchList = useStore(
+    (state) => state.removeItemFromWatchList,
+  );
   const { _id: userId } = getUser();
+  const isFavouriteProduct =
+    watchList.findIndex(
+      (item) => item.product === _id || item.product._id === _id,
+    ) !== -1;
   const hourDiff = dayjs(expiredAt).diff(dayjs(), 'hour');
   const timeLeft = hoursToString(hourDiff);
 
@@ -41,16 +52,37 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
       return;
     }
 
-    const token = await getToken();
-    const response = await postAPIWithToken(
-      `/api/user/watchlist`,
-      {
-        product: _id,
-      },
-      token,
-    );
-    if (!response.error) {
-      toast.success('Sản phẩm đã được thêm vào Watch list');
+    if (!isFavouriteProduct) {
+      const token = await getToken();
+      const response = await postAPIWithToken(
+        `/api/user/watchlist`,
+        {
+          product: _id,
+        },
+        token,
+      );
+      if (!response.error) {
+        toast.success('Sản phẩm đã được thêm vào Watch list');
+        addItemToWatchList(response);
+      }
+    } else {
+      const watchlistIndex = watchList.findIndex(
+        (item) => item.product._id === _id,
+      );
+
+      if (watchlistIndex === -1) {
+        return;
+      }
+      const token = await getToken();
+      const response = await deleteAPIWithToken(
+        `/api/user/watchlist/${watchList[watchlistIndex]._id}`,
+        token,
+      );
+
+      if (!response.error) {
+        toast.success('Sản phẩm đã được xóa khỏi Watch list');
+        removeItemFromWatchList(watchList[watchlistIndex]._id);
+      }
     }
   };
 
@@ -102,16 +134,17 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
             </div>
             {!isWatchListScreen && (
               <span
-                className="uk-text-danger"
                 style={{
                   cursor: 'pointer',
                   padding: '5px 10px',
-                  backgroundColor: '#f1f1f1',
+                  backgroundColor: isFavouriteProduct ? '#f1f1f1' : '#f0506e',
+                  color: isFavouriteProduct ? '#f0506e' : '#f1f1f1',
                   borderRadius: '4px',
                 }}
                 onClick={onAddToWatchList}
               >
-                Yêu thích <span uk-icon="heart"></span>
+                {isFavouriteProduct ? 'Đã yêu thích' : 'Yêu thích'}{' '}
+                <span uk-icon="heart"></span>
               </span>
             )}
           </div>

@@ -5,11 +5,14 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from '../../hooks/useNavigate';
 import { useLocation } from 'react-router-dom';
 
+import useStore from '../../store/useStore';
+
 import { getAPI } from '../../utils/api';
 import { getUser, logout } from '../../utils/auth';
 import { ADMIN_VALUE, SELLER_VALUE } from '../../utils/constants/role';
 
 const NavBar = () => {
+  const clearWatchList = useStore((state) => state.clearWatchList);
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const keyword = search.get('s') || '';
@@ -53,6 +56,11 @@ const NavBar = () => {
     navigate(
       `/search?s=${searchString.trim()}&&category=${selectedSubcategories}`,
     );
+  };
+
+  const onLogout = () => {
+    clearWatchList();
+    logout(() => navigate('/'));
   };
 
   return (
@@ -150,7 +158,7 @@ const NavBar = () => {
                     <Link to={'/account'}>Tài khoản</Link>
                   </li>
                   <li>
-                    <a onClick={() => logout(() => navigate('/'))}>Đăng xuất</a>
+                    <a onClick={onLogout}>Đăng xuất</a>
                   </li>
                 </ul>
               </div>

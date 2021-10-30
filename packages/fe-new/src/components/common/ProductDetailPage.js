@@ -6,13 +6,19 @@ import UIKit from 'uikit/dist/js/uikit.min.js';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from '../../hooks/useNavigate';
 import { useProduct } from '../../hooks/useProduct';
+import useStore from '../../store/useStore';
 
 import LoadingOverlay from './LoadingOverlay';
 import CarouselItems from './Carouseltems';
 import MostPopularProduct from '../common/Carousel/MostPopularProduct';
 import Modal, { showModal } from './Modal';
 
-import { getAPI, postAPIWithToken, patchAPIWithToken } from '../../utils/api';
+import {
+  getAPI,
+  postAPIWithToken,
+  patchAPIWithToken,
+  deleteAPIWithToken,
+} from '../../utils/api';
 import { hoursToString } from '../../utils/time';
 import { getToken, getUser } from '../../utils/auth';
 import { checkIfValidBid, maskedString } from '../../utils/bid';
@@ -33,9 +39,20 @@ const ProductDetailPage = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [bidAmount, setBidAmount] = useState('');
   const [status, setStatus] = useState(PRODUCT_STATUS.NORMAL);
+  const watchList = useStore((state) => state.watchList);
+  const addItemToWatchList = useStore((state) => state.addItemToWatchList);
+  const removeItemFromWatchList = useStore(
+    (state) => state.removeItemFromWatchList,
+  );
 
   const { navigate } = useNavigate();
   const { productId } = useProduct();
+
+  const isFavouriteProduct =
+    watchList.findIndex(
+      (item) => item.product === productId || item.product._id === productId,
+    ) !== -1;
+  console.log(watchList);
 
   useEffect(() => {
     if (productId) {
@@ -211,6 +228,46 @@ const ProductDetailPage = () => {
     }
   };
 
+  const onAddToWatchList = async () => {
+    if (!userId) {
+      toast.error(LOGIN_REQUIRED);
+      return;
+    }
+
+    if (!isFavouriteProduct) {
+      const token = await getToken();
+      const response = await postAPIWithToken(
+        `/api/user/watchlist`,
+        {
+          product: productId,
+        },
+        token,
+      );
+      if (!response.error) {
+        toast.success('Sản phẩm đã được thêm vào Watch list');
+        addItemToWatchList(response);
+      }
+    } else {
+      const watchlistIndex = watchList.findIndex(
+        (item) => item.product._id === productId,
+      );
+
+      if (watchlistIndex === -1) {
+        return;
+      }
+      const token = await getToken();
+      const response = await deleteAPIWithToken(
+        `/api/user/watchlist/${watchList[watchlistIndex]._id}`,
+        token,
+      );
+
+      if (!response.error) {
+        toast.success('Sản phẩm đã được xóa khỏi Watch list');
+        removeItemFromWatchList(watchList[watchlistIndex]._id);
+      }
+    }
+  };
+
   const hourDiff = dayjs(product.expiredAt || '').diff(dayjs(), 'hour');
   const timeLeft = hoursToString(hourDiff);
 
@@ -323,10 +380,15 @@ const ProductDetailPage = () => {
                 {!isOwner && (
                   <div className="uk-flex uk-flex-right">
                     <Button
-                      className="uk-button uk-flex uk-flex-middle uk-flex-center uk-text-right uk-button-danger"
+                      className={`uk-button uk-flex uk-flex-middle uk-flex-center uk-text-right ${
+                        isFavouriteProduct
+                          ? 'uk-button-default'
+                          : 'uk-button-danger'
+                      }`}
                       disabled={status !== PRODUCT_STATUS.NORMAL}
+                      onClick={onAddToWatchList}
                     >
-                      Yêu thích{' '}
+                      {isFavouriteProduct ? 'Đã yêu thích' : 'Yêu thích'}{' '}
                       <span
                         className="uk-margin-small-left"
                         uk-icon="heart"
@@ -490,7 +552,7 @@ const Divider = styled.div`
 `;
 
 const Button = styled.button`
-  width: 180px;
+  width: 190px;
   height: 40px;
 `;
 
