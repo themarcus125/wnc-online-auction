@@ -27,4 +27,4 @@ const bootstrapWithSocket = async () => {
   return server;
 };
 
-bootstrap();
+bootstrapWithSocket();

@@ -10,6 +10,11 @@ import ScheduleService from '@/schedule/schedule.service';
 import { JWTPayload } from '@/auth/auth.dto';
 import { Forbidden, NotFound } from '@/error';
 import { BidDoc, BidStatus } from './bid.schema';
+import {
+  ioEmitter,
+  placedBidEmitter,
+  rejectedBidEmitter,
+} from '@/web-socket/io.emitter';
 
 const getBidHistory: RequestHandler = async (req, res, next) => {
   try {
@@ -95,9 +100,8 @@ const placeBid: RequestHandler = async (req, res, next) => {
       )
     )[0];
     if (!bid) {
-      throw new Error('CAN_NOT_CREATE_BID');
+      throw new Error('CREATE_BID');
     }
-
     const newExpiredAt = ProductService.getAutoRenewDate(bidProduct);
     const updatedProduct = await ProductService.getModel()
       .findByIdAndUpdate(
@@ -123,12 +127,8 @@ const placeBid: RequestHandler = async (req, res, next) => {
       throw new Error('UPDATE_PRODUCT');
     }
 
-    const [afterAutoProduct, holdThePrice] = await BidService.autoBidHandler(
-      bidProduct,
-      currentBid,
-      bid,
-      session,
-    );
+    const [holdThePrice, afterAutoProduct, autoBid] =
+      await BidService.autoBidHandler(bidProduct, currentBid, bid, session);
 
     await session.commitTransaction();
     await session.endSession();
@@ -141,8 +141,15 @@ const placeBid: RequestHandler = async (req, res, next) => {
       bidder,
       bidProduct.currentBidder,
     );
+    placedBidEmitter({
+      bid,
+      autoBid,
+      product: afterAutoProduct || updatedProduct,
+      holdThePrice,
+    });
     res.json({
       bid,
+      autoBid,
       product: afterAutoProduct || updatedProduct,
       holdThePrice,
     });
@@ -178,18 +185,23 @@ const buyNow: RequestHandler = async (req, res, next) => {
     if (!(await BidService.checkRating(product, bidder))) {
       return next(new Forbidden('RATING'));
     }
-    await BidService.getModel().create(
-      [
+    const buyNowBid = (
+      await BidService.getModel().create(
+        [
+          {
+            price: product.buyPrice,
+            product: product._id,
+            bidder: id,
+          },
+        ],
         {
-          price: product.buyPrice,
-          product: product._id,
-          bidder: id,
+          session,
         },
-      ],
-      {
-        session,
-      },
-    );
+      )
+    )[0];
+    if (!buyNowBid) {
+      throw new Error('CREATE_BID');
+    }
     const buyProduct = await ProductService.getModel()
       .findByIdAndUpdate(product._id, {
         $inc: {
@@ -203,10 +215,22 @@ const buyNow: RequestHandler = async (req, res, next) => {
         status: ProductStatus.SOLD,
       })
       .session(session);
+    if (!buyProduct) {
+      throw new Error('UPDATE_PRODUCT');
+    }
 
     await BidService.sendBuyNowMail(bidder, product, currentBid);
     await session.commitTransaction();
     await session.endSession();
+    placedBidEmitter(
+      {
+        bid: buyNowBid,
+        autoBid: null,
+        product: buyProduct,
+        holdThePrice: false,
+      },
+      true,
+    );
     res.json(buyProduct);
   } catch (e) {
     await session.abortTransaction();
@@ -232,10 +256,9 @@ const rejectBid: RequestHandler = async (req, res, next) => {
       )
       .session(session);
 
-    const response: any = {
+    const response: { bid: BidDoc; product: ProductDoc } = {
       bid,
       product,
-      mail: null,
     };
     if (bid.bidder.toString() === product.currentBidder.toString()) {
       const prevBid = await BidService.findOne({
@@ -246,17 +269,26 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         .session(session);
       const bidder = prevBid?.bidder || null;
       const price = prevBid?.price || product.startPrice;
-      response.product = await ProductService.getModel()
-        .findByIdAndUpdate(product._id, {
-          currentBidder: bidder,
-          currentPrice: price,
-        })
+      const updatedProduct = await ProductService.getModel()
+        .findByIdAndUpdate(
+          product._id,
+          {
+            currentBidder: bidder,
+            currentPrice: price,
+          },
+          {
+            returnOriginal: false,
+          },
+        )
         .session(session);
+      if (!updatedProduct) throw new Error('UPDATE_PRODUCT');
+      response.product = updatedProduct;
     }
 
-    response.mail = await BidService.sendRejectMail(bid.bidder, product);
+    await BidService.sendRejectMail(bid.bidder, product);
     await session.commitTransaction();
     await session.endSession();
+    rejectedBidEmitter(response);
     res.json(response);
   } catch (e) {
     await session.abortTransaction();

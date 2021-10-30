@@ -122,16 +122,16 @@ class BidService
     currentBid: BidDoc | null,
     newBid: BidDoc,
     session: ClientSession,
-  ): Promise<[ProductDoc | null, boolean]> {
+  ): Promise<[boolean, ProductDoc | null, BidDoc | null]> {
     // C
     // N  (
-    if (!currentBid) return [null, true];
+    if (!currentBid) return [true, null, null];
     // C (
     // N   (
-    if (!currentBid.maxAutoPrice) return [null, true];
+    if (!currentBid.maxAutoPrice) return [true, null, null];
     // C ()
     // N   (
-    if (currentBid.maxAutoPrice < newBid.price) return [null, true];
+    if (currentBid.maxAutoPrice < newBid.price) return [true, null, null];
     if (newBid.maxAutoPrice) {
       // C (     )
       // N   ( -->(  )
@@ -167,7 +167,7 @@ class BidService
           .populate('seller', excludeString)
           .session(session);
         if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_N');
-        return [updatedProduct, true];
+        return [true, updatedProduct, autoBid];
       }
       // C ( ---->( )
       // N   ( )
@@ -204,7 +204,7 @@ class BidService
         .populate('seller', excludeString)
         .session(session);
       if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_1');
-      return [updatedProduct, false];
+      return [false, updatedProduct, autoBid];
     }
     // C ( -->(   )
     // N   (
@@ -239,7 +239,7 @@ class BidService
       .populate('seller', excludeString)
       .session(session);
     if (!updatedProduct) throw new Error('AUTO_BID_PRODUCT_C_2');
-    return [updatedProduct, false];
+    return [false, updatedProduct, autoBid];
   }
 
   checkBidderRejected(bidder: string, product: string) {
