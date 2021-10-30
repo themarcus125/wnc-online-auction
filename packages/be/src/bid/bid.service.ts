@@ -92,7 +92,7 @@ class BidService
     { price, maxAutoPrice }: CreateBidDTO,
   ) {
     const { seller, currentPrice } = product;
-    if (seller._id === bidder._id) {
+    if (seller._id.toString() === bidder._id.toString()) {
       return false;
     }
     if (currentPrice > price) {

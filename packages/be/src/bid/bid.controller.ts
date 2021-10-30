@@ -172,7 +172,7 @@ const buyNow: RequestHandler = async (req, res, next) => {
     if (!productCanBuy) {
       return next(new Forbidden('PRODUCT_CAN_NOT_BUY'));
     }
-    if (id === product.seller) {
+    if (id.toString() === product.seller.toString()) {
       return next(new Forbidden('SELLER'));
     }
     if (!(await BidService.checkRating(product, bidder))) {
