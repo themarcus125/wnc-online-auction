@@ -245,6 +245,12 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         })
         .session(session);
     }
+    await session.commitTransaction();
+    await session.endSession();
+    res.json({
+      bid,
+      product,
+    });
   } catch (e) {
     await session.abortTransaction();
     await session.endSession();

@@ -79,7 +79,8 @@ export const rejectBidGuard: RequestHandler = async (req, res, next) => {
       return next(new Forbidden('PRODUCT_NOT_NORMAL'));
     if (new Date(product.expiredAt).getTime() <= Date.now())
       return next(new Forbidden('PRODUCT_EXPIRED'));
-    if (product.seller !== id) return next(new Forbidden('SELLER'));
+    if (product.seller.toString() !== id.toString())
+      return next(new Forbidden('SELLER'));
 
     res.locals.bid = bid;
     res.locals.product = product;
