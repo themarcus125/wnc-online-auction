@@ -51,6 +51,5 @@ authorization: Bearer {{bidderToken}}
 
 ### Reject Bid
 PATCH  {{$dotenv baseUrl}}/bid/{{bidId}}/reject
-
 content-type: application/json
 authorization: Bearer {{sellerToken}}
