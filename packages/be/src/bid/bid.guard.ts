@@ -37,7 +37,7 @@ export const placeBidGuard: RequestHandler = async (req, res, next) => {
       bidProduct.currentBidder &&
       bidder._id.toString() === bidProduct.currentBidder._id.toString()
     )
-      return next(new NotFound('CURRENT_BIDDER'));
+      return next(new Forbidden('CURRENT_BIDDER'));
     const bidderRejected = await BidService.checkBidderRejected(
       bidder._id,
       product,
