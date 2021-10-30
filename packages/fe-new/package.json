@@ -23,7 +23,8 @@
     "styled-components": "^5.3.1",
     "uikit": "^3.7.2",
     "web-vitals": "^1.0.1",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "zustand": "^3.6.2"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

@@ -23,7 +23,7 @@ const AccountWatchList = () => {
     );
 
     if (!response.error) {
-      setWatchListItems(response);
+      setWatchListItems(response.reverse());
     }
     setLoading(false);
   };
