@@ -46,6 +46,14 @@ export const userSeeds: UserSeed[] = [
     role: UserRole.BIDDER,
     isVerified: true,
   },
+  {
+    email: 'bidder2@sample.com',
+    name: 'bidder2',
+    address: 'bidder2',
+    password: hashedPassword,
+    role: UserRole.BIDDER,
+    isVerified: true,
+  },
 ];
 
 export const parentCategorySeeds: CategorySeed[] = [

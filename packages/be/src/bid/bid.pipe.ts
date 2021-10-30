@@ -25,7 +25,7 @@ export const bidValidator: RequestHandler = (req, res, next) => {
     req.body.maxAutoPrice = undefined;
   } else {
     const [safeAutoPrice, autoPriceValue] = safePositive(maxAutoPrice);
-    if (!safeAutoPrice && numberBetWeenRange(autoPriceValue, priceValue)) {
+    if (!safeAutoPrice || !numberBetWeenRange(autoPriceValue, priceValue)) {
       return next(new BadRequest('AUTO_PRICE'));
     }
     req.body.maxAutoPrice = autoPriceValue;

@@ -126,15 +126,19 @@ class BidService
     // C
     // N  (
     if (!currentBid) return [null, true];
+    console.log('1');
     // C (
     // N   (
     if (!currentBid.maxAutoPrice) return [null, true];
+    console.log('2');
     // C ()
     // N   (
     if (currentBid.maxAutoPrice < newBid.price) return [null, true];
+    console.log('3');
     if (newBid.maxAutoPrice) {
       // C (     )
       // N   ( -->(  )
+      console.log('4');
       if (newBid.maxAutoPrice > currentBid.maxAutoPrice) {
         const autoPrice = currentBid.maxAutoPrice + product.stepPrice;
         const autoBid = (
@@ -142,7 +146,7 @@ class BidService
             [
               {
                 product: product._id,
-                bidder: newBid._id,
+                bidder: newBid.bidder,
                 price: autoPrice,
                 maxAutoPrice: newBid.maxAutoPrice,
               },
@@ -171,13 +175,14 @@ class BidService
       }
       // C ( ---->( )
       // N   ( )
+      console.log('5');
       const autoPrice = newBid.maxAutoPrice + product.stepPrice;
       const autoBid = (
         await this.getModel().create(
           [
             {
               product: product._id,
-              bidder: currentBid._id,
+              bidder: currentBid.bidder,
               price: autoPrice,
               maxAutoPrice: currentBid.maxAutoPrice,
             },
@@ -208,13 +213,14 @@ class BidService
     }
     // C ( -->(   )
     // N   (
+    console.log('6');
     const autoPrice = newBid.price + product.stepPrice;
     const autoBid = (
       await this.getModel().create(
         [
           {
             product: product._id,
-            bidder: currentBid._id,
+            bidder: currentBid.bidder,
             price: autoPrice,
             maxAutoPrice: currentBid.maxAutoPrice,
           },
