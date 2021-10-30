@@ -5,9 +5,9 @@ import { FaThumbsUp } from '@react-icons/all-files/fa/FaThumbsUp';
 import { FaThumbsDown } from '@react-icons/all-files/fa/FaThumbsDown';
 import UIKit from 'uikit/dist/js/uikit.min.js';
 
-import Modal, { showModal } from '../common/Modal';
+import Modal, { hideModal, showModal } from '../common/Modal';
 
-import { getAPIWithToken } from '../../utils/api';
+import { getAPIWithToken, postAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
 const reviewModalID = 'reviewBidderModal';
@@ -18,6 +18,7 @@ const AccountProductSoldList = () => {
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState(1);
   const currentUserId = useRef('');
+  const currentProductId = useRef('');
 
   useEffect(() => {
     loadProducts();
@@ -28,47 +29,75 @@ const AccountProductSoldList = () => {
     const token = await getToken();
     const response = await getAPIWithToken(`/api/product/seller/sold`, token);
     if (!response.error) {
-      setProductList(response);
+      setProductList(response.reverse());
     }
     setLoading(false);
   };
 
-  const onReview = (userId) => {
+  const onReview = (userId, productId) => {
     currentUserId.current = userId;
+    currentProductId.current = productId;
     setFeedback('');
     setScore(1);
     showModal(reviewModalID);
   };
 
   const onSend = async () => {
-    // const token = await getToken();
-    // const response = await postAPIWithToken(
-    //   `/api/rating/winner`,
-    //   {
-    //     targetUser: currentUserId.current,
-    //     feedback,
-    //     score: score === 1,
-    //   },
-    //   token,
-    // );
-    // console.log('resp', response);
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      `/api/rating/product/${currentProductId.current}/seller`,
+      {
+        targetUser: currentUserId.current,
+        feedback,
+        score: score === 1,
+      },
+      token,
+    );
+    if (!response.error) {
+      hideModal(reviewModalID);
+      toast.success('Gửi đánh giá thành công');
+      const index = productList.findIndex(
+        (product) => product._id === currentProductId.current,
+      );
+
+      if (index !== -1) {
+        setProductList([
+          ...productList.slice(0, index),
+          response.updatedProduct,
+          ...productList.slice(index + 1),
+        ]);
+      }
+    }
   };
 
-  const onTerminate = () => {
+  const onTerminate = (userId, productId) => {
     UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
     UIKit.modal.confirm('Bạn có chắc chắn muốn hủy giao dịch?').then(
       async () => {
-        // const token = await getToken();
-        // const response = await postAPIWithToken(
-        //     `/api/rating/winner`,
-        //     {
-        //       targetUser: userId,
-        //       feedback: 'Người thắng không thanh toán',
-        //       score: false,
-        //     },
-        //     token,
-        //   );
-        //   console.log('response', response)
+        const token = await getToken();
+        const response = await postAPIWithToken(
+          `/api/rating/product/${productId}/seller`,
+          {
+            targetUser: userId,
+            feedback: 'Người thắng không thanh toán',
+            score: false,
+          },
+          token,
+        );
+        if (!response.error) {
+          toast.success('Gửi đánh giá thành công');
+          const index = productList.findIndex(
+            (product) => product._id === productId,
+          );
+
+          if (index !== -1) {
+            setProductList([
+              ...productList.slice(0, index),
+              response.updatedProduct,
+              ...productList.slice(index + 1),
+            ]);
+          }
+        }
       },
       () => {},
     );
@@ -109,22 +138,29 @@ const AccountProductSoldList = () => {
                     <TableCell>{product.currentBidder?.name}</TableCell>
                     <TableCell>{product.currentBidder?.email}</TableCell>
                     <TableCell>
-                      <p className="uk-flex uk-flex-column">
-                        <Button
-                          className="uk-button uk-button-primary uk-margin-bottom"
-                          onClick={() => onReview(product.currentBidder?._id)}
-                        >
-                          Đánh giá
-                        </Button>
-                        <Button
-                          className="uk-button uk-button-danger"
-                          onClick={() =>
-                            onTerminate(product.currentBidder?._id)
-                          }
-                        >
-                          Hủy giao dịch
-                        </Button>
-                      </p>
+                      {!product?.sellerRating && (
+                        <p className="uk-flex uk-flex-column">
+                          <Button
+                            className="uk-button uk-button-primary uk-margin-bottom"
+                            onClick={() =>
+                              onReview(product.currentBidder?._id, product._id)
+                            }
+                          >
+                            Đánh giá
+                          </Button>
+                          <Button
+                            className="uk-button uk-button-danger"
+                            onClick={() =>
+                              onTerminate(
+                                product.currentBidder?._id,
+                                product._id,
+                              )
+                            }
+                          >
+                            Hủy giao dịch
+                          </Button>
+                        </p>
+                      )}
                     </TableCell>
                   </tr>
                 );

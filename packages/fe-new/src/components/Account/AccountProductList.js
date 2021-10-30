@@ -76,7 +76,7 @@ const AccountProductList = () => {
       token,
     );
     if (!response.error) {
-      setProductList(response);
+      setProductList(response.reverse());
     }
     setLoading(false);
   };
