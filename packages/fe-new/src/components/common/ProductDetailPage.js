@@ -232,36 +232,46 @@ const ProductDetailPage = () => {
       return;
     }
 
-    const bidPrice = bidAmount.split(',').join('');
-    if (
-      typeof Number(bidPrice) !== 'number' ||
-      bidAmount < product.currentPrice + product.stepPrice ||
-      !checkIfValidBid(Number(bidPrice), product.stepPrice, product.startPrice)
-    ) {
-      toast.error('Giá bid không hợp lệ');
-      return;
-    }
+    UIKit.modal.labels = { ok: 'Đồng ý', cancel: 'Không' };
+    UIKit.modal.confirm('Bạn có chắc chắn muốn bid với giá này?').then(
+      async () => {
+        const bidPrice = bidAmount.split(',').join('');
+        if (
+          typeof Number(bidPrice) !== 'number' ||
+          bidAmount < product.currentPrice + product.stepPrice ||
+          !checkIfValidBid(
+            Number(bidPrice),
+            product.stepPrice,
+            product.startPrice,
+          )
+        ) {
+          toast.error('Giá bid không hợp lệ');
+          return;
+        }
 
-    setLoading(true);
-    const token = await getToken();
-    const response = await postAPIWithToken(
-      '/api/bid',
-      {
-        product: productId,
-        price: Number(bidPrice),
+        setLoading(true);
+        const token = await getToken();
+        const response = await postAPIWithToken(
+          '/api/bid',
+          {
+            product: productId,
+            price: Number(bidPrice),
+          },
+          token,
+        );
+
+        if (response.error && response.message === 'REJECTED_BIDDER') {
+          toast.error('Bạn đã bị cấm đấu giá sản phẩm này');
+        }
+        if (!response.error) {
+          toast.success('Đặt bid thành công!');
+          setBidAmount('');
+          setProduct(response.product);
+        }
+        setLoading(false);
       },
-      token,
+      () => {},
     );
-
-    if (response.error && response.message === 'REJECTED_BIDDER') {
-      toast.error('Bạn đã bị cấm đấu giá sản phẩm này');
-    }
-    if (!response.error) {
-      toast.success('Đặt bid thành công!');
-      setBidAmount('');
-      setProduct(response.product);
-    }
-    setLoading(false);
   };
 
   const onAmountBidChange = (e) => {
