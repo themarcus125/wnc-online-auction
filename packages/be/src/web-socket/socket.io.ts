@@ -23,7 +23,9 @@ const initSocketIO = (server: HTTPServer) => {
 };
 
 export enum CustomEvent {
+  // Listen
   PING = 'ping',
+  // Emit
   PONG = ' pong',
   CONNECTED = 'connected',
   PLACED_BID = 'placed_bid',
