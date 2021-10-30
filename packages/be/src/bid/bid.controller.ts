@@ -231,6 +231,12 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         },
       )
       .session(session);
+
+    const response: any = {
+      bid,
+      product,
+      mail: null,
+    };
     if (bid.bidder.toString() === product.currentBidder.toString()) {
       const prevBid = await BidService.findOne({
         product: product._id,
@@ -240,7 +246,7 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         .session(session);
       const bidder = prevBid?.bidder || null;
       const price = prevBid?.price || product.startPrice;
-      await ProductService.getModel()
+      response.product = await ProductService.getModel()
         .findByIdAndUpdate(product._id, {
           currentBidder: bidder,
           currentPrice: price,
@@ -248,14 +254,10 @@ const rejectBid: RequestHandler = async (req, res, next) => {
         .session(session);
     }
 
-    const mail = await BidService.sendRejectMail(bid.bidder, product);
+    response.mail = await BidService.sendRejectMail(bid.bidder, product);
     await session.commitTransaction();
     await session.endSession();
-    res.json({
-      bid,
-      product,
-      mail,
-    });
+    res.json(response);
   } catch (e) {
     await session.abortTransaction();
     await session.endSession();
