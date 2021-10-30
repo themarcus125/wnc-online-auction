@@ -10,14 +10,12 @@ import MostPopularProduct from '../components/common/Carousel/MostPopularProduct
 import HighestPriceProduct from '../components/common/Carousel/HighestPriceProduct';
 import AlmostExpireProduct from '../components/common/Carousel/AlmostExpireProduct';
 
-
 const HomePage = () => {
   const [almostExpiredProducts, setAlmostExpiredProducts] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
   const [highestPriceProducts, setHighestPriceProducts] = useState([]);
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_API_URL)
     loadData();
   }, []);
 
