@@ -219,9 +219,10 @@ const buyNow: RequestHandler = async (req, res, next) => {
       throw new Error('UPDATE_PRODUCT');
     }
 
-    await BidService.sendBuyNowMail(bidder, product, currentBid);
     await session.commitTransaction();
     await session.endSession();
+
+    await BidService.sendBuyNowMail(bidder, product, currentBid);
     placedBidEmitter(
       {
         bid: buyNowBid,
@@ -285,9 +286,10 @@ const rejectBid: RequestHandler = async (req, res, next) => {
       response.product = updatedProduct;
     }
 
-    await BidService.sendRejectMail(bid.bidder, product);
     await session.commitTransaction();
     await session.endSession();
+
+    await BidService.sendRejectMail(bid.bidder, product);
     rejectedBidEmitter(response);
     res.json(response);
   } catch (e) {
