@@ -17,6 +17,7 @@ ratingRoute.post(
   winnerRateGuard,
   RatingController.createRating(false),
 );
+ratingRoute.get('/score/:userId', RatingController.getScore);
 ratingRoute.get('/', tokenGuard(false), RatingController.getRatings);
 
 export default ratingRoute;

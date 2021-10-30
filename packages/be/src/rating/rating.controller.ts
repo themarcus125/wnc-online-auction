@@ -18,6 +18,20 @@ export const getRatings: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getScore: RequestHandler = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const [total, pos, neg] = await RatingService.countScore(userId);
+    res.json({
+      total,
+      pos,
+      neg,
+    });
+  } catch (e) {
+    next();
+  }
+};
+
 export const createRating =
   (isSeller: boolean = true): RequestHandler =>
   async (req, res, next) => {
@@ -32,11 +46,16 @@ export const createRating =
         feedback,
         score,
       });
-      const updatedProduct = await ProductService.getModel().findByIdAndUpdate(
-        productId,
-        isSeller ? { sellerRating: rating._id } : { winnerRating: rating._id },
-        { returnOriginal: false },
-      ).populate('currentBidder', excludeString).populate('seller', excludeString);
+      const updatedProduct = await ProductService.getModel()
+        .findByIdAndUpdate(
+          productId,
+          isSeller
+            ? { sellerRating: rating._id }
+            : { winnerRating: rating._id },
+          { returnOriginal: false },
+        )
+        .populate('currentBidder', excludeString)
+        .populate('seller', excludeString);
       res.json({
         rating,
         updatedProduct,
@@ -47,6 +66,7 @@ export const createRating =
   };
 
 export default {
+  getScore,
   getRatings,
   createRating,
 };
