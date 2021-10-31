@@ -29,7 +29,7 @@ export const checkToken = async (token) => {
   return isTokenValid;
 };
 
-export const refreshToken = async (token) => {
+export const refreshToken = async (token, shouldRedirect) => {
   const response = await getAPIWithToken('/api/auth/re-sign', token);
 
   if (!response.error) {
@@ -37,28 +37,31 @@ export const refreshToken = async (token) => {
   }
 
   if (response.error && response.message === 'EXPIRED_RESIGN_TOKEN') {
-    logout(() =>
-      navigate('/login', {
-        toastMsg: 'Hãy đăng nhập lại để tiếp tục',
-        toastType: 'error',
-      }),
-    );
+    logout(() => {
+      if (shouldRedirect) {
+        navigate('/login', {
+          toastMsg: 'Hãy đăng nhập lại để tiếp tục',
+          toastType: 'error',
+        });
+      }
+    });
     return;
   }
 
   return token;
 };
 
-export const getToken = async () => {
+export const getToken = async (shouldRedirect = true, setLoginStatus) => {
   let token = '';
   const user = getUser();
   if (user.token) {
     const check = await checkToken(user.token);
-    token = check ? user.token : await refreshToken(user.token);
+    token = check ? user.token : await refreshToken(user.token, shouldRedirect);
 
     if (token !== user.token) {
       setTokenToLocalStorage(token);
     }
+    setLoginStatus && setLoginStatus(true);
   }
 
   return token;

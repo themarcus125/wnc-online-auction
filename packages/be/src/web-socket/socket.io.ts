@@ -26,7 +26,7 @@ export enum CustomEvent {
   // Listen
   PING = 'ping',
   // Emit
-  PONG = ' pong',
+  PONG = 'pong',
   CONNECTED = 'connected',
   PLACED_BID = 'placed_bid',
   REJECTED_BID = 'rejected_bid',
