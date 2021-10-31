@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 
 import useStore from './store/useStore';
+import { getUser } from './utils/auth';
 
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/404';
@@ -20,13 +21,21 @@ import Seller from './pages/seller';
 import Admin from './pages/admin';
 
 import { getToken } from './utils/auth';
-import { getAPIWithToken } from './utils/api';
+import { getAPI, getAPIWithToken } from './utils/api';
 
 const AuthCheckWrapper = ({ children }) => {
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const setProductList = useStore((state) => state.setProductList);
+
   useEffect(() => {
     checkToken();
+    loadProducts();
   }, []);
+
+  const loadProducts = async () => {
+    const response = await getAPI('/api/product');
+    setProductList(response.products);
+  };
 
   const checkToken = async () => {
     await getToken(false, setIsLoggedIn);
@@ -35,22 +44,22 @@ const AuthCheckWrapper = ({ children }) => {
   return children;
 };
 
-function App() {
+const SocketWrapper = ({ children }) => {
   const isLoggedIn = useStore((state) => state.isLoggedIn);
-  const setWatchList = useStore((state) => state.setWatchList);
+  const updateItem = useStore((state) => state.updateItem);
+  const { _id: userId } = getUser();
 
   useEffect(async () => {
     let socket;
-    if (isLoggedIn) {
+    if (isLoggedIn && !socket) {
       const token = await getToken();
       socket = io('localhost:3000', {
         auth: {
           token,
         },
+        transports: ['websocket'],
       });
-      socket.on('placed_bid', (data) => {
-        console.log('data', data);
-      });
+      socket.on('placed_bid', handleBidResponse);
 
       socket.on('connected', (data) => {
         console.log('connected', data);
@@ -63,6 +72,32 @@ function App() {
     //   }
     // };
   }, [isLoggedIn]);
+
+  const handleBidResponse = (data) => {
+    const product = data.product;
+    if (!window.location.pathname.startsWith('/product')) {
+      if (product.bidder.includes(userId)) {
+        toast.info(`${product.name} đã có giá bid mới.`);
+      }
+    }
+    updateItem(product);
+  };
+
+  return (
+    <React.Fragment>
+      <ToastContainer
+        position={toast.POSITION.TOP_RIGHT}
+        autoClose={3000}
+        theme="colored"
+      />
+      {children}
+    </React.Fragment>
+  );
+};
+
+function App() {
+  const setWatchList = useStore((state) => state.setWatchList);
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
 
   useEffect(() => {
     const loadWatchList = async () => {
@@ -85,38 +120,35 @@ function App() {
   return (
     <AuthCheckWrapper>
       <div className="App">
-        <ToastContainer
-          position={toast.POSITION.TOP_RIGHT}
-          autoClose={3000}
-          theme="colored"
-        />
         <Router>
-          <Switch>
-            <Route exact path="/">
-              <HomePage />
-            </Route>
+          <SocketWrapper>
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
 
-            <Account path="/account" />
-            <Login path="/login" />
-            <Register path="/register" />
-            <ResetPassword path="/reset-password" />
-            <Search path="/search" />
-            <CategoryPage exact path="/category/:categoryId" />
-            <CategoryProductPage
-              exact
-              path="/category/:categoryId/:subCategoryId"
-            />
-            <ProductDetailPage exact path="/product/:productId" />
-            <Seller exact path="/seller/:sellerPath" />
-            <Admin path="/admin" />
+              <Account path="/account" />
+              <Login path="/login" />
+              <Register path="/register" />
+              <ResetPassword path="/reset-password" />
+              <Search path="/search" />
+              <CategoryPage exact path="/category/:categoryId" />
+              <CategoryProductPage
+                exact
+                path="/category/:categoryId/:subCategoryId"
+              />
+              <ProductDetailPage exact path="/product/:productId" />
+              <Seller exact path="/seller/:sellerPath" />
+              <Admin path="/admin" />
 
-            <Route path="/404">
-              <NotFoundPage />
-            </Route>
-            <Route path="*">
-              <NotFoundPage />
-            </Route>
-          </Switch>
+              <Route path="/404">
+                <NotFoundPage />
+              </Route>
+              <Route path="*">
+                <NotFoundPage />
+              </Route>
+            </Switch>
+          </SocketWrapper>
         </Router>
       </div>
     </AuthCheckWrapper>

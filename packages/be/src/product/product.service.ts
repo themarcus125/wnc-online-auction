@@ -175,7 +175,12 @@ class ProductService
         },
       };
     }
-    const products = await this.find({})
+    const products = await this.find({
+      expiredAt: {
+        $gt: new Date(),
+      },
+      status: ProductStatus.NORMAL,
+    }).populate('currentBidder', excludeString)
       .sort({
         _id: -1,
       })
