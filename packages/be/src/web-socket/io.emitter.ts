@@ -3,13 +3,12 @@ import { ProductDoc } from '@/product/product.schema';
 import { getIO } from './socket.io';
 import { CustomEvent } from './socket.io';
 
-const io = getIO();
-
 export const ioEmitter = (
   event: CustomEvent,
   payload: any,
   cb?: (err: Error | null, payload: any) => void,
 ) => {
+  const io = getIO();
   if (!io) return null;
   if (cb) return io.emit(event, payload, cb);
   return io.emit(event, payload);
