@@ -45,6 +45,7 @@ const ProductDetailPage = () => {
   const [autoBidAmount, setAutoBidAmount] = useState('');
   const [status, setStatus] = useState(PRODUCT_STATUS.NORMAL);
   const watchList = useStore((state) => state.watchList);
+  const productList = useStore((state) => state.productList);
   const addItemToWatchList = useStore((state) => state.addItemToWatchList);
   const removeItemFromWatchList = useStore(
     (state) => state.removeItemFromWatchList,
@@ -67,6 +68,14 @@ const ProductDetailPage = () => {
       window.scrollTo(0, 0);
     }
   }, [productId]);
+
+  useEffect(() => {
+    const index = productList.findIndex((product) => product._id === productId);
+    if (index !== -1) {
+      console.log(productList[index]);
+      setProduct(productList[index]);
+    }
+  }, [productList]);
 
   const loadProduct = async () => {
     setLoading(true);
@@ -266,7 +275,7 @@ const ProductDetailPage = () => {
         if (!response.error) {
           toast.success('Đặt bid thành công!');
           setBidAmount('');
-          setProduct(response.product);
+          // setProduct(response.product);
         }
         setLoading(false);
       },
@@ -329,7 +338,7 @@ const ProductDetailPage = () => {
           if (!response.error) {
             toast.success('Đặt bid tự động thành công!');
             setAutoBidAmount('');
-            setProduct(response.product);
+            // setProduct(response.product);
           }
           setLoading(false);
         },

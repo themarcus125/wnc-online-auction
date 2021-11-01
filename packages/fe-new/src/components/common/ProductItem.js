@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import * as dayjs from 'dayjs';
 import { useNavigate } from '../../hooks/useNavigate';
@@ -15,6 +15,7 @@ import { LOGIN_REQUIRED } from '../../utils/constants/error';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProductItem = ({ productData, isWatchListScreen = false }) => {
+  const [product, setProduct] = useState(productData);
   const {
     name,
     currentPrice,
@@ -25,7 +26,8 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
     expiredAt,
     _id,
     currentBidder,
-  } = productData;
+  } = product;
+  const productList = useStore((state) => state.productList);
   const watchList = useStore((state) => state.watchList);
   const addItemToWatchList = useStore((state) => state.addItemToWatchList);
   const removeItemFromWatchList = useStore(
@@ -40,6 +42,13 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
   const timeLeft = hoursToString(hourDiff);
 
   const { navigate } = useNavigate();
+
+  useEffect(() => {
+    const index = productList.findIndex((product) => product._id === _id);
+    if (index !== -1) {
+      setProduct(productList[index]);
+    }
+  }, [productList]);
 
   const onClick = () => {
     navigate(`/product/${_id}`);
