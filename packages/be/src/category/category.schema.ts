@@ -1,6 +1,5 @@
+import { CategoryModelName } from '@/db/modelName';
 import { Document, model, PopulatedDoc, Schema, Types } from 'mongoose';
-
-export const CategoryModelName = 'Category';
 
 export interface Category {
   name: string;

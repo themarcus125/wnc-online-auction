@@ -4,14 +4,12 @@ import styled from 'styled-components';
 import { useNavigate } from '../../hooks/useNavigate';
 import dayjs from 'dayjs';
 
-import PaginationButtonGroup from '../common/PaginationButtonGroup';
 import Modal, { hideModal, showModal } from '../common/Modal';
 import RichTextEditor from '../common/RichTextEditor';
 
-import { getAPI, patchAPIWithToken } from '../../utils/api';
+import { getAPI, getAPIWithToken, patchAPIWithToken } from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
-import { PRODUCTS_PER_PAGE } from '../../utils/constants/product';
 import { DEFAULT_ERROR } from '../../utils/constants/error';
 import { PRODUCT_DESCRIPTION_UPDATED } from '../../utils/constants/success';
 
@@ -21,9 +19,7 @@ const AccountProductList = () => {
   const editorRef = useRef(null);
   const [productList, setProductList] = useState([]);
   const [categoryList, setCategoryList] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const numOfPage = useRef(0);
   const selectedProduct = useRef('');
 
   const { navigate } = useNavigate();
@@ -34,7 +30,7 @@ const AccountProductList = () => {
 
   useEffect(() => {
     loadProducts();
-  }, [currentPage]);
+  }, []);
 
   const onAdd = () => {
     navigate('/seller/add-product');
@@ -74,16 +70,13 @@ const AccountProductList = () => {
 
   const loadProducts = async () => {
     setLoading(true);
-    const response = await getAPI(
-      `/api/product?limit=${PRODUCTS_PER_PAGE}&&skip=${
-        (currentPage - 1) * PRODUCTS_PER_PAGE
-      }`,
+    const token = await getToken();
+    const response = await getAPIWithToken(
+      `/api/product/seller/selling`,
+      token,
     );
     if (!response.error) {
-      numOfPage.current = Math.ceil(
-        response.page.totalCount / PRODUCTS_PER_PAGE,
-      );
-      setProductList(response.products);
+      setProductList(response.reverse());
     }
     setLoading(false);
   };
@@ -97,22 +90,6 @@ const AccountProductList = () => {
         {},
       );
       setCategoryList(obj);
-    }
-  };
-
-  const onChangePage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const onNext = () => {
-    if (currentPage < numOfPage.current) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const onPrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -197,13 +174,6 @@ const AccountProductList = () => {
             onInit={(evt, editor) => (editorRef.current = editor)}
           />
         </Modal>
-        <PaginationButtonGroup
-          onChangePage={onChangePage}
-          onNext={onNext}
-          onPrev={onPrev}
-          numOfPage={numOfPage.current}
-          currentPage={currentPage}
-        />
       </div>
     </React.Fragment>
   );

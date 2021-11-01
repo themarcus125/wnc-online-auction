@@ -1,16 +1,12 @@
-import { ProductDoc, ProductModelName } from '@/product/product.schema';
-import { UserDoc, UserModelName } from '@/user/user.schema';
+import { ProductModelName, UserModelName, BidModelName } from '@/db/modelName';
+import { ProductDoc } from '@/product/product.schema';
+import { UserDoc } from '@/user/user.schema';
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
 
 export enum BidStatus {
   NORMAL,
   REJECTED,
-  WAITING,
-  APPROVED,
-  CANCELED,
 }
-
-export const BidModelName = 'Bid';
 
 export interface Bid {
   product: PopulatedDoc<ProductDoc>;
@@ -31,7 +27,7 @@ export const BidSchema = new Schema<BidDoc>(
       required: true,
     },
     bidder: { type: Schema.Types.ObjectId, ref: UserModelName, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number, required: true, index: 1 },
     maxAutoPrice: Number,
     status: { type: Number, default: BidStatus.NORMAL },
   },

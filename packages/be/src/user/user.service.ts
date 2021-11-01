@@ -17,7 +17,7 @@ class UserService extends RepositoryService<UserDoc, CreateUserDTO> {
 
   createAdmin({ email, name, address, password }: CreateUserDTO) {
     const hashedPassword = getHashedPassword(password);
-    return this.model.create({
+    return this.getModel().create({
       email,
       name,
       address,
@@ -30,7 +30,7 @@ class UserService extends RepositoryService<UserDoc, CreateUserDTO> {
   async checkEmail(email: string) {
     const isEmail = validateEmail(email);
     if (!isEmail) return CheckEmailMessage.INVALID;
-    const isNonUnique = await this.model.exists({ email });
+    const isNonUnique = await this.getModel().exists({ email });
     if (isNonUnique) return CheckEmailMessage.NON_UNIQUE;
     return CheckEmailMessage.VALID;
   }

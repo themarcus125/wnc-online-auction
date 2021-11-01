@@ -35,7 +35,6 @@ const AccountProductWonList = () => {
       numOfPage.current = Math.ceil(
         response.page.totalCount / PRODUCTS_PER_PAGE,
       );
-      console.log(response.products);
       setProductList(response.products);
     }
     setLoading(false);

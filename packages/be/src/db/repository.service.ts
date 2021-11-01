@@ -1,7 +1,7 @@
 import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
 
 export default abstract class RepositoryService<DocT, CreateDtoT> {
-  model: Model<DocT>;
+  private model: Model<DocT>;
   constructor(model: Model<DocT>) {
     this.model = model;
   }
@@ -11,11 +11,11 @@ export default abstract class RepositoryService<DocT, CreateDtoT> {
   }
 
   create(dto: CreateDtoT) {
-    return this.model.create(dto);
+    return this.getModel().create(dto);
   }
 
   findById(id: string, options?: QueryOptions, select?: string) {
-    const query = this.model.findById(id, options);
+    const query = this.getModel().findById(id, options);
     if (select) {
       return query.select(select);
     }
@@ -23,7 +23,7 @@ export default abstract class RepositoryService<DocT, CreateDtoT> {
   }
 
   findOne(filter: FilterQuery<DocT>, options?: QueryOptions, select?: string) {
-    const query = this.model.findOne(filter, options);
+    const query = this.getModel().findOne(filter, options);
     if (select) {
       return query.select(select);
     }
@@ -31,7 +31,7 @@ export default abstract class RepositoryService<DocT, CreateDtoT> {
   }
 
   find(filter: FilterQuery<DocT>, options?: QueryOptions, select?: string) {
-    const query = this.model.find(filter, options);
+    const query = this.getModel().find(filter, options);
     if (select) {
       return query.select(select);
     }
@@ -43,7 +43,7 @@ export default abstract class RepositoryService<DocT, CreateDtoT> {
     dto: UpdateQuery<DocT>,
     options: QueryOptions = { returnOriginal: false },
   ) {
-    return this.model.findOneAndUpdate(filter, dto, options);
+    return this.getModel().findOneAndUpdate(filter, dto, options);
   }
 }
 

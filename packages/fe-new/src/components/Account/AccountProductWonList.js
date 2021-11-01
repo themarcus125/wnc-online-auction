@@ -5,69 +5,76 @@ import { FaThumbsUp } from '@react-icons/all-files/fa/FaThumbsUp';
 import { FaThumbsDown } from '@react-icons/all-files/fa/FaThumbsDown';
 import { useNavigate } from '../../hooks/useNavigate';
 
-import PaginationButtonGroup from '../common/PaginationButtonGroup';
-import Modal, { showModal } from '../common/Modal';
+import Modal, { hideModal, showModal } from '../common/Modal';
 
-import { getAPI } from '../../utils/api';
+import { getAPIWithToken, postAPIWithToken } from '../../utils/api';
+import { getToken } from '../../utils/auth';
 
-import { PRODUCTS_PER_PAGE } from '../../utils/constants/product';
-
-const reviewModalID = 'reviewModal';
+const reviewModalID = 'reviewSellerModal';
 
 const AccountProductWonList = () => {
   const [productList, setProductList] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const numOfPage = useRef(0);
+  const [feedback, setFeedback] = useState('');
+  const [score, setScore] = useState(1);
+  const currentUserId = useRef('');
+  const currentProductId = useRef('');
 
   const { navigate } = useNavigate();
 
   useEffect(() => {
     loadProducts();
-  }, [currentPage]);
+  }, []);
 
   const loadProducts = async () => {
     setLoading(true);
-    const response = await getAPI(
-      `/api/product?limit=${PRODUCTS_PER_PAGE}&&skip=${
-        (currentPage - 1) * PRODUCTS_PER_PAGE
-      }`,
-    );
+    const token = await getToken();
+    const response = await getAPIWithToken(`/api/product/bidder/won`, token);
     if (!response.error) {
-      numOfPage.current = Math.ceil(
-        response.page.totalCount / PRODUCTS_PER_PAGE,
-      );
-      console.log(response.products);
-      setProductList(response.products);
+      setProductList(response.reverse());
     }
     setLoading(false);
-  };
-
-  const onChangePage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const onNext = () => {
-    if (currentPage < numOfPage.current) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const onPrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
   };
 
   const onDetails = (productId) => {
     navigate(`/product/${productId}`);
   };
 
-  const onReview = () => {
+  const onReview = (userId, productId) => {
+    currentUserId.current = userId;
+    currentProductId.current = productId;
+    setFeedback('');
+    setScore(1);
     showModal(reviewModalID);
   };
 
-  const onSendReview = () => {};
+  const onSendReview = async () => {
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      `/api/rating/product/${currentProductId.current}/winner`,
+      {
+        targetUser: currentUserId.current,
+        feedback,
+        score: score === 1,
+      },
+      token,
+    );
+    if (!response.error) {
+      hideModal(reviewModalID);
+      toast.success('Gửi đánh giá thành công');
+      const index = productList.findIndex(
+        (product) => product._id === currentProductId.current,
+      );
+
+      if (index !== -1) {
+        setProductList([
+          ...productList.slice(0, index),
+          response.updatedProduct,
+          ...productList.slice(index + 1),
+        ]);
+      }
+    }
+  };
 
   return (
     <React.Fragment>
@@ -101,22 +108,26 @@ const AccountProductWonList = () => {
                     <TableCell>
                       {Number(product.currentPrice).toLocaleString()} đ
                     </TableCell>
-                    <TableCell>Nguyễn Văn A</TableCell>
-                    <TableCell>Nva@gmail.com</TableCell>
+                    <TableCell>{product.seller.name}</TableCell>
+                    <TableCell>{product.seller.email}</TableCell>
                     <TableCell>
                       <p className="uk-flex uk-flex-column">
                         <Button
-                          className="uk-button uk-button-primary uk-margin-bottom"
+                          className="uk-button uk-button-primary"
                           onClick={() => onDetails(product._id)}
                         >
                           Chi tiết
                         </Button>
-                        <Button
-                          className="uk-button uk-button-secondary"
-                          onClick={onReview}
-                        >
-                          Đánh giá
-                        </Button>
+                        {!product?.winnerRating && (
+                          <Button
+                            className="uk-button uk-button-secondary uk-margin-top"
+                            onClick={() =>
+                              onReview(product.seller._id, product._id)
+                            }
+                          >
+                            Đánh giá
+                          </Button>
+                        )}
                       </p>
                     </TableCell>
                   </tr>
@@ -134,6 +145,7 @@ const AccountProductWonList = () => {
               className="uk-button uk-button-primary"
               type="button"
               onClick={onSendReview}
+              disabled={!feedback}
             >
               Gửi đánh giá
             </button>
@@ -145,13 +157,22 @@ const AccountProductWonList = () => {
                 <input
                   className="uk-radio"
                   type="radio"
-                  name="radio2"
-                  checked
+                  name="radio"
+                  value={1}
+                  checked={score === 1}
+                  onChange={(e) => setScore(Number(e.target.value))}
                 />
                 <FaThumbsUp className="uk-margin-small-left" />
               </label>
               <label>
-                <input className="uk-radio" type="radio" name="radio2" />
+                <input
+                  className="uk-radio"
+                  type="radio"
+                  name="radio"
+                  value={-1}
+                  checked={score === -1}
+                  onChange={(e) => setScore(Number(e.target.value))}
+                />
                 <FaThumbsDown className="uk-margin-small-left" />
               </label>
             </div>
@@ -161,17 +182,12 @@ const AccountProductWonList = () => {
                 className="uk-textarea uk-margin-small-top"
                 rows="5"
                 style={{ resize: 'none' }}
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
               />
             </div>
           </>
         </Modal>
-        <PaginationButtonGroup
-          onChangePage={onChangePage}
-          onNext={onNext}
-          onPrev={onPrev}
-          numOfPage={numOfPage.current}
-          currentPage={currentPage}
-        />
       </div>
     </React.Fragment>
   );

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "sourceMap": true,
     "incremental": true,
@@ -26,6 +27,8 @@
   "exclude": [
     "node_modules",
     "dist",
+    "test",
+    "seed"
   ],
   "include": [
     "**/*.ts"

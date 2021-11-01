@@ -1,13 +1,17 @@
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { UserDoc, UserModelName } from '@/user/user.schema';
-import { CategoryDoc, CategoryModelName } from '@/category/category.schema';
-
-export const ProductModelName = 'Product';
+import { UserDoc } from '@/user/user.schema';
+import { CategoryDoc } from '@/category/category.schema';
+import { RatingDoc } from '@/rating/rating.schema';
+import {
+  ProductModelName,
+  UserModelName,
+  RatingModelName,
+  CategoryModelName,
+} from '@/db/modelName';
 
 export enum ProductStatus {
   NORMAL,
-  WAITING,
-  APPROVED,
+  SOLD,
   CANCELED,
 }
 
@@ -17,15 +21,19 @@ export interface Product {
   category: PopulatedDoc<CategoryDoc>;
   images: string[];
   seller: PopulatedDoc<UserDoc>;
+  bidder: string[];
   startPrice: number;
   stepPrice: number;
   buyPrice?: number;
   currentPrice: number;
+  currentBidder?: PopulatedDoc<UserDoc>;
   bidCount: number;
   expiredAt: Date;
   createdAt: Date;
   isAutoRenew?: boolean;
-  allowNoRatingBid?: boolean;
+  onlyRatedBidder?: boolean;
+  winnerRating?: PopulatedDoc<RatingDoc>;
+  sellerRating?: PopulatedDoc<RatingDoc>;
   status: number;
 }
 
@@ -54,15 +62,19 @@ export const ProductSchema = new Schema<ProductDoc>(
       required: true,
       ref: UserModelName,
     },
+    bidder: [String],
     startPrice: { type: Number, require: true },
     stepPrice: { type: Number, require: true },
     buyPrice: Number,
     currentPrice: { type: Number, require: true, index: 1 },
+    currentBidder: { type: Schema.Types.ObjectId, ref: UserModelName },
     bidCount: { type: Number, default: 0, index: 1 },
     expiredAt: { type: Date, require: true, index: 1 },
     isAutoRenew: { type: Boolean, default: false },
-    allowNoRatingBid: { type: Boolean, default: true },
+    onlyRatedBidder: { type: Boolean, default: false },
     status: { type: Number, default: ProductStatus.NORMAL },
+    winnerRating: { type: Schema.Types.ObjectId, ref: RatingModelName },
+    sellerRating: { type: Schema.Types.ObjectId, ref: RatingModelName },
   },
   { timestamps: true },
 );

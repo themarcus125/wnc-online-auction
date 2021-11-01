@@ -13,9 +13,9 @@ export const transformCreateProductBody = (body: any) => {
     startPrice, // toPositive
     stepPrice, // toPositive
     buyPrice, // canEmpty, toPositive
-    expiredIn,
+    expiredIn, // toInt
     isAutoRenew, // canEmpty, toBoolean
-    allowNoRatingBid, // canEmpty, toBoolean
+    onlyRatedBidder, // canEmpty, toBoolean
   }: RawCreateProductRequestDTO = body;
 
   if (!notEmpty(description)) {
@@ -31,19 +31,27 @@ export const transformCreateProductBody = (body: any) => {
     return 'CAT';
   }
 
+  if (!notEmpty(startPrice)) {
+    return 'S_PRICE';
+  }
   const [safeStartPrice, startPriceValue] = safePositive(startPrice);
   if (!safeStartPrice) {
     return 'S_PRICE';
   }
   body.startPrice = startPriceValue;
 
+  if (!notEmpty) {
+    return 'STP_PRICE';
+  }
   const [safeStepPrice, stepPriceValue] = safePositive(stepPrice);
   if (!safeStepPrice) {
     return 'STP_PRICE';
   }
   body.stepPrice = stepPriceValue;
 
-  if (notEmpty(buyPrice)) {
+  if (!notEmpty(buyPrice)) {
+    body.buyPrice = undefined;
+  } else {
     const [safeBuyPrice, buyPriceValue] = safePositive(buyPrice);
     if (!safeBuyPrice) {
       return 'B_PRICE';
@@ -51,11 +59,13 @@ export const transformCreateProductBody = (body: any) => {
     body.buyPrice = buyPriceValue;
   }
 
-  if (!validateInt(undefined, 24)(expiredIn)) {
+  if (!notEmpty(expiredIn) || !validateInt(undefined, 24)(expiredIn)) {
     return 'EXP_HOUR';
   }
 
-  if (notEmpty(isAutoRenew)) {
+  if (!notEmpty(isAutoRenew)) {
+    body.isAutoRenew = undefined;
+  } else {
     const parsedIsAutoRenew = parseBoolean(isAutoRenew);
     if (!notNull(parsedIsAutoRenew)) {
       return 'AUTO_RENEW';
@@ -63,12 +73,14 @@ export const transformCreateProductBody = (body: any) => {
     body.isAutoRenew = parsedIsAutoRenew;
   }
 
-  if (notEmpty(allowNoRatingBid)) {
-    const parsedAllowNoRatingBid = parseBoolean(allowNoRatingBid);
-    if (!notNull(parsedAllowNoRatingBid)) {
+  if (!notEmpty(onlyRatedBidder)) {
+    body.onlyRatedBidder = undefined;
+  } else {
+    const parsedOnlyRatedBidder = parseBoolean(onlyRatedBidder);
+    if (!notNull(parsedOnlyRatedBidder)) {
       return 'ALLOW_RATING';
     }
-    body.allowNoRatingBid = parsedAllowNoRatingBid;
+    body.onlyRatedBidder = parsedOnlyRatedBidder;
   }
 
   return null;

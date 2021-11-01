@@ -1,9 +1,8 @@
-import { CategorySeed, ProductSeed, UserSeed } from '@/db/seed.t';
+import { CategorySeed, ProductSeed, UserSeed, BidSeed } from '@/db/seed.t';
 import { UserRole } from '@/user/user.schema';
 import { getHashedPassword } from '@/utils/password';
-import { appConfig } from '~/config';
 
-const password = appConfig.jwtSecret;
+const password = '123456';
 const hashedPassword = getHashedPassword(password);
 
 export const userSeeds: UserSeed[] = [
@@ -37,6 +36,22 @@ export const userSeeds: UserSeed[] = [
     address: 'seller3',
     password: hashedPassword,
     role: UserRole.SELLER,
+    isVerified: true,
+  },
+  {
+    email: 'bidder1@sample.com',
+    name: 'bidder1',
+    address: 'bidder1',
+    password: hashedPassword,
+    role: UserRole.BIDDER,
+    isVerified: true,
+  },
+  {
+    email: 'bidder2@sample.com',
+    name: 'bidder2',
+    address: 'bidder2',
+    password: hashedPassword,
+    role: UserRole.BIDDER,
     isVerified: true,
   },
 ];
@@ -118,7 +133,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 10000,
     currentPrice: 10000,
     stepPrice: 1000,
@@ -134,7 +149,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 20000,
     currentPrice: 20000,
     stepPrice: 1000,
@@ -150,7 +165,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 30000,
     currentPrice: 30000,
     stepPrice: 1000,
@@ -161,7 +176,7 @@ export const expiredProductSeeds: ProductSeed[] = [
 export const productSeeds: ProductSeed[] = [
   {
     name: 'product1',
-    descriptions: ['product1 - seller2'],
+    descriptions: ['product1 - seller1'],
     category: 1,
     images: [
       'public/images/uploads/seed-pepekora.png',
@@ -177,7 +192,7 @@ export const productSeeds: ProductSeed[] = [
   },
   {
     name: 'product2',
-    descriptions: ['product2 - seller2'],
+    descriptions: ['product2 - seller1'],
     category: 1,
     images: [
       'public/images/uploads/seed-pepekora.png',
@@ -201,10 +216,51 @@ export const productSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
+    seller: 2,
+    startPrice: 30000,
+    currentPrice: 30000,
+    stepPrice: 1000,
+    onlyRatedBidder: true,
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+  },
+  {
+    name: 'product4',
+    descriptions: ['product4 - seller1 - expired soon'],
+    category: 1,
+    images: [
+      'public/images/uploads/seed-pepekora.png',
+      'public/images/uploads/seed-copium.png',
+      'public/images/uploads/seed-pepe-angry.png',
+      'public/images/uploads/seed-pepe-hand.png',
+    ],
     seller: 1,
     startPrice: 30000,
     currentPrice: 30000,
     stepPrice: 1000,
-    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+    isAutoRenew: true,
+    expiredAt: new Date(Date.now() + 5 * 60 * 1000),
+  },
+];
+
+export const bidSeeds: BidSeed[] = [
+  {
+    bidder: 4,
+    product: 0,
+    price: 11000,
+  },
+  {
+    bidder: 5,
+    product: 0,
+    price: 12000,
+  },
+  {
+    bidder: 4,
+    product: 0,
+    price: 13000,
+  },
+  {
+    bidder: 5,
+    product: 0,
+    price: 14000,
   },
 ];

@@ -2,6 +2,6 @@ export enum CheckBidMessage {
   VALID = 'VALID',
   INVALID = 'INVALID',
   BIDDER_IS_SELLER = 'BIDDER_IS_SELLER',
-  NO_RATING_BIDDER = 'NO_RATING_BIDDER',
+  RATING = 'RATING',
   PRICE = 'PRICE',
 }

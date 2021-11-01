@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from '../../../hooks/useNavigate';
+
+import useStore from '../../../store/useStore';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Product({ item }) {
+  const productList = useStore((state) => state.productList);
+  const [product, setProduct] = useState(item);
   const { navigate } = useNavigate();
 
+  useEffect(() => {
+    const index = productList.findIndex(
+      (productItem) => productItem._id === item._id,
+    );
+    if (index !== -1) {
+      setProduct(productList[index]);
+    }
+  }, [productList]);
+
   const onClick = () => {
-    navigate(`/product/${item._id}`);
+    navigate(`/product/${product._id}`);
   };
 
   return (
     <HighestPriceProduct className="uk-card uk-card-default" onClick={onClick}>
       <div className="uk-card-media-top">
         <img
-          src={`${API_URL}/${item.images[0]}`}
+          src={`${API_URL}/${product.images[0]}`}
           style={{
             objectFit: 'cover',
             width: '100%',
@@ -24,12 +37,12 @@ export default function Product({ item }) {
         />
       </div>
       <div className="uk-card-body">
-        <h3 className="uk-card-title title">{item.name}</h3>
+        <h3 className="uk-card-title title">{product.name}</h3>
         <h4
           className="uk-text-bold uk-margin-remove-top uk-margin-remove-bottom"
           style={{ color: '#666' }}
         >
-          Giá hiện tại: {Number(item.currentPrice).toLocaleString()} đ
+          Giá hiện tại: {Number(product.currentPrice).toLocaleString()} đ
         </h4>
       </div>
     </HighestPriceProduct>

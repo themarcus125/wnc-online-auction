@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import ProductItem from './common/ProductItem';
 import PaginationButtonGroup from './common/PaginationButtonGroup';
+import LoadingOverlay from './common/LoadingOverlay';
 
 import { getAPI } from '../utils/api';
 
@@ -45,7 +46,7 @@ const SearchPage = () => {
       skipString = '&&skip=0';
     }
     const response = await getAPI(
-      `/api/product?mode=search&&productName=${keyword}&&categoryId=${category}&&notExpired=true&&limit=${PRODUCTS_PER_PAGE}${skipString}${sortString}`,
+      `/api/product?mode=search&&productName=${keyword}&&categoryId=${category}&&notExpired=true&&status=true&&limit=${PRODUCTS_PER_PAGE}${skipString}${sortString}`,
     );
 
     if (!response.error) {
@@ -93,24 +94,19 @@ const SearchPage = () => {
             <option value="price">Giá tăng dần</option>
           </select>
         </div>
-        {loading ? (
-          <div uk-spinner="" />
-        ) : (
-          <>
-            <div>
-              {productList.map((product) => {
-                return <ProductItem key={product._id} productData={product} />;
-              })}
-            </div>
-            <PaginationButtonGroup
-              onChangePage={onChangePage}
-              onNext={onNext}
-              onPrev={onPrev}
-              numOfPage={numOfPage.current}
-              currentPage={currentPage}
-            />
-          </>
-        )}
+        <div>
+          {productList.map((product) => {
+            return <ProductItem key={product._id} productData={product} />;
+          })}
+        </div>
+        <PaginationButtonGroup
+          onChangePage={onChangePage}
+          onNext={onNext}
+          onPrev={onPrev}
+          numOfPage={numOfPage.current}
+          currentPage={currentPage}
+        />
+        <LoadingOverlay isLoading={loading} />
       </div>
     </Wrapper>
   );

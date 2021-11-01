@@ -1,4 +1,8 @@
 - Try cookie for auth
+- Error Handler
+  https://expressjs.com/en/guide/error-handling.html
+  https://stackoverflow.com/questions/49417580/express-middleware-cannot-trap-errors-thrown-by-async-await-but-why
+  https://stackoverflow.com/questions/51391080/handling-errors-in-express-async-middleware
 - Mongo
   https://docs.mongodb.com/manual/reference/operator/query/
   https://stackoverflow.com/questions/51533234/mongodb-find-with-calculated-field
@@ -40,3 +44,13 @@
   https://mongoosejs.com/docs/transactions.html
   https://stackoverflow.com/questions/51228059/mongo-db-4-0-transactions-with-mongoose-nodejs-express
   https://stackoverflow.com/questions/41071617/atomically-update-multiple-documents-and-return-them
+- Socket + express
+  https://www.freecodecamp.org/news/create-a-professional-node-express/
+  https://medium.com/daily-programmer/build-a-chat-application-with-express-and-socket-io-e8c335d27386
+  https://towardsdatascience.com/building-a-real-time-web-app-in-nodejs-express-with-socket-io-library-d9b50aded6e6
+  https://socket.io/get-started/chat#introduction
+  https://stackoverflow.com/questions/17696801/express-js-app-listen-vs-server-listen
+  https://stackoverflow.com/questions/55086261/how-to-use-app-listen-with-socket-io-in-node
+  https://stackoverflow.com/questions/38062689/how-do-i-get-the-http-server-from-the-express-app
+  https://github.com/huynonstop/chat-app-ws/tree/master/packages/server/src
+  https://medium.com/@raj_36650/integrate-socket-io-with-node-js-express-2292ca13d891

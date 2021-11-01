@@ -11,7 +11,7 @@ export interface CreateProductDTO {
   createdAt: Date;
   currentPrice: number;
   isAutoRenew?: boolean;
-  allowNoRatingBid?: boolean;
+  onlyRatedBidder?: boolean;
 }
 
 export interface TransformedCreateProductRequestDTO {
@@ -24,7 +24,7 @@ export interface TransformedCreateProductRequestDTO {
   buyPrice?: number;
   expiredIn: number;
   isAutoRenew?: boolean;
-  allowNoRatingBid?: boolean;
+  onlyRatedBidder?: boolean;
 }
 
 export interface RawCreateProductRequestDTO {
@@ -36,7 +36,7 @@ export interface RawCreateProductRequestDTO {
   buyPrice?: string;
   expiredIn?: string;
   isAutoRenew?: string;
-  allowNoRatingBid?: string;
+  onlyRatedBidder?: string;
 }
 
 export interface UpdateProductDTO {
@@ -64,4 +64,5 @@ export interface QueryProductDTO {
   notExpired?: string;
   limit?: string;
   skip?: string;
+  status?: string;
 }

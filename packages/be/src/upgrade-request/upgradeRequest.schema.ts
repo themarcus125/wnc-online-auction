@@ -1,13 +1,12 @@
+import { UpgradeRequestModelName, UserModelName } from '@/db/modelName';
 import { Document, model, PopulatedDoc, Schema } from 'mongoose';
-import { UserDoc, UserModelName } from '../user/user.schema';
+import { UserDoc } from '../user/user.schema';
 
 export enum RequestStatus {
   PENDING,
   APPROVED,
   REJECTED,
 }
-
-export const UpgradeRequestModelName = 'UpgradeRequest';
 
 export interface UpgradeRequest {
   user: PopulatedDoc<UserDoc>;

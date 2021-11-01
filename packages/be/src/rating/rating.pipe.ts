@@ -1,5 +1,4 @@
 import { BadRequest } from '@/error';
-import { parseBoolean } from '@/utils/parser';
 import { notEmpty, notNull } from '@/utils/validator';
 import { RequestHandler } from 'express';
 import { CreateRatingDTO } from './rating.dto';
@@ -12,7 +11,7 @@ export const rateSellerValidator: RequestHandler = (req, res, next) => {
   if (!notEmpty(feedback)) {
     return next(new BadRequest('INVALID_FEEDBACK'));
   }
-  if (!notNull(parseBoolean(score))) {
+  if (!notNull(score)) {
     return next(new BadRequest('INVALID_SCORE'));
   }
   next();
