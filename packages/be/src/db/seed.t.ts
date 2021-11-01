@@ -27,3 +27,9 @@ export interface ProductSeed {
   isAutoRenew?: boolean;
   onlyRatedBidder?: boolean;
 }
+
+export interface BidSeed {
+  bidder: number;
+  product: number;
+  price: number;
+}

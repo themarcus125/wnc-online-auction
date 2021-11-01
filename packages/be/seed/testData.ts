@@ -1,4 +1,4 @@
-import { CategorySeed, ProductSeed, UserSeed } from '@/db/seed.t';
+import { CategorySeed, ProductSeed, UserSeed, BidSeed } from '@/db/seed.t';
 import { UserRole } from '@/user/user.schema';
 import { getHashedPassword } from '@/utils/password';
 
@@ -133,7 +133,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 10000,
     currentPrice: 10000,
     stepPrice: 1000,
@@ -149,7 +149,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 20000,
     currentPrice: 20000,
     stepPrice: 1000,
@@ -165,7 +165,7 @@ export const expiredProductSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 0,
+    seller: 1,
     startPrice: 30000,
     currentPrice: 30000,
     stepPrice: 1000,
@@ -176,7 +176,7 @@ export const expiredProductSeeds: ProductSeed[] = [
 export const productSeeds: ProductSeed[] = [
   {
     name: 'product1',
-    descriptions: ['product1 - seller2'],
+    descriptions: ['product1 - seller1'],
     category: 1,
     images: [
       'public/images/uploads/seed-pepekora.png',
@@ -192,7 +192,7 @@ export const productSeeds: ProductSeed[] = [
   },
   {
     name: 'product2',
-    descriptions: ['product2 - seller2'],
+    descriptions: ['product2 - seller1'],
     category: 1,
     images: [
       'public/images/uploads/seed-pepekora.png',
@@ -216,7 +216,7 @@ export const productSeeds: ProductSeed[] = [
       'public/images/uploads/seed-pepe-angry.png',
       'public/images/uploads/seed-pepe-hand.png',
     ],
-    seller: 1,
+    seller: 2,
     startPrice: 30000,
     currentPrice: 30000,
     stepPrice: 1000,
@@ -225,7 +225,7 @@ export const productSeeds: ProductSeed[] = [
   },
   {
     name: 'product4',
-    descriptions: ['product4 - seller2 - expired soon'],
+    descriptions: ['product4 - seller1 - expired soon'],
     category: 1,
     images: [
       'public/images/uploads/seed-pepekora.png',
@@ -239,5 +239,28 @@ export const productSeeds: ProductSeed[] = [
     stepPrice: 1000,
     isAutoRenew: true,
     expiredAt: new Date(Date.now() + 5 * 60 * 1000),
+  },
+];
+
+export const bidSeeds: BidSeed[] = [
+  {
+    bidder: 4,
+    product: 0,
+    price: 11000,
+  },
+  {
+    bidder: 5,
+    product: 0,
+    price: 12000,
+  },
+  {
+    bidder: 4,
+    product: 0,
+    price: 13000,
+  },
+  {
+    bidder: 5,
+    product: 0,
+    price: 14000,
   },
 ];

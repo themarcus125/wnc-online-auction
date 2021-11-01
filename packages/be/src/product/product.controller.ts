@@ -124,6 +124,8 @@ const getProductSelling: RequestHandler = async (req, res, next) => {
         $gt: new Date(),
       },
       status: ProductStatus.NORMAL,
+    }).sort({
+      _id: 1,
     });
     res.json(products);
   } catch (e) {

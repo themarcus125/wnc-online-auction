@@ -5,10 +5,12 @@ import {
   parentCategorySeeds,
   productSeeds,
   userSeeds,
+  bidSeeds,
 } from './testData';
 
 seedDB(
   userSeeds,
   [parentCategorySeeds, childCategorySeeds],
   [expiredProductSeeds, productSeeds],
+  bidSeeds,
 );
