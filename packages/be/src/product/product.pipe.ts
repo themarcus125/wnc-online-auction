@@ -23,7 +23,7 @@ export const transformCreateProductBody = (body: any) => {
   }
   body.descriptions = [description];
 
-  if (!length(name, 1, 30)) {
+  if (!length(name, 1, 300)) {
     return 'NAME';
   }
 

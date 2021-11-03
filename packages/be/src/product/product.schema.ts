@@ -44,7 +44,7 @@ export const ProductSchema = new Schema<ProductDoc>(
     name: {
       type: String,
       required: true,
-      maxlength: 30,
+      maxlength: 300,
       index: 'text',
     },
     descriptions: { type: [String], required: true },

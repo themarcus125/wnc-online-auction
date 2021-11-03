@@ -26,6 +26,7 @@ export interface ProductSeed {
   expiredAt: Date;
   isAutoRenew?: boolean;
   onlyRatedBidder?: boolean;
+  buyPrice?: number;
 }
 
 export interface BidSeed {
