@@ -82,10 +82,12 @@ const categorySeed = async (
     name,
   }));
   const parentDoc = await model.insertMany(parentData);
-  const childData = childSeeds.map(({ name, index }) => ({
-    name,
-    parent: index ? parentDoc[index]?._id : undefined,
-  }));
+  const childData = childSeeds.map(({ name, index=-1 }) => {
+    return {
+      name,
+      parent: index >= 0 ? parentDoc[index]?._id : undefined,
+    }
+  });
   categoryA = await model.insertMany(childData);
   return true;
 };
