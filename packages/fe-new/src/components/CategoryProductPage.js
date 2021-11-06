@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
-import { useCategory } from '../hooks/useCategory'
+import { useCategory } from '../hooks/useCategory';
 import ProductItem from './common/ProductItem';
 import PaginationButtonGroup from './common/PaginationButtonGroup';
 
@@ -36,7 +36,8 @@ const CategoryProductPage = () => {
   const loadProducts = async () => {
     setLoading(true);
     const productListResponse = await getAPI(
-      `/api/product?mode=category&&category=${subCategoryId}&&notExpired=true&&limit=${PRODUCTS_PER_PAGE}&&skip=${(currentPage - 1) * PRODUCTS_PER_PAGE
+      `/api/product?mode=category&&category=${subCategoryId}&&notExpired=true&&limit=${PRODUCTS_PER_PAGE}&&skip=${
+        (currentPage - 1) * PRODUCTS_PER_PAGE
       }`,
     );
 
@@ -118,13 +119,15 @@ const CategoryProductPage = () => {
                 })}
               </div>
 
-              <PaginationButtonGroup
-                onChangePage={onChangePage}
-                onNext={onNext}
-                onPrev={onPrev}
-                numOfPage={numOfPage.current}
-                currentPage={currentPage}
-              />
+              {productList.length !== 0 && (
+                <PaginationButtonGroup
+                  onChangePage={onChangePage}
+                  onNext={onNext}
+                  onPrev={onPrev}
+                  numOfPage={numOfPage.current}
+                  currentPage={currentPage}
+                />
+              )}
             </>
           )}
         </div>

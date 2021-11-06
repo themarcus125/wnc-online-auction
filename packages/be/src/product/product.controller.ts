@@ -138,6 +138,9 @@ const getProductSold: RequestHandler = async (req, res, next) => {
     const { id }: JWTPayload = res.locals.jwtPayload;
     const products = await ProductService.find({
       seller: id,
+      currentBidder: {
+        $exists: true,
+      },
       $or: [
         {
           expiredAt: {

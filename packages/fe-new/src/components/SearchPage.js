@@ -99,13 +99,15 @@ const SearchPage = () => {
             return <ProductItem key={product._id} productData={product} />;
           })}
         </div>
-        <PaginationButtonGroup
-          onChangePage={onChangePage}
-          onNext={onNext}
-          onPrev={onPrev}
-          numOfPage={numOfPage.current}
-          currentPage={currentPage}
-        />
+        {productList.length !== 0 && (
+          <PaginationButtonGroup
+            onChangePage={onChangePage}
+            onNext={onNext}
+            onPrev={onPrev}
+            numOfPage={numOfPage.current}
+            currentPage={currentPage}
+          />
+        )}
         <LoadingOverlay isLoading={loading} />
       </div>
     </Wrapper>

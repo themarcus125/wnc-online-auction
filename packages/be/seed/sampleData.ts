@@ -250,7 +250,7 @@ export const productSeeds: ProductSeed[] = [
     buyPrice: 3000000,
     stepPrice: 200000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 5 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 4
   {
@@ -272,7 +272,7 @@ export const productSeeds: ProductSeed[] = [
     buyPrice: 2000000,
     stepPrice: 50000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 2 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 5
   {
@@ -293,7 +293,7 @@ export const productSeeds: ProductSeed[] = [
     buyPrice: 18000000,
     stepPrice: 100000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 23 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 23 * 24 * 3600 * 1000),
   },
   // Product 6
   {
@@ -313,7 +313,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 16000000,
     stepPrice: 100000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Product 7
   {
@@ -332,7 +332,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 3000000,
     currentPrice: 3000000,
     stepPrice: 50000,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Category 1
   // Product 8
@@ -354,7 +354,7 @@ export const productSeeds: ProductSeed[] = [
     buyPrice: 20000000,
     stepPrice: 300000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Product 9
   {
@@ -375,7 +375,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 8000000,
     stepPrice: 200000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 10
   {
@@ -395,7 +395,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 10000000,
     stepPrice: 200000,
     onlyRatedBidder: true,
-    expiredAt: new Date(Date.now() + 40 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 40 * 24 * 3600 * 1000),
   },
   // Product 11
   {
@@ -414,7 +414,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 2500000,
     currentPrice: 2500000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 40 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 40 * 24 * 3600 * 1000),
   },
   // Category 2
   // Product 12
@@ -435,7 +435,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 4000000,
     stepPrice: 100000,
     onlyRatedBidder: true,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 13
   {
@@ -454,7 +454,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 18000000,
     currentPrice: 18000000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 14
   {
@@ -474,7 +474,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 4000000,
     currentPrice: 4000000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 40 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 40 * 24 * 3600 * 1000),
   },
   // Category 3
   // Product 15
@@ -495,7 +495,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 10000000,
     stepPrice: 100000,
     buyPrice: 18000000,
-    expiredAt: new Date(Date.now() + 40 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 40 * 24 * 3600 * 1000),
   },
   // Product 16
   {
@@ -515,7 +515,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 5000000,
     stepPrice: 100000,
     buyPrice: 8000000,
-    expiredAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 10 * 24 * 3600 * 1000),
   },
   // Product 17
   {
@@ -535,7 +535,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 1000000,
     stepPrice: 50000,
     buyPrice: 2100000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 18
   {
@@ -555,7 +555,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 6000000,
     stepPrice: 100000,
     buyPrice: 13000000,
-    expiredAt: new Date(Date.now() + 40 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 40 * 24 * 3600 * 1000),
   },
   // Category 4
   // Product 19
@@ -577,7 +577,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 4000000,
     stepPrice: 100000,
     buyPrice: 6000000,
-    expiredAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 10 * 24 * 3600 * 1000),
   },
   // Product 20
   {
@@ -596,7 +596,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 400000,
     currentPrice: 400000,
     stepPrice: 30000,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Product 21
   {
@@ -616,7 +616,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 400000,
     stepPrice: 20000,
     buyPrice: 800000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 22
   {
@@ -635,7 +635,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 100000,
     currentPrice: 100000,
     stepPrice: 20000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 5
   // Product 23
@@ -656,7 +656,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 200000,
     stepPrice: 30000,
     buyPrice: 600000,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Product 24
   {
@@ -676,7 +676,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 800000,
     stepPrice: 50000,
     buyPrice: 1900000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 25
   {
@@ -696,7 +696,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 200000,
     stepPrice: 20000,
     buyPrice: 600000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 26
   {
@@ -716,7 +716,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 100000,
     stepPrice: 10000,
     buyPrice: 400000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 6
   // Product 27
@@ -737,7 +737,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 2000000,
     stepPrice: 100000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 28
   {
@@ -756,7 +756,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 1000000,
     currentPrice: 1000000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 7
   // Product 29
@@ -776,7 +776,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 200000,
     currentPrice: 200000,
     stepPrice: 10000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 8
   // Product 30
@@ -796,7 +796,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 200000,
     currentPrice: 200000,
     stepPrice: 10000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 31
   {
@@ -815,7 +815,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 1000000,
     currentPrice: 1000000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 20 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 20 * 24 * 3600 * 1000),
   },
   // Category 9
   // Product 32
@@ -836,7 +836,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 300000,
     stepPrice: 20000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 33
   {
@@ -855,7 +855,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 100000,
     currentPrice: 100000,
     stepPrice: 20000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 10
   // Category 11
@@ -877,7 +877,7 @@ export const productSeeds: ProductSeed[] = [
     currentPrice: 30000000,
     stepPrice: 100000,
     isAutoRenew: true,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Product 35
   {
@@ -896,7 +896,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 18000000,
     currentPrice: 18000000,
     stepPrice: 100000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
   // Category 12
   // Category 13
@@ -918,7 +918,7 @@ export const productSeeds: ProductSeed[] = [
     startPrice: 7000000,
     currentPrice: 7000000,
     stepPrice: 50000,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+    expiredAt: new Date(Date.now() + 30 * 24 * 3600 * 1000),
   },
 ];
 
