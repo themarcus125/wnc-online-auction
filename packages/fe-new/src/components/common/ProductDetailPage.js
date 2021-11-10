@@ -246,6 +246,7 @@ const ProductDetailPage = () => {
     if (
       typeof Number(bidPrice) !== 'number' ||
       bidPrice < product.currentPrice + product.stepPrice ||
+      (product.buyPrice > 0 && bidPrice >= product.buyPrice) ||
       !checkIfValidBid(Number(bidPrice), product.stepPrice, product.startPrice)
     ) {
       toast.error('Giá bid không hợp lệ');
@@ -302,6 +303,7 @@ const ProductDetailPage = () => {
     if (
       typeof Number(autoBidPrice) !== 'number' ||
       autoBidPrice < product.currentPrice + product.stepPrice ||
+      (product.buyPrice > 0 && autoBidPrice >= product.buyPrice) ||
       !checkIfValidBid(
         Number(autoBidPrice),
         product.stepPrice,
