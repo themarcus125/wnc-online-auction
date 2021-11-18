@@ -9,6 +9,7 @@ import useStore from '../../store/useStore';
 import { hoursToString } from '../../utils/time';
 import { getUser, getToken } from '../../utils/auth';
 import { postAPIWithToken, deleteAPIWithToken } from '../../utils/api';
+import { maskedString } from '../../utils/bid';
 
 import { LOGIN_REQUIRED } from '../../utils/constants/error';
 
@@ -118,7 +119,9 @@ const ProductItem = ({ productData, isWatchListScreen = false }) => {
           </div>
           <p className="uk-margin-remove-bottom">
             {Number(currentPrice).toLocaleString()} đ
-            {currentBidder && <span> - Bidder: {currentBidder.name}</span>}
+            {currentBidder && (
+              <span> - Bidder: {maskedString(currentBidder.name)}</span>
+            )}
           </p>
           {!!buyPrice && (
             <p className="uk-text-large uk-margin-remove-bottom uk-text-bold">
