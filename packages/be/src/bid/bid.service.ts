@@ -5,7 +5,7 @@ import ProductService from '@/product/product.service';
 import RatingService from '@/rating/rating.service';
 import { excludeString, UserDoc } from '@/user/user.schema';
 import UserService from '@/user/user.service';
-import { tag } from '@/utils/html';
+import { anchorNewTab, tag } from '@/utils/html';
 import { ClientSession } from 'mongoose';
 import { CreateBidDTO, QueryBidDTO } from './bid.dto';
 import { BidDoc, BidModel, BidStatus } from './bid.schema';
@@ -260,7 +260,10 @@ class BidService
     const subject = `${bidProduct.name} has just been placed a new bid`;
     const content = tag(
       'h2',
-      `${bidProduct.name} - ${bidProduct._id} has a new bid`,
+      `${anchorNewTab(
+        ProductService.productClientLink(bidProduct._id),
+        bidProduct.name,
+      )} has a new bid`,
     );
     const emails = [seller.email, bidder.email];
     if (prevBidder) {
@@ -275,7 +278,10 @@ class BidService
     const subject = `Your bid has been rejected`;
     const content = tag(
       `h2`,
-      `Your bids in ${product.name} - ${product._id} has beed rejected by the seller`,
+      `Your bids in ${anchorNewTab(
+        ProductService.productClientLink(product._id),
+        product.name,
+      )} has beed rejected by the seller`,
     );
     const emails = [bidder.email];
     return sendMail(emails, subject, content);
@@ -296,7 +302,13 @@ class BidService
       }
     }
     const subject = `Your product has been sold`;
-    const content = tag('h2', `${product.name} - ${product._id} has been sold`);
+    const content = tag(
+      'h2',
+      `${anchorNewTab(
+        ProductService.productClientLink(product._id),
+        product.name,
+      )} has been sold`,
+    );
     return sendMail(emails, subject, content);
   }
 

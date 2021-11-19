@@ -3,6 +3,7 @@ export interface AppConfig {
   mode: string;
   host: string;
   port: number;
+  clientURL: string;
 }
 
 export interface DatabaseConfig {

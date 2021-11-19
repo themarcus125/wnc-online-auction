@@ -1,7 +1,7 @@
 import { Job, scheduleJob, rescheduleJob } from 'node-schedule';
 import { sendMail } from '@/mail/mail.service';
 import ProductService from '@/product/product.service';
-import { tag } from '@/utils/html';
+import { anchorNewTab, tag } from '@/utils/html';
 import { ProductDoc } from '@/product/product.schema';
 import UserService from '@/user/user.service';
 
@@ -76,7 +76,10 @@ class Scheduler {
         'div',
         tag(
           'p',
-          `${`You have won the ${name} - ${_id} with price is ${currentPrice}`}`,
+          `${`You have won the ${anchorNewTab(
+            ProductService.productClientLink(_id),
+            name,
+          )} with price is ${currentPrice}`}`,
         ) + tag('p', 'Remember to contact the seller for trading'),
       ),
     );
@@ -86,7 +89,16 @@ class Scheduler {
     return sendMail(
       [email],
       'Your product has been expired',
-      tag('div', tag('p', `Your product ${name} - ${_id} has been expired`)),
+      tag(
+        'div',
+        tag(
+          'p',
+          `Your product ${anchorNewTab(
+            ProductService.productClientLink(_id),
+            name,
+          )} has been expired`,
+        ),
+      ),
     );
   }
 }

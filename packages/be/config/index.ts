@@ -4,13 +4,21 @@ import { loading } from '@/utils/logs';
 import { AppConfig, DatabaseConfig, MailConfig, JwtConfig } from './config.t';
 dotenvExpand(dotenv.config());
 
-const { APPNAME, NODE_ENV, HOST, PORT, JWT_SECRET_KEY, JWT_EXPIRATION_TIME } =
-  process.env;
+const {
+  APPNAME,
+  NODE_ENV,
+  HOST,
+  PORT,
+  JWT_SECRET_KEY,
+  JWT_EXPIRATION_TIME,
+  CLIENT_URL,
+} = process.env;
 export const appConfig: AppConfig & JwtConfig = {
   name: APPNAME || 'biddlybe',
   mode: NODE_ENV || 'development',
   host: HOST || 'localhost',
   port: +(PORT || '3000') || 3000,
+  clientURL: CLIENT_URL || 'localhost:3001',
   jwtSecret: JWT_SECRET_KEY || 'biddlysecret',
   expirationTime: +(JWT_EXPIRATION_TIME || '3600') || 3600,
 };

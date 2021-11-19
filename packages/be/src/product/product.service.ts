@@ -2,6 +2,7 @@ import RepositoryService, { ModeQuery } from '@/db/repository.service';
 import { excludeString } from '@/user/user.schema';
 import { parseIntDefault, parseSort } from '@/utils/parser';
 import { FilterQuery, QueryOptions } from 'mongoose';
+import { appConfig, dbConfig } from '~/config';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel, ProductStatus } from './product.schema';
 
@@ -11,6 +12,10 @@ class ProductService
 {
   constructor() {
     super(ProductModel);
+  }
+
+  productClientLink(id: string) {
+    return `${appConfig.clientURL}/product/${id}`;
   }
 
   async findPopulate(query: FilterQuery<ProductDoc>, options?: QueryOptions) {
@@ -180,7 +185,8 @@ class ProductService
         $gt: new Date(),
       },
       status: ProductStatus.NORMAL,
-    }).populate('currentBidder', excludeString)
+    })
+      .populate('currentBidder', excludeString)
       .sort({
         _id: -1,
       })
