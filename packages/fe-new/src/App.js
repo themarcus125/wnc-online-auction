@@ -65,12 +65,6 @@ const SocketWrapper = ({ children }) => {
         console.log('connected', data);
       });
     }
-
-    // return () => {
-    //   if (isLoggedIn && socket) {
-    //     socket.disconnect();
-    //   }
-    // };
   }, [isLoggedIn]);
 
   const handleBidResponse = (data) => {
