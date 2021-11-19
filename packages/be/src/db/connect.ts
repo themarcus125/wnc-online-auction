@@ -5,7 +5,6 @@ import { appConfig, dbConfig } from '~/config';
 
 export const connectDB = () => {
   const { url } = dbConfig;
-  console.log(appConfig.mode);
   if (appConfig.mode === 'development')
     mongoose.set('debug', (collectionName, method, query, doc) => {
       console.log(
