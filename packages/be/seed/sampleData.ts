@@ -15,7 +15,7 @@ export const userSeeds: UserSeed[] = [
     isVerified: true,
   },
   {
-    email: 'seller1@sample.com',
+    email: 'seller1biddly@gmail.com',
     name: 'seller1',
     address: '123 nguyễn văn cừ p4 q5',
     password: hashedPassword,
@@ -39,7 +39,7 @@ export const userSeeds: UserSeed[] = [
     isVerified: true,
   },
   {
-    email: 'bidder1@sample.com',
+    email: 'bidder1biddly@gmail.com',
     name: 'bidder1',
     address: '235 nguyễn văn cừ p4 q5',
     password: hashedPassword,
@@ -47,7 +47,7 @@ export const userSeeds: UserSeed[] = [
     isVerified: true,
   },
   {
-    email: 'bidder2@sample.com',
+    email: 'bidder2biddly@gmail.com',
     name: 'bidder2',
     address: '246 nguyễn văn cừ p4 q5',
     password: hashedPassword,
