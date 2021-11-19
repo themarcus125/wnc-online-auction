@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from '../hooks/useNavigate';
+import useStore from '../store/useStore';
 
 import FormErrorMessage from '../components/common/Form/ErrorMessage';
 
@@ -21,6 +22,7 @@ const LoginPage = () => {
   const location = useLocation();
   const { toastMsg, toastType } = location.state || {};
   const { navigate } = useNavigate();
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
 
   useEffect(() => {
     if (toastMsg && toastType) {
@@ -38,6 +40,7 @@ const LoginPage = () => {
         toast.error(DEFAULT_ERROR);
       } else {
         setUser({ ...user, token: res.accessToken });
+        setIsLoggedIn(true);
         navigate('/');
       }
     }
