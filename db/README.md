@@ -1,16 +1,16 @@
-# Setup database and prepare data:
+# Setup database and restore data:
 
 Install [Mongodb](https://docs.mongodb.com/manual/installation/) for local cluters and [Database Tools](https://docs.mongodb.com/database-tools/installation/installation/) for restore database from dump data.
 
 - Add the `<MONGODB_PATH>\bin` and `<MONGODB_TOOLS_PATH>\bin` directory to the system variable `PATH`
 - Open command line as administrator
-- Check with `mongod --version` and `mongo --version` and `mongorestore --version`
+- Check installed successfully `mongod --version` and `mongo --version` and `mongorestore --version`
 
 Make sure everything are fine, then create a database cluster:
 
 1. Mongodb Atlas: https://docs.atlas.mongodb.com/getting-started/
 
-   - Follow docs, get and set `DBURL=mongodb+srv://${DBUSER}:${DBPASS}@${DBHOST}/${DBNAME}?retryWrites=true&w=majority` in environment variable
+   - Follow docs to created a cluster, then get connection string and set `DBURL=mongodb+srv://${DBUSER}:${DBPASS}@${DBHOST}/${DBNAME}?retryWrites=true&w=majority` in environment variable
 
 2. Create a local cluster: https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/
 
