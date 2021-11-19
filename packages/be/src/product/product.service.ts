@@ -1,8 +1,10 @@
 import RepositoryService, { ModeQuery } from '@/db/repository.service';
-import { excludeString } from '@/user/user.schema';
+import { sendMail } from '@/mail/mail.service';
+import { excludeString, UserDoc } from '@/user/user.schema';
+import { anchorNewTab, tag } from '@/utils/html';
 import { parseIntDefault, parseSort } from '@/utils/parser';
 import { FilterQuery, QueryOptions } from 'mongoose';
-import { appConfig, dbConfig } from '~/config';
+import { appConfig } from '~/config';
 import { CreateProductDTO, QueryProductDTO } from './product.dto';
 import { ProductDoc, ProductModel, ProductStatus } from './product.schema';
 
@@ -23,6 +25,21 @@ class ProductService
       .populate('seller', excludeString)
       .populate('currentBidder', excludeString)
       .populate('category');
+  }
+
+  async sendChangeDescEmail(product: ProductDoc, bidder: UserDoc | null) {
+    if (!bidder) return null;
+    const subject = `${product.name} has been changed description`;
+    const content =
+      tag(
+        'h2',
+        `The selller of ${anchorNewTab(
+          this.productClientLink(product._id),
+          product.name,
+        )} has changed description to: `,
+      ) + product.descriptions.map((d) => tag('p', d)).join();
+    const emails = [bidder.email];
+    return sendMail(emails, subject, content);
   }
 
   async findNotExpired() {

@@ -12,6 +12,7 @@ import ScheduleService from '@/schedule/schedule.service';
 import { ProductStatus } from './product.schema';
 import RatingService from '@/rating/rating.service';
 import mongoose from 'mongoose';
+import UserService from '@/user/user.service';
 
 const createProduct: RequestHandler = async (req, res, next) => {
   const {
@@ -176,6 +177,12 @@ const appendProductDescription: RequestHandler = async (req, res, next) => {
     if (!product) {
       return next(new NotFound('NOT_FOUND_PRODUCT'));
     }
+
+    if (product.currentBidder) {
+      const bidder = await UserService.findById(product.currentBidder);
+      await ProductService.sendChangeDescEmail(product, bidder);
+    }
+
     res.json({
       descriptions: product.descriptions,
     });
